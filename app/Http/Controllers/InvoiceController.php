@@ -17,15 +17,12 @@ class InvoiceController extends Controller
 {
     public function show($id)
     {
+        $penjualan = Penjualan::with('properti', 'pelanggan', 'lokasi')->findOrFail($id);
 
-
-        // $penjualan = Penjualan::with('properti', 'pembeli')->findOrFail($id);
-        $penjualan = Penjualan::with('properti', 'pembeli', 'lokasi')->findOrFail($id);
-
-        $kelurahan = MasterWilayah::getNamaByKode($penjualan->kelurahan);
-        $kecamatan = MasterWilayah::getNamaByKode($penjualan->kecamatan);
-        $kabupaten = MasterWilayah::getNamaByKode($penjualan->kabupaten);
-        $provinsi = MasterWilayah::getNamaByKode($penjualan->provinsi);
+        $kelurahan = $penjualan->kelurahan ? MasterWilayah::getNamaByKode($penjualan->kelurahan) : '-';
+        $kecamatan = $penjualan->kecamatan ? MasterWilayah::getNamaByKode($penjualan->kecamatan) : '-';
+        $kabupaten = $penjualan->kabupaten ? MasterWilayah::getNamaByKode($penjualan->kabupaten) : '-';
+        $provinsi  = $penjualan->provinsi  ? MasterWilayah::getNamaByKode($penjualan->provinsi) : '-';
 
         $settings = Pengaturan::getAllAsArray();
         $pdf = Pdf::loadView('invoices.invoice', compact('penjualan', 'settings', 'kelurahan', 'kecamatan', 'kabupaten', 'provinsi'))->setPaper('a4', 'portrait');

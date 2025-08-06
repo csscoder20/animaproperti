@@ -138,7 +138,6 @@ class PropertyController extends Controller
             ->get();
 
         // Cek apakah kecamatan tersedia
-        // $alamatMaps = $property->kecamatan ? $this->getalamatMaps($property->kecamatan) : null;
         $alamatLengkap = $this->getAlamatLengkapProperti($property);
 
         $mapsUrl = $alamatLengkap

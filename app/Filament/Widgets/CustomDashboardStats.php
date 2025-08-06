@@ -9,9 +9,12 @@ use App\Models\Agen;
 use App\Models\Pelanggan;
 use App\Models\Penjualan;
 use Filament\Widgets\Widget;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 
 class CustomDashboardStats extends Widget
 {
+    use HasWidgetShield;
+
     protected static string $view = 'filament.widgets.custom-dashboard-stats';
     protected int | string | array $columnSpan = 'full';
 

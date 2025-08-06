@@ -9,9 +9,11 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Widgets\TableWidget as BaseWidget;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 
 class LatestProperti extends BaseWidget
 {
+    use HasWidgetShield;
     protected static ?string $heading = '5 Properti Terbaru';
     protected static ?int $sort = 4;
 

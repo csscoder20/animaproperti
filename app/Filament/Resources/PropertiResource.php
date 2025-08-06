@@ -386,49 +386,6 @@ class PropertiResource extends Resource
 
                 Tables\Columns\TextColumn::make('penawaran')
                     ->label('Penawaran'),
-
-                Tables\Columns\IconColumn::make('unggulan')
-                    ->label('Unggulan')
-                    ->boolean()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Dibuat')
-                    ->date('d M Y')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('file_brosur')
-                    ->label('File Brosur')
-                    ->formatStateUsing(function ($state) {
-                        return $state ? asset('storage/' . $state) : '-';
-                    })
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('gbr_layout')
-                    ->label('Gbr Layout')
-                    ->formatStateUsing(function ($state) {
-                        return $state ? asset('storage/' . $state) : '-';
-                    })
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('gbr_spesifikasi')
-                    ->label('Gbr Spesifikasi')
-                    ->formatStateUsing(function ($state) {
-                        return $state ? asset('storage/' . $state) : '-';
-                    })
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('gbr_site_plan')
-                    ->label('Gbr Site Plan')
-                    ->formatStateUsing(function ($state) {
-                        return $state ? asset('storage/' . $state) : '-';
-                    })
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('gbr_primary_properti')
-                    ->label('Gbr Properti')
-                    ->formatStateUsing(function ($state) {
-                        return $state ? asset('storage/' . $state) : '-';
-                    })
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('alamat')
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

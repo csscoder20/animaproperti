@@ -30,8 +30,8 @@ class AppServiceProvider extends ServiceProvider
                 ->locales(['id', 'en'])
 
                 ->flags([
-                    'id' => 'https://upload.wikimedia.org/wikipedia/commons/9/9f/Flag_of_Indonesia.svg',
-                    'en' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/English_language.svg/1280px-English_language.svg.png',
+                    'id' => asset('themes/img/flags/id.svg'),
+                    'en' => asset('themes/img/flags/en.png'),
                 ]);
         });
 

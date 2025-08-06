@@ -10,13 +10,6 @@ class EditPenjualan extends EditRecord
 {
     protected static string $resource = PenjualanResource::class;
 
-    // protected function getHeaderActions(): array
-    // {
-    //     return [
-    //         Actions\DeleteAction::make(),
-    //     ];
-    // }
-
     protected function getFormActions(): array
     {
         return [];

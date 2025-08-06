@@ -6,9 +6,11 @@ use App\Models\User;
 use Filament\Tables;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 
 class LatestUsers extends BaseWidget
 {
+    use HasWidgetShield;
     protected static ?string $heading = '5 Pengguna Terbaru';
     protected static ?int $sort = 5;
 

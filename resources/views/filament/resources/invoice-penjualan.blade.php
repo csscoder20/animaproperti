@@ -2,7 +2,7 @@
     <div class="p-6 bg-white shadow rounded">
         <h2 class="text-xl font-bold mb-4">Invoice Penjualan</h2>
 
-        <p><strong>Nama Pembeli:</strong> {{ $record->pembeli->nama ?? '-' }}</p>
+        <p><strong>Nama Pembeli:</strong> {{ $record->pelanggan->nama ?? '-' }}</p>
         <p><strong>Properti:</strong> {{ $record->properti->judul ?? '-' }}</p>
         <p><strong>Harga Jual:</strong> Rp {{ number_format($record->harga_jual, 0, ',', '.') }}</p>
         <p><strong>Tanggal:</strong> {{ $record->tanggal_penjualan }}</p>

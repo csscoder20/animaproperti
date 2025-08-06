@@ -7,16 +7,16 @@
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <div class="hero-content text-center" data-aos="zoom-in" data-aos-delay="200">
-                        <h2>{{ $data['about_title'] ?? 'Animaproperty' }}</h2>
-                        <p class="hero-description">{!! $data['about_description'] ?? '' !!}</p>
+                        <h2>{{ $settings['site_title'] ?? 'Animaproperty' }}</h2>
+                        <p class="hero-description">{!! $settings['site_description'] ?? '' !!}</p>
                     </div>
 
                     <div class="dual-image-layout" data-aos="fade-up" data-aos-delay="300">
                         <div class="row g-4 align-items-center justify-content-center">
                             <div class="col-lg-6">
                                 <div class="primary-image-wrap">
-                                    <img src="{{ !empty($data['about_image']) ? asset('storage/' . $data['about_image']) : asset('themes/frontend/assets/img/default.png') }}"
-                                        alt="{{ $data['about_title'] ?? 'Animaproperty' }}" class="img-fluid">
+                                    <img src="{{ !empty($settings['logo']) ? asset('storage/' . $settings['logo']) : asset('themes/frontend/assets/img/default.png') }}"
+                                        alt="{{ $settings['site_title'] ?? 'Animaproperty' }}" class="img-fluid">
 
                                     <div class="floating-badge" data-aos="zoom-in" data-aos-delay="400">
                                         <div class="badge-content">

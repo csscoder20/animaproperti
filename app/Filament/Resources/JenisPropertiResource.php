@@ -2,15 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\JenisPropertiResource\Pages;
-use App\Models\JenisProperti;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Filament\Tables\Actions\Action;
 use Illuminate\Support\Str;
+use App\Models\JenisProperti;
+use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
+use App\Filament\Resources\JenisPropertiResource\Pages;
 
 class JenisPropertiResource extends Resource
 {
@@ -53,10 +54,10 @@ class JenisPropertiResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nama')->label('Nama')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('slug')->label('Slug')->sortable(),
-                Tables\Columns\TextColumn::make('deskripsi')->label('Deskripsi')->limit(50),
-                Tables\Columns\TextColumn::make('created_at')->label('Dibuat')->dateTime()->sortable(),
+                TextColumn::make('nama')->label('Nama')->searchable()->sortable(),
+                TextColumn::make('slug')->label('Slug')->sortable(),
+                TextColumn::make('deskripsi')->label('Deskripsi')->limit(50),
+                TextColumn::make('created_at')->label('Dibuat')->dateTime()->sortable(),
             ])
             ->filters([
                 //

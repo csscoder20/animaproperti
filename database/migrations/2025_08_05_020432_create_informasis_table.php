@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kontaks', function (Blueprint $table) {
+        Schema::create('informasis', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('judul')->nullable();
-            $table->text('alamat')->nullable();
-            $table->string('email')->nullable();
-            $table->string('telepon')->nullable();
-            $table->string('whatsapp')->nullable();
-            $table->string('latitude')->nullable();
-            $table->string('longitude')->nullable();
+            $table->text('deskripsi')->nullable();
+            $table->string('gambar')->nullable();
+            $table->string('slug')->unique();
+            $table->unsignedBigInteger('lihat')->default(0)->nullable();
+            $table->boolean('unggulan')->default(false);
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kontaks');
+        Schema::dropIfExists('informasis');
     }
 };

@@ -18,7 +18,7 @@ class CreatePenjualan extends CreateRecord
     public $foto_ktp;
     public $foto_npwp;
 
-    public function updatedPembeliId($value)
+    public function updatedPelangganId($value)
     {
         $pelanggan = Pelanggan::find($value);
 

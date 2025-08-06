@@ -20,7 +20,6 @@ class AgenController extends Controller
 
     public function show($id)
     {
-        // $agen = Agen::with('propertis.jenisProperti')->findOrFail($id);
         $agen = Agen::withCount('propertis')
             ->with('propertis.jenisProperti')
             ->findOrFail($id);

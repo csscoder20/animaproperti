@@ -86,8 +86,8 @@
                 <tr>
                     <th>
                         <p><strong>Alamat Penagihan:</strong><br>
-                            {{ $penjualan->pembeli->nama }}<br>
-                            {{ $penjualan->pembeli->alamat ?? '-' }}
+                            {{ $penjualan->pelanggan->nama }}<br>
+                            {{ $penjualan->pelanggan->alamat ?? '-' }}
                         </p>
                     </th>
                     <th>

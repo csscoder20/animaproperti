@@ -307,7 +307,7 @@ class PenjualanResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('pembeli.nama')
+                TextColumn::make('pelanggan.nama')
                     ->label('Pembeli')
                     ->searchable()
                     ->sortable(),

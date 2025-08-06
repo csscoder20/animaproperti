@@ -11,10 +11,11 @@ use Filament\Notifications\Notification;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Concerns\InteractsWithForms;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class AboutUs extends Page
 {
-    use InteractsWithForms;
+    use InteractsWithForms, HasPageShield;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
     protected static string $view = 'filament.pages.about-us';
@@ -40,29 +41,12 @@ class AboutUs extends Page
             ->schema([
                 Fieldset::make('Identitas Perusahaan')
                     ->schema([
-                        TextInput::make('about_title')
-                            ->label('Nama Perusahaan')
-                            ->columnSpanFull()
-                            ->required(),
-                        RichEditor::make('about_description')
-                            ->label('Deskripsi Singkat Perusahaan')
-                            ->required(),
                         RichEditor::make('visi')
                             ->label('Visi Perusahaan')
                             ->required(),
                         RichEditor::make('misi')
                             ->label('Misi Perusahaan')
                             ->required(),
-                        FileUpload::make('about_image')
-                            ->label('Logo Perusahaan')
-                            ->image()
-                            ->directory('about')
-                            ->imageEditor()
-                            ->imageEditorAspectRatios([
-                                '16:9',
-                                '4:3',
-                                '1:1',
-                            ])
                     ])->columns(2),
                 Fieldset::make('Statisik & Prestasi')
                     ->schema([

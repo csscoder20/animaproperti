@@ -8,9 +8,13 @@ use Filament\Tables;
 use Illuminate\Support\Facades\DB;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 
 class ActiveUsers extends BaseWidget
 {
+
+    use HasWidgetShield;
+
     protected static ?string $heading = 'Pengguna Aktif Saat Ini';
     protected static ?int $sort = 6;
     protected int $pollInterval = 10;

@@ -2,21 +2,26 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\AuthenticateSession;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
-use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Routing\Middleware\SubstituteBindings;
+use App\Models\Pengaturan;
+use Filament\PanelProvider;
+use Filament\Enums\ThemeMode;
+use App\Filament\Pages\Settings;
+use Filament\Navigation\MenuItem;
+use Filament\Support\Colors\Color;
+use Filament\Http\Middleware\Authenticate;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Filament\Http\Middleware\AuthenticateSession;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -26,8 +31,31 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->darkMode(false)
             ->id('admin')
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('Pengaturan Tema')
+                    ->url(fn(): string => Settings::getUrl())
+                    ->icon('heroicon-o-cog-6-tooth'),
+                MenuItem::make()
+                    ->label('Kunjungi Web')
+                    ->url('/')
+                    ->openUrlInNewTab()
+                    ->icon('heroicon-o-globe-alt'),
+            ])
+
             ->path('admin')
             ->brandName('ANIMA PROPERTI')
+            ->sidebarFullyCollapsibleOnDesktop()
+            ->defaultThemeMode(ThemeMode::Light)
+            ->favicon(function () {
+                $favicon = Pengaturan::where('key', 'favicon')->value('value');
+
+                return $favicon
+                    ? asset('storage/' . $favicon)
+                    : asset('themes/frontend/assets/img/favicon-32x32.png');
+            })
+            ->brandLogo(fn() => view('filament.admin.logo'))
+            ->brandLogoHeight('4rem')
             ->login()
             ->colors([
                 'danger' => Color::Red,
@@ -68,17 +96,28 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->plugins([
+                FilamentShieldPlugin::make(),
+            ])
             ->renderHook('panels::body.end', function () {
                 return <<<'HTML'
                     <style>
+                        /* .fi-logo {
+                            color: #fff;
+                        } */
+
                         .fi-topbar nav {
                             background-color: #0093dd;
+                        }
+
+                        .fi-sidebar-nav {
+                            padding-top: 1rem;
                         }
 
                         nav.fi-sidebar-nav,
                         header.fi-sidebar-header {
                             background-color: #32404d;
-                            height: 4rem;
+                            height: 5rem;
                         }
 
                         .fi-sidebar-nav-groups li.fi-sidebar-item a:hover {
@@ -98,18 +137,16 @@ class AdminPanelProvider extends PanelProvider
                             background-color: #0093dd;
                         }
 
-                        li.fi-sidebar-item.fi-active.fi-sidebar-item-active a svg,
-                        li.fi-sidebar-item.fi-active.fi-sidebar-item-active a span {
+                        li.fi-sidebar-item.fi-active.fi-sidebar-item-active a svg {
                             color: #fff !important;
                         }
 
-                        .fi-logo {
-                            color: #fff;
-                            max-width: 100% !important;
-                            text-align: center;
-                            width: 100%;
-                            display: flex;
-                            justify-content: center;
+                        a.fi-sidebar-item-button span>span {
+                            background: #ecf0f6 !important;
+                            border-radius: 5px;
+                        }
+                        a.fi-sidebar-item-button span>span>span>span {
+                            color: #000 !important;
                         }
 
                         .fi-main {

@@ -36,6 +36,6 @@ class Pelanggan extends Model
 
     public function penjualans(): HasMany
     {
-        return $this->hasMany(Penjualan::class, 'pembeli_id');
+        return $this->hasMany(Penjualan::class, 'pelanggan_id');
     }
 }

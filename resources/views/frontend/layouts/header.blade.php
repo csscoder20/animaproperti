@@ -1,8 +1,9 @@
 <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-
         <a href="{{ url('/') }}" class="logo d-flex align-items-center">
-            <img src="{{ asset('themes/frontend/assets/img/android-chrome-512x512.png') }}" alt="Logo Website">
+            <img class="rounded"
+                src="{{ $settings['logo'] ? asset('storage/' . $settings['logo']) : asset('themes/frontend/assets/img/android-chrome-512x512.png') }}"
+                alt="Logo">
             <h1 class="sitename">{{ $settings['site_name'] ?? 'ANIMA PROPERTI' }}</h1>
         </a>
 
@@ -41,7 +42,12 @@
                 <li><a href="{{ url('/kontak-kami') }}"
                         class="{{ Request::is('kontak-kami') ? 'active' : '' }}">Kontak</a>
                 </li>
-
+                <li>
+                    <a href="{{ url('/berita') }}"
+                        class="{{ Request::is('berita') || Request::is('berita/*') ? 'active' : '' }}">
+                        Berita
+                    </a>
+                </li>
                 <!-- Tombol WA untuk layar >= 1200px (xl ke atas) -->
                 <li class="d-none d-xl-block">
                     <a class="waMe btn btn-success px-3 py-2 rounded-pill"

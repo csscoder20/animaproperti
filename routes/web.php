@@ -8,6 +8,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\AgenController;
+use App\Http\Controllers\InformasiController;
 
 Route::get('/formulir-registrasi-agen', [RegistrationController::class, 'index']);
 
@@ -36,3 +37,7 @@ Route::get('/invoice/{id}', [InvoiceController::class, 'show'])->name('invoice.s
 Route::get('/kontak-agen', [AgenController::class, 'index']);
 Route::get('/agen/{id}/properti', [AgenController::class, 'showProperti'])->name('agen.properti');
 Route::get('/agen/{id}', [AgenController::class, 'show'])->name('agen.show');
+
+// Informasi routes
+Route::get('/berita', [InformasiController::class, 'berita'])->name('berita.index');
+Route::get('/berita/{slug}', [InformasiController::class, 'detail_berita'])->name('berita.detail');

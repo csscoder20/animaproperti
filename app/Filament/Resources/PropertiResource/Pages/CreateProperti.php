@@ -32,7 +32,6 @@ class CreateProperti extends CreateRecord
         }
     }
 
-
     protected function getFormActions(): array
     {
         return [];

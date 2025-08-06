@@ -8299,6 +8299,7 @@ section,
     border-radius: 8px;
     overflow: hidden;
     height: 100%;
+    border: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
 }
 
 .blog-hero .secondary-post .post-image img {
@@ -8327,7 +8328,7 @@ section,
 
 .blog-hero .news-tabs {
     background-color: var(--surface-color);
-    border-radius: 8px;
+    /* border-radius: 8px; */
     overflow: hidden;
 }
 
@@ -8549,7 +8550,7 @@ section,
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 0;
+    padding: 10px 0;
     margin: 0;
     list-style: none;
 }
@@ -8565,7 +8566,8 @@ section,
     user-select: none;
 }
 
-.pagination-2 li a {
+.pagination-2 li a,
+.pagination-2 li > span {
     display: flex;
     align-items: center;
     justify-content: center;

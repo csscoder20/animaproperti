@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             AgenSeeder::class,
             PropertiSeeder::class,
             PelangganSeeder::class,
+            InformasiSeeder::class,
         ]);
     }
 }

@@ -13,21 +13,22 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Components\RichEditor;
 use Illuminate\Support\Facades\Storage;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class Settings extends Page
 {
-    use InteractsWithForms;
+    use InteractsWithForms, HasPageShield;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static string $view = 'filament.pages.setting';
     protected static ?string $navigationLabel = 'Pengaturan';
     protected static ?string $modelLabel = 'Pengaturan';
-    // protected static ?string $navigationGroup = 'Pengaturan';
     protected static ?string $title = 'Pengaturan';
     protected static ?string $navigationGroup = 'Halaman';
 
@@ -37,7 +38,6 @@ class Settings extends Page
     {
         return 5;
     }
-
 
     public function mount(): void
     {
@@ -51,80 +51,111 @@ class Settings extends Page
                 Tabs::make('Tabs')
                     ->tabs([
                         Tabs\Tab::make('Pengaturan Web')
-                            ->icon('heroicon-m-paint-brush')
+                            ->icon('heroicon-m-globe-alt')
                             ->schema([
-                                Fieldset::make('Identitas Web')
-                                    ->schema([
-                                        TextInput::make('site_name')
-                                            ->label('Nama Web')
-                                            ->required()
-                                            ->maxLength(255),
-                                        TextInput::make('site_description')
-                                            ->label('Deskripsi')
-                                            ->required()
-                                            ->maxLength(255),
-                                        TextInput::make('site_tagline')
-                                            ->label('Slogan')
-                                            ->required(),
-                                        TextInput::make('copyright')
-                                            ->label('Hak Cipta')
-                                            ->required(),
-                                        TextInput::make('welcome_text')
-                                            ->label('Welcome Text')
-                                            ->required(),
-                                        TextInput::make('address')
-                                            ->label('Alamat')
-                                            ->required(),
-                                        TextInput::make('postal_code')
-                                            ->label('Kode Pos')
-                                            ->required(),
-                                        TextInput::make('phone')
-                                            ->label('Nomor HP')
-                                            ->required(),
-                                        TextInput::make('email')
-                                            ->label('Email')
-                                            ->required(),
-                                    ])->columns(3),
-                                Fieldset::make('Media Sosial')
-                                    ->schema([
-                                        TextInput::make('facebook')
-                                            ->label('Facebook')
-                                            ->required()
-                                            ->maxLength(255),
-                                        TextInput::make('instagram')
-                                            ->label('Instagram')
-                                            ->required(),
-                                        TextInput::make('tiktok')
-                                            ->label('Tiktok')
-                                            ->required(),
-                                        TextInput::make('youtube')
-                                            ->label('Youtube')
-                                            ->required(),
-                                        TextInput::make('twitter')
-                                            ->label('Twitter')
-                                            ->required(),
-                                    ])->columns(3),
 
-                                Fieldset::make('Logo dan Favicon')
-                                    ->schema([
-                                        FileUpload::make('logo')
-                                            ->previewable(true)
-                                            ->image()
-                                            ->maxSize(1024)
-                                            ->maxFiles(1)
-                                            ->directory('logos')
-                                            ->openable(),
-                                        FileUpload::make('favicon')
-                                            ->previewable(true)
-                                            ->image()
-                                            ->maxSize(1024)
-                                            ->maxFiles(1)
-                                            ->directory('favicons')
-                                            ->openable(),
-                                    ])->columns(4)
+                                TextInput::make('site_name')
+                                    ->label('Nama Web')
+                                    ->required()
+                                    ->maxLength(255),
+                                TextInput::make('author')
+                                    ->label('Author')
+                                    ->required(),
+                                TextInput::make('keywords')
+                                    ->label('Keywords')
+                                    ->required(),
+                                Textarea::make('site_description')
+                                    ->label('Deskripsi')
+                                    ->required()
+                                    ->columnSpanFull(),
+                                TextInput::make('site_tagline')
+                                    ->label('Slogan')
+                                    ->required(),
+                                TextInput::make('copyright')
+                                    ->label('Hak Cipta')
+                                    ->required(),
+                                TextInput::make('design_by')
+                                    ->label('Didesain Oleh')
+                                    ->required(),
 
+                            ])->columns(3),
+                        Tabs\Tab::make('Google Integration')
+                            ->icon('heroicon-m-cog-6-tooth')
+                            ->schema([
+                                TextInput::make('recaptcha_site_key')
+                                    ->label('Google reCAPTCHA Site Key'),
+                                TextInput::make('recaptcha_secret_key')
+                                    ->label('Google reCAPTCHA Secret Key'),
+                                TextInput::make('google_analytics')
+                                    ->label('Google Analytics ID'),
+                                TextInput::make('google_tag_manager')
+                                    ->label('Google Tag Manager ID'),
+                                TextInput::make('google_site_verification')
+                                    ->label('Google Site Verification Code'),
+                            ])->columns(3),
+                        Tabs\Tab::make('Kontak & Media Sosial')
+                            ->icon('heroicon-m-phone')
+                            ->schema([
+                                TextArea::make('address')
+                                    ->label('Alamat')
+                                    ->columnSpanFull()
+                                    ->required(),
+                                TextInput::make('postal_code')
+                                    ->label('Kode Pos')
+                                    ->required(),
+                                TextInput::make('latitude')
+                                    ->label('Latitude')
+                                    ->required(),
+                                TextInput::make('longitude')
+                                    ->label('Longitude')
+                                    ->required(),
+                                TextInput::make('phone')
+                                    ->label('Nomor HP')
+                                    ->required(),
+                                TextInput::make('email')
+                                    ->label('Email')
+                                    ->required(),
+                                TextInput::make('facebook')
+                                    ->label('Facebook')
+                                    ->required()
+                                    ->maxLength(255),
+                                TextInput::make('instagram')
+                                    ->label('Instagram')
+                                    ->required(),
+                                TextInput::make('tiktok')
+                                    ->label('Tiktok')
+                                    ->required(),
+                                TextInput::make('youtube')
+                                    ->label('Youtube')
+                                    ->required(),
+                                TextInput::make('twitter')
+                                    ->label('Twitter')
+                                    ->required(),
+                            ])->columns(3),
+                        Tabs\Tab::make('Logo & Favicon')
+                            ->icon('heroicon-m-photo')
+                            ->schema([
+                                FileUpload::make('logo')
+                                    ->previewable(true)
+                                    ->image()
+                                    ->maxSize(1024)
+                                    ->maxFiles(1)
+                                    ->directory('logos')
+                                    ->openable()
+                                    ->imageEditor()
+                                    ->imageEditorAspectRatios([
+                                        '1:1',
+                                    ])
+                                    ->dehydrated(),
 
-                            ]),
+                                FileUpload::make('favicon')
+                                    ->previewable(true)
+                                    ->image()
+                                    ->maxSize(1024)
+                                    ->maxFiles(1)
+                                    ->directory('favicons')
+                                    ->openable(),
+                            ])->columns(4),
                     ])
             ])
             ->statePath('data');
