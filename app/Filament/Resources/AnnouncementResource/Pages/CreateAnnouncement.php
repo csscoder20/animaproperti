@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\InformasiResource\Pages;
+namespace App\Filament\Resources\AnnouncementResource\Pages;
 
-use App\Filament\Resources\InformasiResource;
+use App\Filament\Resources\AnnouncementResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateInformasi extends CreateRecord
+class CreateAnnouncement extends CreateRecord
 {
-    protected static string $resource = InformasiResource::class;
+    protected static string $resource = AnnouncementResource::class;
     protected static bool $canCreateAnother = false;
 
     protected function getRedirectUrl(): string

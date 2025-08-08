@@ -33,10 +33,6 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->userMenuItems([
                 MenuItem::make()
-                    ->label('Pengaturan Tema')
-                    ->url(fn(): string => Settings::getUrl())
-                    ->icon('heroicon-o-cog-6-tooth'),
-                MenuItem::make()
                     ->label('Kunjungi Web')
                     ->url('/')
                     ->openUrlInNewTab()

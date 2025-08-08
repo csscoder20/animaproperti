@@ -1157,7 +1157,7 @@ section,
         color-mix(in srgb, var(--default-color), transparent 88%);
     border: 1px solid color-mix(in srgb, var(--default-color), transparent 92%);
     /* width: 360px; */
-    width: 80%;
+    /* width: 100%; */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1294,8 +1294,8 @@ section,
     }
 
     .hero .hero-visual .visual-container .agent-card {
-        bottom: -10px;
-        left: -20px;
+        /* bottom: -10px; */
+        /* left: -20px; */
         width: 280px;
         padding: 16px;
     }

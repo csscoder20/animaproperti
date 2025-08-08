@@ -13,7 +13,11 @@ class ListRoles extends ListRecords
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('Buat Hak Akses')
+            // ->icon('heroicon-o-plus')
+            // ->color('primary')
+            // ->modalHeading('Buat Hak Akses Baru')
+            // ->modalSubmitActionLabel('Simpan Hak Akses'),
         ];
     }
 }

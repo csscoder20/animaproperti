@@ -9,7 +9,7 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateAgen extends CreateRecord
 {
     protected static string $resource = AgenResource::class;
-
+    protected static bool $canCreateAnother = false;
 
     protected function getFormActions(): array
     {

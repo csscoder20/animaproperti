@@ -1,4 +1,13 @@
 @extends('frontend.layouts.app')
+<style>
+    a.card.p-2.d-flex.flex-column.align-items-center.rounded-3.justify-content-center.text-center {
+        box-shadow: 0 0 1px rgba(40, 41, 61, .04), 0 2px 4px rgba(96, 97, 112, .16);
+        border-left: 1px solid #fff;
+        border-right: 1px solid #fff;
+        border-top: 1px solid #fff;
+        border-bottom: 1px solid #fff;
+    }
+</style>
 @section('content')
 @section('title', $title)
 
@@ -8,17 +17,17 @@
             <div class="row g-4">
                 <div class="col-lg-7">
                     <div class="hero-content" data-aos="zoom-in" data-aos-delay="200">
-                        <div class="content-header">
+                        {{-- <div class="content-header">
                             <span class="hero-label">
                                 <i class="bi bi-house-heart"></i>
                                 Hunian Impian Anda
                             </span>
                             <h1>Temukan Sekarang!</h1>
-                        </div>
+                        </div> --}}
                         <div class="search-container" data-aos="fade-up" data-aos-delay="300">
                             <div class="search-header">
                                 <h3>Cari Properti</h3>
-                                <p>Temukan Ribuan Daftar Terverifikasi</p>
+                                <p>{{ $settings['welcome_text'] ?? 'Temukan Properti Impian Anda' }}</p>
                             </div>
                             <form action="{{ route('properties.index') }}" method="GET" class="property-search-form">
                                 <div class="search-grid">
@@ -32,8 +41,6 @@
                                         </select>
                                         <i class="bi bi-geo-alt field-icon"></i>
                                     </div>
-
-
 
                                     <div class="search-field">
                                         <label for="search-type" class="field-label">Tipe Properti</label>
@@ -89,7 +96,6 @@
                                     <span>Cari</span>
                                 </button>
                             </form>
-
                         </div>
                     </div>
                 </div>
@@ -154,12 +160,12 @@
                                         @if ($featuredProperty->agens->count() > 1)
                                             <button class="carousel-control-prev" type="button"
                                                 data-bs-target="#{{ $carouselId }}" data-bs-slide="prev">
-                                                <i class="bi bi-arrow-left-circle-fill fs-5 text-success"></i>
+                                                <i class="bi bi-chevron-left fs-5 text-success"></i>
                                                 <span class="visually-hidden">Previous</span>
                                             </button>
                                             <button class="carousel-control-next" type="button"
                                                 data-bs-target="#{{ $carouselId }}" data-bs-slide="next">
-                                                <i class="bi bi-arrow-right-circle-fill fs-5 text-success"></i>
+                                                <i class="bi bi-chevron-right fs-5 text-success"></i>
                                                 <span class="visually-hidden">Next</span>
                                             </button>
                                         @endif
@@ -171,6 +177,47 @@
                     </div>
                 @endif
 
+            </div>
+
+            <div class="row flex-nowrap overflow-auto gap-2 pb-2">
+                @php
+                    $icons = [
+                        'Apartemen' => 'bi bi-house-door',
+                        'Cluster' => 'bi bi-house',
+                        'Gudang' => 'bi bi-box-seam',
+                        'Kantor' => 'bi bi-building',
+                        'Kost' => 'bi bi-person-lines-fill',
+                        'Perumahan' => 'bi bi-houses',
+                        'Ruko' => 'bi bi-shop',
+                        'Rumah' => 'bi bi-house-check',
+                        'Tanah' => 'bi bi-globe',
+                        'Villa' => 'bi bi-tree',
+                    ];
+                @endphp
+
+                @foreach ($propertyTypes as $type)
+                    <div class="col-auto">
+                        <a href="{{ route('properties.index', ['tipe' => $type->slug]) }}"
+                            class="card p-2 d-flex flex-column align-items-center rounded-3 justify-content-center text-center"
+                            style="width: 100px; height: 100px;">
+                            <i class="{{ $icons[trim($type->nama)] ?? 'bi bi-building' }} fs-3 text-success mb-2"></i>
+                            <span class="text-small">{{ $type->nama }}</span>
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+
+            @php
+                $bannerPath =
+                    !empty($settings['banner']) && file_exists(public_path('storage/' . $settings['banner']))
+                        ? asset('storage/' . $settings['banner'])
+                        : asset('themes/frontend/assets/img/android-chrome-512x512.png');
+            @endphp
+
+            <div class="row mt-4">
+                <div class="col-lg-12">
+                    <img class="w-100 rounded" src="{{ $bannerPath }}" alt="Foto Banner" data-aos="fade-up">
+                </div>
             </div>
         </div>
     </div>

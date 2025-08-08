@@ -9,6 +9,7 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateJenisProperti extends CreateRecord
 {
     protected static string $resource = JenisPropertiResource::class;
+    protected static bool $canCreateAnother = false;
 
     protected function getRedirectUrl(): string
     {

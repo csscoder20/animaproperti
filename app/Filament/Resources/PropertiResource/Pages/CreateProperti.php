@@ -10,7 +10,7 @@ use App\Models\PropertyImage;
 class CreateProperti extends CreateRecord
 {
     protected static string $resource = PropertiResource::class;
-
+    protected static bool $canCreateAnother = false;
 
     protected function getRedirectUrl(): string
     {

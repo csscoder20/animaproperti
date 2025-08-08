@@ -211,12 +211,12 @@
                                     <!-- Controls -->
                                     <button class="carousel-control-prev" type="button" data-bs-target="#agentCarousel"
                                         data-bs-slide="prev">
-                                        <i class="bi bi-arrow-left-circle-fill fs-5 text-success"></i>
+                                        <i class="bi bi-chevron-left fs-5 text-success"></i>
                                         <span class="visually-hidden">Previous</span>
                                     </button>
                                     <button class="carousel-control-next" type="button" data-bs-target="#agentCarousel"
                                         data-bs-slide="next">
-                                        <i class="bi bi-arrow-right-circle-fill fs-5 text-success"></i>
+                                        <i class="bi bi-chevron-right fs-5 text-success"></i>
                                         <span class="visually-hidden">Next</span>
                                     </button>
                                 </div>

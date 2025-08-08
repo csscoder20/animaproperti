@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 class CreateRole extends CreateRecord
 {
     protected static string $resource = RoleResource::class;
+    protected static bool $canCreateAnother = false;
 
     public Collection $permissions;
 

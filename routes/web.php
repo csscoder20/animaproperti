@@ -1,14 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AgenController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\PropertyController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\InvoiceController;
-use App\Http\Controllers\AgenController;
+use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\InformasiController;
+use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\RegistrationController;
 
 Route::get('/formulir-registrasi-agen', [RegistrationController::class, 'index']);
 
@@ -41,3 +42,6 @@ Route::get('/agen/{id}', [AgenController::class, 'show'])->name('agen.show');
 // Informasi routes
 Route::get('/berita', [InformasiController::class, 'berita'])->name('berita.index');
 Route::get('/berita/{slug}', [InformasiController::class, 'detail_berita'])->name('berita.detail');
+
+
+Route::get('/api/announcement/active', [AnnouncementController::class, 'getActive']);

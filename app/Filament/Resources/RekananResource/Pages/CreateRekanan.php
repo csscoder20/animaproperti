@@ -9,4 +9,5 @@ use Filament\Resources\Pages\CreateRecord;
 class CreatePelanggan extends CreateRecord
 {
     protected static string $resource = PelangganResource::class;
+    protected static bool $canCreateAnother = false;
 }

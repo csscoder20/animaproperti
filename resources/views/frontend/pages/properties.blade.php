@@ -199,20 +199,6 @@
                                             <span class="status-badge sale">
                                                 {{ $property->penawaran }}</span>
                                         </div>
-                                        <div class="property-actions">
-                                            <button class="action-btn favorite-btn" data-toggle="tooltip"
-                                                title="Add to Favorites">
-                                                <i class="bi bi-heart"></i>
-                                            </button>
-                                            <button class="action-btn share-btn" data-toggle="tooltip"
-                                                title="Share Property">
-                                                <i class="bi bi-share"></i>
-                                            </button>
-                                            <button class="action-btn gallery-btn" data-toggle="tooltip"
-                                                title="View Gallery">
-                                                <i class="bi bi-images"></i>
-                                            </button>
-                                        </div>
                                     </div>
                                 </a>
                                 <div class="property-details"><a href="{{ route('property.show', $property) }}"
@@ -283,12 +269,12 @@
                                         @if ($property->agens->count() > 1)
                                             <button class="carousel-control-prev" type="button"
                                                 data-bs-target="#{{ $carouselId }}" data-bs-slide="prev">
-                                                <i class="bi bi-arrow-left-circle-fill text-success fs-5"></i>
+                                                <i class="bi bi-chevron-left fs-5 text-success"></i>
                                                 <span class="visually-hidden">Previous</span>
                                             </button>
                                             <button class="carousel-control-next" type="button"
                                                 data-bs-target="#{{ $carouselId }}" data-bs-slide="next">
-                                                <i class="bi bi-arrow-right-circle-fill text-success fs-5"></i>
+                                                <i class="bi bi-chevron-right fs-5 text-success"></i>
                                                 <span class="visually-hidden">Next</span>
                                             </button>
                                         @endif

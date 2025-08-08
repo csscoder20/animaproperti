@@ -9,6 +9,7 @@ use App\Models\Pelanggan;
 class CreatePenjualan extends CreateRecord
 {
     protected static string $resource = PenjualanResource::class;
+    protected static bool $canCreateAnother = false;
 
     public $pembeli_id;
     public $no_ktp;

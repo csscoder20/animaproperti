@@ -77,6 +77,9 @@ class Settings extends Page
                                 TextInput::make('design_by')
                                     ->label('Didesain Oleh')
                                     ->required(),
+                                TextInput::make('welcome_text')
+                                    ->label('Welcom Text')
+                                    ->required(),
 
                             ])->columns(3),
                         Tabs\Tab::make('Google Integration')
@@ -145,6 +148,18 @@ class Settings extends Page
                                     ->imageEditor()
                                     ->imageEditorAspectRatios([
                                         '1:1',
+                                    ])
+                                    ->dehydrated(),
+                                FileUpload::make('banner')
+                                    ->previewable(true)
+                                    ->image()
+                                    ->maxSize(1024)
+                                    ->maxFiles(1)
+                                    ->directory('banners')
+                                    ->openable()
+                                    ->imageEditor()
+                                    ->imageEditorAspectRatios([
+                                        '16:9',
                                     ])
                                     ->dehydrated(),
 
