@@ -145,26 +145,6 @@
                             @endif
                         </p>
                     </div>
-
-                </div>
-                <div class="col-lg-6">
-                    <div class="results-controls">
-                        <div class="d-flex gap-3 align-items-center justify-content-lg-end">
-                            <div class="sort-dropdown">
-                                <select class="form-select form-select-sm" name="sort" onchange="this.form.submit()">
-                                    <option value="low-high" {{ $selectedSort == 'low-high' ? 'selected' : '' }}>Harga:
-                                        Rendah ke Tinggi</option>
-                                    <option value="high-low" {{ $selectedSort == 'high-low' ? 'selected' : '' }}>Harga:
-                                        Tinggi ke Rendah</option>
-                                    <option value="latest"
-                                        {{ $selectedSort == 'latest' || !$selectedSort ? 'selected' : '' }}>Terbaru
-                                    </option>
-                                    <option value="featured" {{ $selectedSort == 'featured' ? 'selected' : '' }}>
-                                        Unggulan</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -189,8 +169,7 @@
                                             }
                                         @endphp
 
-                                        <img src="{{ $imageUrl }}" alt="{{ $property->judul }}"
-                                            class="img-fluid">
+                                        <img src="{{ $imageUrl }}" alt="{{ $property->judul }}" class="img-fluid">
                                         <div class="property-status">
                                             @if ($property->featured == 1)
                                                 <span class="status-badge featured">Unggulan</span>

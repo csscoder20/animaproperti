@@ -17,13 +17,6 @@
             <div class="row g-4">
                 <div class="col-lg-7">
                     <div class="hero-content" data-aos="zoom-in" data-aos-delay="200">
-                        {{-- <div class="content-header">
-                            <span class="hero-label">
-                                <i class="bi bi-house-heart"></i>
-                                Hunian Impian Anda
-                            </span>
-                            <h1>Temukan Sekarang!</h1>
-                        </div> --}}
                         <div class="search-container" data-aos="fade-up" data-aos-delay="300">
                             <div class="search-header">
                                 <h3>Cari Properti</h3>
@@ -208,16 +201,36 @@
             </div>
 
             @php
-                $bannerPath =
-                    !empty($settings['banner']) && file_exists(public_path('storage/' . $settings['banner']))
-                        ? asset('storage/' . $settings['banner'])
-                        : asset('themes/frontend/assets/img/android-chrome-512x512.png');
+                $activeSliders = $sliders->where('is_active', true);
+                $countActive = $activeSliders->count();
             @endphp
 
-            <div class="row mt-4">
-                <div class="col-lg-12">
-                    <img class="w-100 rounded" src="{{ $bannerPath }}" alt="Foto Banner" data-aos="fade-up">
+            <div class="swiper mySwiper mt-4" data-aos="fade-up" data-aos-delay="500">
+                <div class="swiper-wrapper mb-3">
+                    @foreach ($activeSliders as $slider)
+                        <div class="swiper-slide position-relative">
+
+                            @php
+                                $imagePath =
+                                    $slider->image_path &&
+                                    file_exists(storage_path('app/public/' . $slider->image_path))
+                                        ? asset('storage/' . $slider->image_path)
+                                        : asset('images/no-image.jpg');
+                            @endphp
+
+                            @if ($slider->link_url)
+                                <a href="{{ $slider->link_url }}">
+                                    <img src="{{ $imagePath }}" alt="{{ $slider->title ?? 'Slider Image' }}"
+                                        class="img-fluid w-100">
+                                </a>
+                            @else
+                                <img src="{{ $imagePath }}" alt="{{ $slider->title ?? 'Slider Image' }}"
+                                    class="img-fluid w-100">
+                            @endif
+                        </div>
+                    @endforeach
                 </div>
+                <div class="swiper-pagination"></div>
             </div>
         </div>
     </div>
@@ -464,6 +477,52 @@
         </div>
     </div>
 </section>
+
+
+<section id="recent-blog-posts" class="recent-blog-posts section beritaTerbaru">
+    <div class="container section-title" data-aos="fade-up">
+        <div class="row">
+            <div class="col-lg-6 d-flex align-items-center">
+                <h2>Berita Terbaru</h2>
+            </div>
+        </div>
+        <p class="text-left">Temukan berita terbaru seputar properti di wilayah timur Indonesia.</p>
+    </div>
+
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="swiper recentSwiper">
+            <div class="swiper-wrapper">
+                @foreach ($beritaHome as $berita)
+                    <div class="swiper-slide">
+                        <article class="recent-post">
+                            <div class="recent-img">
+                                @php
+                                    $gambar =
+                                        $berita->gambar && file_exists(storage_path('app/public/' . $berita->gambar))
+                                            ? asset('storage/' . $berita->gambar)
+                                            : asset('themes/frontend/assets/img/default.png');
+                                @endphp
+                                <img src="{{ $gambar }}" alt="{{ $berita->judul }}" class="img-fluid"
+                                    loading="lazy">
+                            </div>
+                            <div class="recent-content">
+                                <h3 class="recent-title">
+                                    <a href="{{ route('berita.detail', $berita->slug) }}">{{ $berita->judul }}</a>
+                                </h3>
+                                <div class="recent-meta">
+                                    <span class="author">By {{ $berita->user->name ?? 'Admin' }}</span>
+                                    <span class="date">{{ $berita->created_at->format('M d, Y') }}</span>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                @endforeach
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+</section>
+
 
 <section id="testimonials" class="testimonials section light-background">
     <div class="container section-title" data-aos="fade-up">

@@ -23,6 +23,7 @@ class Informasi extends Model
         'unggulan',
         'lihat',
         'slug',
+        'home',
         'user_id',
     ];
 

@@ -8,14 +8,21 @@ use Illuminate\Http\Request;
 use App\Models\JenisProperti;
 use App\Models\MasterWilayah;
 use Illuminate\Support\Facades\DB;
+use App\Models\Slider;
+use App\Models\Informasi;
 
 class HomeController extends Controller
 {
+
+
     public function index(Request $request)
     {
         $title = 'Beranda';
 
-        // Ambil 6 properti untuk disewa
+        $sliders = Slider::active()
+            ->orderBy('order')
+            ->get();
+
         $rentProperties = Properti::where('penawaran', 'Disewa')
             ->where('status', 'Tersedia')
             ->latest()
@@ -31,14 +38,12 @@ class HomeController extends Controller
             ->latest()
             ->first();
 
-        // Ambil 6 properti untuk dijual
         $sellProperties = Properti::where('penawaran', 'Dijual')
             ->where('status', 'Tersedia')
             ->latest()
             ->take(6)
             ->get();
 
-        // Ambil 4 properti terbaru
         $latestProperties = Properti::with('images')
             ->where('status', 'Tersedia')
             ->latest()
@@ -60,7 +65,14 @@ class HomeController extends Controller
             ->orderBy('nama')
             ->get();
 
+        // 🔹 Ambil berita untuk home
+        $beritaHome = Informasi::where('home', 1)
+            ->latest()
+            ->take(6)
+            ->get();
+
         return view('frontend.pages.home', compact(
+            'sliders',
             'latestProperties',
             'rentProperties',
             'sellProperties',
@@ -69,8 +81,11 @@ class HomeController extends Controller
             'kecamatanList',
             'featuredProperty',
             'propertyAgen',
+            'beritaHome', // ← lempar ke view
         ));
     }
+
+
 
     // Detail properti berdasarkan ID
     public function show($id)

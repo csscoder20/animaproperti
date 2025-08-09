@@ -20,6 +20,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Illuminate\Support\Str;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Section;
 
 class InformasiResource extends Resource
 {
@@ -35,25 +36,45 @@ class InformasiResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('judul')
-                    ->required()
-                    ->maxLength(255)
-                    ->lazy()
-                    ->afterStateUpdated(function ($state, callable $set) {
-                        $set('slug', Str::slug($state));
-                    }),
+                Section::make('Detail Berita')
+                    ->description('Untuk menampilkan berita di halaman beranda, aktifkan toggle Show di Beranda? Sedangkan untuk menampilkan gambar slider di halaman beranda, aktifkan toggle Unggulan?')
+                    ->schema([
+                        TextInput::make('judul')
+                            ->required()
+                            ->maxLength(255)
+                            ->lazy()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                $set('slug', Str::slug($state));
+                            }),
 
-                TextInput::make('slug')
-                    ->label('Slug')
-                    ->maxLength(255)
-                    ->readonly()
-                    ->dehydrated(),
-                RichEditor::make('deskripsi')
-                    ->columnSpanFull(),
-                Hidden::make('user_id')
-                    ->default(fn() => auth()->id())
-                    ->dehydrated()
-                    ->required(),
+                        TextInput::make('slug')
+                            ->label('Slug')
+                            ->maxLength(255)
+                            ->readonly()
+                            ->dehydrated(),
+                        RichEditor::make('deskripsi')
+                            ->required()
+                            ->maxLength(5000)
+                            ->columnSpanFull(),
+                        Hidden::make('user_id')
+                            ->default(fn() => auth()->id())
+                            ->dehydrated()
+                            ->required(),
+                    ])->columns(2),
+                Section::make('')
+                    ->schema([
+                        Toggle::make('unggulan')
+                            ->label('Unggulan?')
+                            ->inline(false)
+                            ->default(false)
+                            ->required(),
+                        Toggle::make('home')
+                            ->inline(false)
+                            ->label('Show di Beranda?')
+                            ->default(false)
+                            ->required(),
+                    ])->columns(4),
+
                 FileUpload::make('gambar')
                     ->label('Gambar')
                     ->previewable(true)
@@ -69,11 +90,7 @@ class InformasiResource extends Resource
                         '1:1',
                     ])
                     ->dehydrated(),
-                Toggle::make('unggulan')
-                    ->label('Unggulan')
-                    ->default(false)
-                    ->required(),
-            ]);
+            ])->columns(2);
     }
 
     public static function table(Table $table): Table

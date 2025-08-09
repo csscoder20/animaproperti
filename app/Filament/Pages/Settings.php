@@ -150,18 +150,6 @@ class Settings extends Page
                                         '1:1',
                                     ])
                                     ->dehydrated(),
-                                FileUpload::make('banner')
-                                    ->previewable(true)
-                                    ->image()
-                                    ->maxSize(1024)
-                                    ->maxFiles(1)
-                                    ->directory('banners')
-                                    ->openable()
-                                    ->imageEditor()
-                                    ->imageEditorAspectRatios([
-                                        '16:9',
-                                    ])
-                                    ->dehydrated(),
 
                                 FileUpload::make('favicon')
                                     ->previewable(true)

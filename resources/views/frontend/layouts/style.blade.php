@@ -8,6 +8,7 @@
 <link href="{{ asset('themes/frontend/assets/vendor/aos/aos.css') }}" rel="stylesheet">
 <link href="{{ asset('themes/frontend/assets/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
 <link href="{{ asset('themes/frontend/assets/css/main.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 
 <style>
     .view-masonry,
@@ -58,6 +59,7 @@
 
     .propertiDisewakan .section-title h2:after,
     .propertiDijual .section-title h2:after,
+    .beritaTerbaru .section-title h2:after,
     .propertiTerbaru .section-title h2:after {
         content: "";
         position: absolute;
@@ -73,6 +75,7 @@
 
     .propertiDisewakan p.text-left,
     .propertiDijual p.text-left,
+    .beritaTerbaru p.text-left,
     .propertiTerbaru p.text-left {
         text-align: left;
     }
@@ -87,5 +90,20 @@
         a.waMe.btn.btn-success.px-3.py-2.rounded-pill {
             padding: 15px !important;
         }
+    }
+
+    .swiper {
+        width: 100%;
+        padding-bottom: 20px;
+    }
+
+    .swiper-slide img {
+        width: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .recentSwiper .swiper-wrapper {
+        height: auto !important;
     }
 </style>

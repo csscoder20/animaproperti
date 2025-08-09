@@ -7,6 +7,7 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     @if (!empty($settings['google_tag_manager']))
         <script async src="https://www.googletagmanager.com/gtag/js?id={{ $settings['google_tag_manager'] }}"></script>
@@ -56,3 +57,50 @@
             }
         });
     </script>
+
+
+    @if (request()->is('/'))
+        <script>
+            var slideCount = {{ $countActive }};
+            var swiper = new Swiper(".mySwiper", {
+                slidesPerView: slideCount === 1 ? 1 : 1,
+                spaceBetween: 10,
+                breakpoints: slideCount === 1 ? {} : {
+                    768: {
+                        slidesPerView: 1.5,
+                        spaceBetween: 20
+                    },
+                    992: {
+                        slidesPerView: 1.5,
+                        spaceBetween: 20
+                    },
+                },
+                freeMode: true,
+                grabCursor: true,
+                pagination: {
+                    el: ".mySwiper .swiper-pagination",
+                    clickable: true
+                }
+            });
+        </script>
+
+        <script>
+            new Swiper(".recentSwiper", {
+                slidesPerView: 1.2,
+                spaceBetween: 15,
+                breakpoints: {
+                    768: {
+                        slidesPerView: 2.5,
+                    },
+                    992: {
+                        slidesPerView: 3,
+                    },
+                },
+                grabCursor: true,
+                pagination: {
+                    el: ".recentSwiper .swiper-pagination",
+                    clickable: true
+                }
+            });
+        </script>
+    @endif

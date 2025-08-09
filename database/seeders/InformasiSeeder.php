@@ -53,6 +53,7 @@ class InformasiSeeder extends Seeder
                 'gambar' => $item['gambar'],
                 'slug' => Str::slug($item['judul']),
                 'unggulan' => true,
+                'home' => true,
                 'lihat' => rand(10, 100),
                 'user_id' => $user?->id,
             ]);

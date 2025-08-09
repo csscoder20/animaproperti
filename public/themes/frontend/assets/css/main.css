@@ -1296,7 +1296,7 @@ section,
     .hero .hero-visual .visual-container .agent-card {
         /* bottom: -10px; */
         /* left: -20px; */
-        width: 280px;
+        /* width: 280px; */
         padding: 16px;
     }
 
@@ -3990,7 +3990,7 @@ section,
 }
 
 .recent-blog-posts .recent-img {
-    height: 120px;
+    height: 160px;
     overflow: hidden;
 }
 
@@ -4122,7 +4122,7 @@ section,
 
     .recent-blog-posts .recent-img {
         flex: none;
-        height: 120px;
+        height: 160px;
     }
 }
 

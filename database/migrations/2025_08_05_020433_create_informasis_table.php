@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->unsignedBigInteger('lihat')->default(0)->nullable();
             $table->boolean('unggulan')->default(false);
+            $table->boolean('home')->default(false);
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
         });
