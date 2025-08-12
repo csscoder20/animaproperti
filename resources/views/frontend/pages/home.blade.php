@@ -520,7 +520,8 @@
                                 <h3 class="recent-title">
                                     <a href="{{ route('berita.detail', $berita->slug) }}">{{ $berita->judul }}</a>
                                 </h3>
-                                <span class="recent-description mb-3">{{ $berita->deskripsi_terbatas }}</span>
+                                <span
+                                    class="recent-description mb-3">{{ strip_tags($berita->deskripsi_terbatas) }}</span>
                                 <div class="recent-meta mt-3">
                                     <span class="author">By {{ $berita->user->name ?? 'Admin' }}</span>
                                     <span class="date">{{ $berita->created_at->format('M d, Y') }}</span>
@@ -551,7 +552,6 @@
     <div class="container" data-aos="fade-up" data-aos-delay="100">
         <div class="swiper kenapaPilihKamiSwiper">
             <div class="swiper-wrapper">
-
                 <div class="swiper-slide">
                     <div class="service-card">
                         <div class="service-icon">
@@ -559,12 +559,8 @@
                         </div>
                         <div class="service-info">
                             <h3><a href="service-details.html">Beli Properti Aman & Mudah</a></h3>
-                            <p>Animaproperty sebagai situs properti terpercaya siap membantu menemukan hunian idaman
-                                Anda</p>
-                            <a href="service-details.html" class="service-link">
-                                <span>Explore Now</span>
-                                <i class="bi bi-arrow-up-right"></i>
-                            </a>
+                            <p>Temukan hunian impian Anda dengan proses pembelian yang cepat, aman, dan transparan
+                                bersama Animaproperty.</p>
                         </div>
                     </div>
                 </div>
@@ -576,12 +572,8 @@
                         </div>
                         <div class="service-info">
                             <h3><a href="service-details.html">Mitra Properti Terbaik</a></h3>
-                            <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium
-                                voluptatum deleniti atque</p>
-                            <a href="service-details.html" class="service-link">
-                                <span>Start Renting</span>
-                                <i class="bi bi-arrow-up-right"></i>
-                            </a>
+                            <p>Jadikan Animaproperty sebagai mitra terpercaya untuk membeli, menjual, atau menyewa
+                                properti sesuai kebutuhan Anda.</p>
                         </div>
                     </div>
                 </div>
@@ -593,12 +585,8 @@
                         </div>
                         <div class="service-info">
                             <h3><a href="service-details.html">Jual Properti Cepat</a></h3>
-                            <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit sed quia
-                                consequuntur magni dolores eos</p>
-                            <a href="service-details.html" class="service-link">
-                                <span>Learn More</span>
-                                <i class="bi bi-arrow-up-right"></i>
-                            </a>
+                            <p>Pasarkan properti Anda dengan strategi efektif dan jangkauan luas untuk mendapatkan
+                                pembeli potensial lebih cepat.</p>
                         </div>
                     </div>
                 </div>
@@ -606,16 +594,12 @@
                 <div class="swiper-slide">
                     <div class="service-card">
                         <div class="service-icon">
-                            <i class="bi bi-shield-check"></i>
+                            <i class="bi bi-house-heart"></i>
                         </div>
                         <div class="service-info">
-                            <h3><a href="service-details.html">Jual Properti Cepat</a></h3>
-                            <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit sed quia
-                                consequuntur magni dolores eos</p>
-                            <a href="service-details.html" class="service-link">
-                                <span>Learn More</span>
-                                <i class="bi bi-arrow-up-right"></i>
-                            </a>
+                            <h3><a href="service-details.html">Sewa Properti Nyaman</a></h3>
+                            <p>Temukan pilihan sewa rumah, apartemen, atau ruko dengan harga terbaik dan lokasi
+                                strategis sesuai kebutuhan Anda.</p>
                         </div>
                     </div>
                 </div>
