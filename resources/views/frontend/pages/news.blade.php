@@ -56,9 +56,9 @@
                                 <div class="post-content">
                                     <div class="post-meta">
                                         <i class="bi bi-calendar"></i> <span
-                                            class="date">{{ $featured->created_at->format('d M Y') }}</span>
-                                        <i class="bi bi-person"></i> <a
-                                            href="#">{{ $featured->user->name ?? 'Admin' }}</a>
+                                            class="date text-white">{{ $featured->created_at->format('d M Y') }}</span>
+                                        <i class="bi bi-person"></i> <span
+                                            class="text-white">{{ $featured->user->name ?? 'Admin' }}</span>
                                         <i class="bi bi-eye"></i> {{ number_format($featured->lihat) }}
                                     </div>
                                     <h2 class="post-title">

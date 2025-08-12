@@ -29,7 +29,7 @@
                     </div>
                 </div>
 
-                <div class="footer-links col-lg-6 footer-contact text-center text-md-start">
+                <div class="footer-links col-lg-6 footer-contact text-md-start">
                     <h4>Link Terkait</h4>
                     <ul>
                         <li><a href="#">Sarat dan Ketentuan</a></li>

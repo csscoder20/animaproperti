@@ -60,6 +60,7 @@
     .propertiDisewakan .section-title h2:after,
     .propertiDijual .section-title h2:after,
     .beritaTerbaru .section-title h2:after,
+    .kenapaPilihKami .section-title h2:after,
     .propertiTerbaru .section-title h2:after {
         content: "";
         position: absolute;
@@ -75,6 +76,7 @@
 
     .propertiDisewakan p.text-left,
     .propertiDijual p.text-left,
+    .kenapaPilihKami p.text-left,
     .beritaTerbaru p.text-left,
     .propertiTerbaru p.text-left {
         text-align: left;
@@ -103,7 +105,19 @@
         border-radius: 10px;
     }
 
+    .newestPropertiSwiper .swiper-wrapper,
+    .kenapaPilihKami .swiper-wrapper,
     .recentSwiper .swiper-wrapper {
         height: auto !important;
+    }
+
+    .swiper-pagination-bullet-active {
+        width: 30px !important;
+        border-radius: 10px !important;
+    }
+
+    span.swiper-pagination-bullet {
+        width: 15px;
+        border-radius: 5px;
     }
 </style>

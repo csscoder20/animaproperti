@@ -2,15 +2,11 @@
 <style>
     a.card.p-2.d-flex.flex-column.align-items-center.rounded-3.justify-content-center.text-center {
         box-shadow: 0 0 1px rgba(40, 41, 61, .04), 0 2px 4px rgba(96, 97, 112, .16);
-        border-left: 1px solid #fff;
-        border-right: 1px solid #fff;
-        border-top: 1px solid #fff;
-        border-bottom: 1px solid #fff;
+        border: 1px solid #fff;
     }
 </style>
 @section('content')
 @section('title', $title)
-
 <section id="hero" class="hero section pb-0">
     <div class="container" data-aos="fade-up" data-aos-delay="100">
         <div class="hero-wrapper">
@@ -42,11 +38,9 @@
                                             @foreach ($propertyTypes as $type)
                                                 <option value="{{ $type->slug }}">{{ ucfirst($type->nama) }}</option>
                                             @endforeach
-
                                         </select>
                                         <i class="bi bi-building field-icon"></i>
                                     </div>
-
 
                                     <div class="search-field">
                                         <label for="offering" class="field-label">Jenis Penawaran</label>
@@ -125,46 +119,50 @@
                                     @endforeach
                                 </div>
 
-                                @php $carouselId = 'carouselFeaturedAgents'; @endphp
+                                <div class="row">
+                                    <div class="col-lg-10 col-md-12 col-sm-12">
+                                        @php $carouselId = 'carouselFeaturedAgents'; @endphp
 
-                                @if ($featuredProperty && $featuredProperty->agens->count())
-                                    <div id="{{ $carouselId }}" class="carousel slide agent-card"
-                                        data-bs-ride="false">
-                                        <div class="carousel-inner">
-                                            @foreach ($featuredProperty->agens as $i => $agen)
-                                                <div class="carousel-item {{ $i === 0 ? 'active' : '' }}">
-                                                    <div
-                                                        class="agent-profile d-flex align-items-center justify-content-center">
-                                                        <img src="{{ $agen->pas_foto ? asset('storage/' . $agen->pas_foto) : asset('themes/frontend/assets/img/default.png') }}"
-                                                            alt="Foto Agen" class="agent-photo">
-                                                        <div class="agent-info">
-                                                            <h4>{{ $agen->nama_lengkap }}</h4>
-                                                            <p>{{ $agen->no_hp ?? 'No. HP tidak tersedia' }}</p>
+                                        @if ($featuredProperty && $featuredProperty->agens->count())
+                                            <div id="{{ $carouselId }}" class="carousel slide agent-card"
+                                                data-bs-ride="false">
+                                                <div class="carousel-inner">
+                                                    @foreach ($featuredProperty->agens as $i => $agen)
+                                                        <div class="carousel-item {{ $i === 0 ? 'active' : '' }}">
+                                                            <div
+                                                                class="agent-profile d-flex align-items-center justify-content-center">
+                                                                <img src="{{ $agen->pas_foto ? asset('storage/' . $agen->pas_foto) : asset('themes/frontend/assets/img/default.png') }}"
+                                                                    alt="Foto Agen" class="agent-photo">
+                                                                <div class="agent-info">
+                                                                    <h4>{{ $agen->nama_lengkap }}</h4>
+                                                                    <p>{{ $agen->no_hp ?? 'No. HP tidak tersedia' }}
+                                                                    </p>
+                                                                </div>
+                                                                <a href="https://wa.me/{{ $agen->no_hp ?? '628114617733' }}?text={{ urlencode('Halo, saya tertarik dengan properti ini: ' . $featuredProperty->judul . '. Apakah masih tersedia?') }}"
+                                                                    target="_blank" class="contact-agent-btn">
+                                                                    <i class="bi bi-whatsapp"></i>
+                                                                </a>
+                                                            </div>
                                                         </div>
-                                                        <a href="https://wa.me/{{ $agen->no_hp ?? '628114617733' }}?text={{ urlencode('Halo, saya tertarik dengan properti ini: ' . $featuredProperty->judul . '. Apakah masih tersedia?') }}"
-                                                            target="_blank" class="contact-agent-btn">
-                                                            <i class="bi bi-whatsapp"></i>
-                                                        </a>
-                                                    </div>
+                                                    @endforeach
                                                 </div>
-                                            @endforeach
-                                        </div>
 
-                                        @if ($featuredProperty->agens->count() > 1)
-                                            <button class="carousel-control-prev" type="button"
-                                                data-bs-target="#{{ $carouselId }}" data-bs-slide="prev">
-                                                <i class="bi bi-chevron-left fs-5 text-success"></i>
-                                                <span class="visually-hidden">Previous</span>
-                                            </button>
-                                            <button class="carousel-control-next" type="button"
-                                                data-bs-target="#{{ $carouselId }}" data-bs-slide="next">
-                                                <i class="bi bi-chevron-right fs-5 text-success"></i>
-                                                <span class="visually-hidden">Next</span>
-                                            </button>
+                                                @if ($featuredProperty->agens->count() > 1)
+                                                    <button class="carousel-control-prev" type="button"
+                                                        data-bs-target="#{{ $carouselId }}" data-bs-slide="prev">
+                                                        <i class="bi bi-chevron-left fs-5 text-success"></i>
+                                                        <span class="visually-hidden">Previous</span>
+                                                    </button>
+                                                    <button class="carousel-control-next" type="button"
+                                                        data-bs-target="#{{ $carouselId }}" data-bs-slide="next">
+                                                        <i class="bi bi-chevron-right fs-5 text-success"></i>
+                                                        <span class="visually-hidden">Next</span>
+                                                    </button>
+                                                @endif
+                                            </div>
                                         @endif
                                     </div>
-                                @endif
-
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -305,48 +303,58 @@
             Kami hadirkan properti dengan fasilitas unggulan dan lokasi strategis untuk menunjang gaya hidup modern
             Anda.</p>
     </div>
+
     <div class="container" data-aos="fade-up" data-aos-delay="100">
-        <div class="row gy-5">
-            @foreach ($latestProperties as $property)
-                <div class="col-lg-6">
-                    <div class="property-card-horizontal" data-aos="zoom-in" data-aos-delay="200">
-                        <div class="property-image-horizontal">
-                            <img src="{{ $property->primary_image_url }}" alt="{{ $property->judul }}"
-                                class="img-fluid">
-                            @if ($property->featured)
-                                <div class="property-badge-horizontal featured">Featured</div>
-                            @endif
-                        </div>
-                        <div class="property-content-horizontal">
-                            <h3><a href="{{ route('property.show', $property->id) }}">{{ $property->judul }}</a></h3>
-                            <div class="property-location-horizontal">
-                                <i class="bi bi-pin-map"></i>
-                                <span>{{ $property->alamat_lengkap }}, {{ $property->kabupaten }},
-                                    {{ $property->provinsi }}</span>
-                            </div>
-                            <div class="property-features">
-                                <span class="feature"><i class="bi bi-house"></i>KT:
-                                    {{ $property->jumlah_kamat_tidur }}
-                                </span>
-                                <span class="feature"><i class="bi bi-droplet"></i>KM:
-                                    {{ $property->jumlah_kamar_mandi }}
-                                </span>
-                                <span class="feature"><i class="bi bi-rulers"></i>
-                                    LB: {{ number_format($property->luas_bangunan) }} m<sup>2</sup></span>
-                                <span class="feature"><i class="bi bi-rulers"></i>
-                                    LT: {{ number_format($property->luas_tanah) }} m<sup>2</sup></span>
-                            </div>
-                            <p>{{ Str::limit($property->description, 120) }}</p>
-                            <div class="property-footer-horizontal">
-                                <div class="property-price-horizontal">Rp
-                                    {{ number_format($property->harga, 0, ',', '.') }}</div>
-                                <a href="{{ route('property.show', $property->id) }}"
-                                    class="btn-view-horizontal">Detail</a>
+        <div class="swiper newestPropertiSwiper">
+            <div class="swiper-wrapper">
+                @foreach ($latestProperties as $property)
+                    <div class="swiper-slide">
+                        <div class="properties-sidebar">
+                            <div class="sidebar-property-card" data-aos="fade-left" data-aos-delay="300">
+                                <div class="sidebar-property-image">
+                                    <img src="{{ $property->primary_image_url }}" alt="{{ $property->judul }}"
+                                        class="img-fluid">
+                                    @if ($property->featured == 1)
+                                        <span class="status-badge featured">Unggulan</span>
+                                    @endif
+                                </div>
+                                <div class="sidebar-property-content">
+                                    <h4>
+                                        <a href="{{ route('property.show', $property->id) }}">
+                                            {{ $property->judul }}
+                                        </a>
+                                    </h4>
+                                    <div class="sidebar-location">
+                                        <i class="bi bi-pin-map"></i>
+                                        <span>{{ $property->alamat_lengkap }}, {{ $property->kabupaten }},
+                                            {{ $property->provinsi }}</span>
+                                    </div>
+                                    <div class="sidebar-specs">
+                                        <span><i class="bi bi-house"></i> KT: {{ $property->jumlah_kamat_tidur }}
+                                            BR</span>
+                                        <span><i class="bi bi-droplet"></i> KM:
+                                            {{ $property->jumlah_kamar_mandi }}
+                                            BA</span>
+                                        <span><i class="bi bi-rulers"></i>
+                                            LB: {{ number_format($property->luas_bangunan ?? 0) }}
+                                            M<sup>2</sup></span>
+                                        <span><i class="bi bi-rulers"></i>
+                                            LT: {{ number_format($property->luas_tanah ?? 0) }}
+                                            M<sup>2</sup></span>
+                                    </div>
+                                    <div class="sidebar-price-row">
+                                        <div class="sidebar-price">Rp
+                                            {{ number_format($property->harga, 0, ',', '.') }}</div>
+                                        <a href="{{ route('property.show', $property->id) }}"
+                                            class="sidebar-btn">Lihat</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
+            <div class="swiper-pagination"></div>
         </div>
     </div>
 </section>
@@ -428,56 +436,59 @@
     </div>
 
     <div class="container" data-aos="fade-up" data-aos-delay="100">
-        <div class="row gy-5">
-            @foreach ($sellProperties as $property)
-                <div class="col-lg-4">
-                    <div class="properties-sidebar">
-                        <div class="sidebar-property-card" data-aos="fade-left" data-aos-delay="300">
-                            <div class="sidebar-property-image">
-                                <img src="{{ $property->primary_image_url }}" alt="{{ $property->judul }}"
-                                    class="img-fluid">
-                                @if ($property->featured == 1)
-                                    <span class="status-badge featured">Unggulan</span>
-                                @endif
-                            </div>
-                            <div class="sidebar-property-content">
-                                <h4>
-                                    <a href="{{ route('property.show', $property->id) }}">
-                                        {{ $property->judul }}
-                                    </a>
-                                </h4>
-                                <div class="sidebar-location">
-                                    <i class="bi bi-pin-map"></i>
-                                    <span>{{ $property->alamat_lengkap }}, {{ $property->kabupaten }},
-                                        {{ $property->provinsi }}</span>
+        <div class="swiper newestPropertiSwiper">
+            <div class="swiper-wrapper">
+                @foreach ($sellProperties as $property)
+                    <div class="swiper-slide">
+                        <div class="properties-sidebar">
+                            <div class="sidebar-property-card" data-aos="fade-left" data-aos-delay="300">
+                                <div class="sidebar-property-image">
+                                    <img src="{{ $property->primary_image_url }}" alt="{{ $property->judul }}"
+                                        class="img-fluid">
+                                    @if ($property->featured == 1)
+                                        <span class="status-badge featured">Unggulan</span>
+                                    @endif
                                 </div>
-                                <div class="sidebar-specs">
-                                    <span><i class="bi bi-house"></i> KT: {{ $property->jumlah_kamat_tidur }}
-                                        BR</span>
-                                    <span><i class="bi bi-droplet"></i> KM: {{ $property->jumlah_kamar_mandi }}
-                                        BA</span>
-                                    <span><i class="bi bi-rulers"></i>
-                                        LB: {{ number_format($property->luas_bangunan ?? 0) }}
-                                        M<sup>2</sup></span>
-                                    <span><i class="bi bi-rulers"></i>
-                                        LT: {{ number_format($property->luas_tanah ?? 0) }}
-                                        M<sup>2</sup></span>
-                                </div>
-                                <div class="sidebar-price-row">
-                                    <div class="sidebar-price">Rp
-                                        {{ number_format($property->harga, 0, ',', '.') }}</div>
-                                    <a href="{{ route('property.show', $property->id) }}"
-                                        class="sidebar-btn">Lihat</a>
+                                <div class="sidebar-property-content">
+                                    <h4>
+                                        <a href="{{ route('property.show', $property->id) }}">
+                                            {{ $property->judul }}
+                                        </a>
+                                    </h4>
+                                    <div class="sidebar-location">
+                                        <i class="bi bi-pin-map"></i>
+                                        <span>{{ $property->alamat_lengkap }}, {{ $property->kabupaten }},
+                                            {{ $property->provinsi }}</span>
+                                    </div>
+                                    <div class="sidebar-specs">
+                                        <span><i class="bi bi-house"></i> KT: {{ $property->jumlah_kamat_tidur }}
+                                            BR</span>
+                                        <span><i class="bi bi-droplet"></i> KM:
+                                            {{ $property->jumlah_kamar_mandi }}
+                                            BA</span>
+                                        <span><i class="bi bi-rulers"></i>
+                                            LB: {{ number_format($property->luas_bangunan ?? 0) }}
+                                            M<sup>2</sup></span>
+                                        <span><i class="bi bi-rulers"></i>
+                                            LT: {{ number_format($property->luas_tanah ?? 0) }}
+                                            M<sup>2</sup></span>
+                                    </div>
+                                    <div class="sidebar-price-row">
+                                        <div class="sidebar-price">Rp
+                                            {{ number_format($property->harga, 0, ',', '.') }}</div>
+                                        <a href="{{ route('property.show', $property->id) }}"
+                                            class="sidebar-btn">Lihat</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
+            <div class="swiper-pagination"></div>
         </div>
     </div>
 </section>
-
 
 <section id="recent-blog-posts" class="recent-blog-posts section beritaTerbaru">
     <div class="container section-title" data-aos="fade-up">
@@ -509,7 +520,8 @@
                                 <h3 class="recent-title">
                                     <a href="{{ route('berita.detail', $berita->slug) }}">{{ $berita->judul }}</a>
                                 </h3>
-                                <div class="recent-meta">
+                                <span class="recent-description mb-3">{{ $berita->deskripsi_terbatas }}</span>
+                                <div class="recent-meta mt-3">
                                     <span class="author">By {{ $berita->user->name ?? 'Admin' }}</span>
                                     <span class="date">{{ $berita->created_at->format('M d, Y') }}</span>
                                 </div>
@@ -517,6 +529,96 @@
                         </article>
                     </div>
                 @endforeach
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+</section>
+
+<section id="featured-services" class="featured-services section kenapaPilihKami">
+    <div class="container section-title" data-aos="fade-up">
+        <div class="row">
+            <div class="col-lg-6 d-flex align-items-center">
+                <h2>Kenapa Animaproperty?</h2>
+            </div>
+        </div>
+        <p class="text-left">
+            Animaproperty adalah platform terpercaya untuk menemukan, menjual, dan memasarkan properti di wilayah timur
+            Indonesia.
+        </p>
+    </div>
+
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="swiper kenapaPilihKamiSwiper">
+            <div class="swiper-wrapper">
+
+                <div class="swiper-slide">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <div class="service-info">
+                            <h3><a href="service-details.html">Beli Properti Aman & Mudah</a></h3>
+                            <p>Animaproperty sebagai situs properti terpercaya siap membantu menemukan hunian idaman
+                                Anda</p>
+                            <a href="service-details.html" class="service-link">
+                                <span>Explore Now</span>
+                                <i class="bi bi-arrow-up-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="swiper-slide">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="bi bi-key"></i>
+                        </div>
+                        <div class="service-info">
+                            <h3><a href="service-details.html">Mitra Properti Terbaik</a></h3>
+                            <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium
+                                voluptatum deleniti atque</p>
+                            <a href="service-details.html" class="service-link">
+                                <span>Start Renting</span>
+                                <i class="bi bi-arrow-up-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="swiper-slide">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <div class="service-info">
+                            <h3><a href="service-details.html">Jual Properti Cepat</a></h3>
+                            <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit sed quia
+                                consequuntur magni dolores eos</p>
+                            <a href="service-details.html" class="service-link">
+                                <span>Learn More</span>
+                                <i class="bi bi-arrow-up-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="swiper-slide">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <div class="service-info">
+                            <h3><a href="service-details.html">Jual Properti Cepat</a></h3>
+                            <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit sed quia
+                                consequuntur magni dolores eos</p>
+                            <a href="service-details.html" class="service-link">
+                                <span>Learn More</span>
+                                <i class="bi bi-arrow-up-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="swiper-pagination"></div>
         </div>
@@ -574,4 +676,5 @@
         </div>
     </div>
 </section>
+
 @endsection

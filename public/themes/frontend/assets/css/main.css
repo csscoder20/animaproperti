@@ -712,7 +712,7 @@ section,
 .section {
     color: var(--default-color);
     background-color: var(--background-color);
-    padding: 60px 0;
+    padding: 30px 0;
     scroll-margin-top: 90px;
     overflow: clip;
 }
@@ -729,7 +729,7 @@ section,
 --------------------------------------------------------------*/
 .section-title {
     text-align: center;
-    padding-bottom: 60px;
+    padding-bottom: 30px;
     position: relative;
 }
 
@@ -1151,13 +1151,11 @@ section,
 .hero .hero-visual .visual-container .agent-card {
     margin-top: 20px;
     background: var(--surface-color);
-    padding: 20px;
+    padding: 10px;
     border-radius: 20px;
     box-shadow: 0 25px 50px
         color-mix(in srgb, var(--default-color), transparent 88%);
     border: 1px solid color-mix(in srgb, var(--default-color), transparent 92%);
-    /* width: 360px; */
-    /* width: 100%; */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1170,9 +1168,9 @@ section,
 }
 
 .hero .hero-visual .visual-container .agent-card .agent-profile .agent-photo {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
     object-fit: cover;
     border: 3px solid var(--accent-color);
 }
@@ -1294,10 +1292,7 @@ section,
     }
 
     .hero .hero-visual .visual-container .agent-card {
-        /* bottom: -10px; */
-        /* left: -20px; */
-        /* width: 280px; */
-        padding: 16px;
+        padding: 10px;
     }
 
     .hero
@@ -1370,7 +1365,7 @@ section,
 
     .hero .hero-visual .visual-container .agent-card {
         width: 100%;
-        padding: 14px;
+        padding: 10px;
     }
 
     .hero .hero-visual .visual-container .agent-card .agent-profile {
@@ -2037,7 +2032,7 @@ section,
     .sidebar-property-card
     .sidebar-property-image {
     position: relative;
-    height: 180px;
+    height: 220px;
     overflow: hidden;
 }
 
@@ -2600,7 +2595,7 @@ section,
     display: flex;
     align-items: flex-start;
     gap: 24px;
-    min-height: 280px;
+    /* min-height: 280px; */
 }
 
 .featured-services .service-card::before {
@@ -3990,7 +3985,7 @@ section,
 }
 
 .recent-blog-posts .recent-img {
-    height: 160px;
+    height: 190px;
     overflow: hidden;
 }
 
@@ -4096,7 +4091,7 @@ section,
 
     .recent-blog-posts .recent-img {
         flex: 0 0 100px;
-        height: 100px;
+        height: 190px;
     }
 
     .recent-blog-posts .recent-content {
@@ -4122,7 +4117,7 @@ section,
 
     .recent-blog-posts .recent-img {
         flex: none;
-        height: 160px;
+        height: 190px;
     }
 }
 

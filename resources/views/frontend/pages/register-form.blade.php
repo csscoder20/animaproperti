@@ -1,5 +1,8 @@
 @extends('frontend.layouts.app')
 <link href="https://cdn.jsdelivr.net/npm/smartwizard@6/dist/css/smart_wizard_all.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/smartwizard@6/dist/js/jquery.smartWizard.min.js"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 @section('content')
 @section('title', $title)
@@ -309,9 +312,7 @@
     </div>
 </section>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/smartwizard@6/dist/js/jquery.smartWizard.min.js"></script>
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+@endsection
 
 <script>
     $(document).ready(function() {
@@ -397,79 +398,77 @@
 </script>
 
 <script>
-    const smInput = document.getElementById('social_media_id');
-    smInput.addEventListener('blur', function() {
-        if (this.value && !this.value.startsWith('@')) {
-            this.value = '@' + this.value;
-        }
-    });
-</script>
-
-<script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Cek elemen social_media_id sebelum pasang event listener
+        const smInput = document.getElementById('social_media_id');
+        if (smInput) {
+            smInput.addEventListener('blur', function() {
+                if (this.value && !this.value.startsWith('@')) {
+                    this.value = '@' + this.value;
+                }
+            });
+        }
+
+        // Elemen-elemen wilayah
         const provinsiSelect = document.getElementById('provinsi');
         const kabupatenSelect = document.getElementById('kabupaten');
         const kecamatanSelect = document.getElementById('kecamatan');
         const kelurahanSelect = document.getElementById('kelurahan');
 
-        function resetSelect(select, placeholder = '-- Pilih --') {
-            select.innerHTML = `<option value="">${placeholder}</option>`;
-        }
+        // Jika semua elemen ada, pasang event listener
+        if (provinsiSelect && kabupatenSelect && kecamatanSelect && kelurahanSelect) {
+            function resetSelect(select, placeholder = '-- Pilih --') {
+                select.innerHTML = `<option value="">${placeholder}</option>`;
+            }
 
-        function loadWilayah(kodeInduk, targetSelect, placeholder) {
-            resetSelect(targetSelect, 'Memuat...');
-            fetch(`/api/wilayah/${kodeInduk}`)
-                .then(res => res.json())
-                .then(data => {
-                    resetSelect(targetSelect, placeholder);
-                    data.forEach(item => {
-                        const opt = document.createElement('option');
-                        opt.value = item.kode;
-                        opt.textContent = item.nama;
-                        targetSelect.appendChild(opt);
+            function loadWilayah(kodeInduk, targetSelect, placeholder) {
+                resetSelect(targetSelect, 'Memuat...');
+                fetch(`/api/wilayah/${kodeInduk}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        resetSelect(targetSelect, placeholder);
+                        data.forEach(item => {
+                            const opt = document.createElement('option');
+                            opt.value = item.kode;
+                            opt.textContent = item.nama;
+                            targetSelect.appendChild(opt);
+                        });
+                    })
+                    .catch(err => {
+                        resetSelect(targetSelect, 'Gagal memuat');
+                        console.error(err);
                     });
-                })
-                .catch(err => {
-                    resetSelect(targetSelect, 'Gagal memuat');
-                    console.error(err);
-                });
-        }
-
-        // Saat Provinsi berubah
-        provinsiSelect.addEventListener('change', function() {
-            const kode = this.value;
-            if (kode) {
-                loadWilayah(kode, kabupatenSelect, '-- Pilih Kabupaten --');
-            } else {
-                resetSelect(kabupatenSelect, '-- Pilih Kabupaten --');
             }
-            resetSelect(kecamatanSelect, '-- Pilih Kecamatan --');
-            resetSelect(kelurahanSelect, '-- Pilih Kelurahan --');
-        });
 
-        // Saat Kabupaten berubah
-        kabupatenSelect.addEventListener('change', function() {
-            const kode = this.value;
-            if (kode) {
-                loadWilayah(kode, kecamatanSelect, '-- Pilih Kecamatan --');
-            } else {
+            provinsiSelect.addEventListener('change', function() {
+                const kode = this.value;
+                if (kode) {
+                    loadWilayah(kode, kabupatenSelect, '-- Pilih Kabupaten --');
+                } else {
+                    resetSelect(kabupatenSelect, '-- Pilih Kabupaten --');
+                }
                 resetSelect(kecamatanSelect, '-- Pilih Kecamatan --');
-            }
-            resetSelect(kelurahanSelect, '-- Pilih Kelurahan --');
-        });
-
-        // Saat Kecamatan berubah
-        kecamatanSelect.addEventListener('change', function() {
-            const kode = this.value;
-            if (kode) {
-                loadWilayah(kode, kelurahanSelect, '-- Pilih Kelurahan --');
-            } else {
                 resetSelect(kelurahanSelect, '-- Pilih Kelurahan --');
-            }
-        });
+            });
+
+            kabupatenSelect.addEventListener('change', function() {
+                const kode = this.value;
+                if (kode) {
+                    loadWilayah(kode, kecamatanSelect, '-- Pilih Kecamatan --');
+                } else {
+                    resetSelect(kecamatanSelect, '-- Pilih Kecamatan --');
+                }
+                resetSelect(kelurahanSelect, '-- Pilih Kelurahan --');
+            });
+
+            kecamatanSelect.addEventListener('change', function() {
+                const kode = this.value;
+                if (kode) {
+                    loadWilayah(kode, kelurahanSelect, '-- Pilih Kelurahan --');
+                } else {
+                    resetSelect(kelurahanSelect, '-- Pilih Kelurahan --');
+                }
+            });
+        }
     });
 </script>
-
-
-
-@endsection

@@ -10,11 +10,10 @@ use App\Models\MasterWilayah;
 use Illuminate\Support\Facades\DB;
 use App\Models\Slider;
 use App\Models\Informasi;
+use Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
-
-
     public function index(Request $request)
     {
         $title = 'Beranda';
@@ -69,7 +68,11 @@ class HomeController extends Controller
         $beritaHome = Informasi::where('home', 1)
             ->latest()
             ->take(6)
-            ->get();
+            ->get()
+            ->map(function ($berita) {
+                $berita->deskripsi_terbatas = Str::limit($berita->deskripsi, 80, '...');
+                return $berita;
+            });
 
         return view('frontend.pages.home', compact(
             'sliders',
