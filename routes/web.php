@@ -11,10 +11,12 @@ use App\Http\Controllers\InformasiController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\RegistrationController;
 
-Route::get('/formulir-registrasi-agen', [RegistrationController::class, 'index']);
+Route::get('/registrasi-agen', [RegistrationController::class, 'index']);
+Route::get('/formulir-registrasi-agen', [RegistrationController::class, 'form_registrasi_agen']);
 
 Route::get('/tentang-kami', [AboutUsController::class, 'index']);
 Route::get('/kontak-kami', [ContactController::class, 'index']);
+Route::get('/terms/{kategori}', [ContactController::class, 'show'])->name('terms.show');
 
 Route::get('/', [HomeController::class, 'index'])->name('properties.index');
 Route::get('/properties/search', [HomeController::class, 'search'])->name('properties.search');

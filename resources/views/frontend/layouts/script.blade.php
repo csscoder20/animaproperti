@@ -30,12 +30,21 @@
                     method: 'GET',
                     success: function(data) {
                         if (data && data.title) {
+                            let imageTag = '';
+                            if (data.image_path) {
+                                imageTag =
+                                    `<img src="/storage/${data.image_path}" 
+                                             alt="Announcement Image" 
+                                             style="max-width:100%; width: 100%; margin-bottom:10px; border-radius:8px;" />`;
+                            }
+
                             let htmlContent = `
-                                <div style="text-align: left;">
-                                    <h5 class="fw-bold">${data.title}</h5>
-                                    <p>${data.content}</p>
-                                </div>
-                            `;
+                            <div style="text-align: left;">
+                                <h5 class="fw-bold">${data.title}</h5>
+                                ${imageTag}
+                                <p>${data.content}</p>
+                            </div>
+                        `;
 
                             Swal.fire({
                                 html: htmlContent,
@@ -145,8 +154,9 @@
                 }
             });
         </script>
+
         <script>
-            var swiper = new Swiper('.kenapaPilihKami', {
+            var swiper = new Swiper('.kenapaPilihKamiSwiper', {
                 slidesPerView: 1,
                 spaceBetween: 20,
                 pagination: {
@@ -167,22 +177,21 @@
         </script>
 
         <script>
-            var swiper = new Swiper('.kenapaPilihKamiSwiper', {
-                slidesPerView: 1,
-                spaceBetween: 20,
-                pagination: {
-                    el: '.swiper-pagination',
-                    clickable: true,
-                },
+            new Swiper(".testimonialSwiper", {
+                slidesPerView: 1.2,
+                spaceBetween: 15,
                 breakpoints: {
                     768: {
-                        slidesPerView: 2,
-                        spaceBetween: 20
+                        slidesPerView: 2.5,
                     },
-                    1024: {
+                    992: {
                         slidesPerView: 3,
-                        spaceBetween: 20
-                    }
+                    },
+                },
+                grabCursor: true,
+                pagination: {
+                    el: ".testimonialSwiper .swiper-pagination",
+                    clickable: true
                 }
             });
         </script>

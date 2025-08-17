@@ -18,6 +18,7 @@
                 <li
                     class="dropdown 
                     {{ Request::is('kontak-agen') ||
+                    Request::is('registrasi-agen') ||
                     Request::is('formulir-registrasi-agen') ||
                     Request::is('agen') ||
                     Request::is('agen/*')
@@ -32,8 +33,8 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ url('/formulir-registrasi-agen') }}"
-                                class="{{ Request::is('formulir-registrasi-agen') ? 'active' : '' }}">
+                            <a href="{{ url('/registrasi-agen') }}"
+                                class="{{ Request::is('registrasi-agen') ? 'active' : '' }}">
                                 Registrasi Agen
                             </a>
                         </li>

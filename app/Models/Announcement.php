@@ -24,6 +24,7 @@ class Announcement extends Model
         'is_active',
         'start_date',
         'end_date',
+        'image_path',
         'show_once_per_session'
     ];
 

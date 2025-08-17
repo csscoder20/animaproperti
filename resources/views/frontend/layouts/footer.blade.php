@@ -32,13 +32,19 @@
                 <div class="footer-links col-lg-6 footer-contact text-md-start">
                     <h4>Link Terkait</h4>
                     <ul>
-                        <li><a href="#">Sarat dan Ketentuan</a></li>
-                        <li><a href="#">Kebijakan Privasi</a></li>
-                        <li><a href="#">Penjualan</a></li>
-                        <li><a href="#">Iklan</a></li>
-                        <li><a href="#">Lelang</a></li>
+                        <li>
+                            <a href="{{ route('terms.show', ['kategori' => 'syarat-ketentuan']) ?? '#' }}">
+                                Syarat dan Ketentuan
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('terms.show', ['kategori' => 'kebijakan-privasi']) ?? '#' }}">
+                                Kebijakan Privasi
+                            </a>
+                        </li>
                     </ul>
                 </div>
+
             </div>
         </div>
 

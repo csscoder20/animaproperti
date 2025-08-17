@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agen;
+use App\Models\Slider;
 use App\Models\Properti;
+use App\Models\Informasi;
+use App\Models\Testimoni;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\JenisProperti;
 use App\Models\MasterWilayah;
 use Illuminate\Support\Facades\DB;
-use App\Models\Slider;
-use App\Models\Informasi;
-use Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
@@ -74,6 +75,11 @@ class HomeController extends Controller
                 return $berita;
             });
 
+        // Ambil testimoni aktif
+        $testimonis = Testimoni::where('is_active', true)
+            ->latest()
+            ->get();
+
         return view('frontend.pages.home', compact(
             'sliders',
             'latestProperties',
@@ -84,7 +90,8 @@ class HomeController extends Controller
             'kecamatanList',
             'featuredProperty',
             'propertyAgen',
-            'beritaHome', // ← lempar ke view
+            'beritaHome',
+            'testimonis',
         ));
     }
 

@@ -610,55 +610,46 @@
 </section>
 
 
+<!-- Section Testimoni -->
 <section id="testimonials" class="testimonials section light-background">
     <div class="container section-title" data-aos="fade-up">
         <h2>Testimoni</h2>
         <p>Pendapat dan pengalaman nyata dari klien kami yang telah menemukan properti impian mereka bersama kami.
             Kepercayaan mereka adalah bukti kualitas layanan kami yang profesional, aman, dan memuaskan.</p>
     </div>
+
     <div class="container">
-        <div class="testimonial-grid">
-            <div class="testimonial-item" data-aos="zoom-in" data-aos-delay="100">
-                <div class="testimonial-card">
-                    <div class="testimonial-body">
-                        <i class="bi bi-chat-quote-fill quote-icon"></i>
-                        <p>“Saya sangat terbantu dengan layanan profesional tim ini. Dalam waktu singkat, saya berhasil
-                            menemukan rumah impian saya di lokasi yang strategis.”</p>
+        <div class="swiper testimonialSwiper">
+            <div class="swiper-wrapper">
+                @forelse ($testimonis as $index => $testimoni)
+                    <div class="swiper-slide">
+                        <div class="testimonial-card {{ $index == 1 ? 'featured' : '' }}" data-aos="zoom-in"
+                            data-aos-delay="{{ ($index + 1) * 100 }}">
+                            <div class="testimonial-body">
+                                <i class="bi bi-chat-quote-fill quote-icon"></i>
+                                <p>“{{ $testimoni->pesan }}”</p>
+                                <h6 class="mt-3 mb-0 fw-bold">{{ $testimoni->nama }}</h6>
+                                @if ($testimoni->jabatan)
+                                    <small class="text-muted">{{ $testimoni->jabatan }}</small>
+                                @endif
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="testimonial-item featured" data-aos="zoom-in" data-aos-delay="200">
-                <div class="testimonial-card">
-                    <div class="testimonial-body">
-                        <i class="bi bi-chat-quote-fill quote-icon"></i>
-                        <p>“Proses pembelian berjalan mulus dan transparan. Saya merasa aman dan nyaman selama seluruh
-                            prosesnya. Sangat direkomendasikan!”</p>
+                @empty
+                    <div class="swiper-slide">
+                        <div class="testimonial-card" data-aos="zoom-in" data-aos-delay="100">
+                            <div class="testimonial-body text-center">
+                                <i class="bi bi-chat-quote-fill quote-icon"></i>
+                                <p class="text-muted fst-italic">Belum ada testimoni yang tersedia saat ini.</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                @endforelse
             </div>
-
-            <div class="testimonial-item" data-aos="zoom-in" data-aos-delay="300">
-                <div class="testimonial-card">
-                    <div class="testimonial-body">
-                        <i class="bi bi-chat-quote-fill quote-icon"></i>
-                        <p>“Agen sangat responsif dan informatif. Mereka memberikan banyak opsi properti sesuai
-                            kebutuhan saya. Pelayanan terbaik yang pernah saya dapatkan.”</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="testimonial-item" data-aos="zoom-in" data-aos-delay="400">
-                <div class="testimonial-card">
-                    <div class="testimonial-body">
-                        <i class="bi bi-chat-quote-fill quote-icon"></i>
-                        <p>“Berbagai pilihan properti yang ditawarkan sangat lengkap dan terpercaya. Terima kasih telah
-                            membantu saya berinvestasi dengan tepat.”</p>
-                    </div>
-                </div>
-            </div>
+            <div class="swiper-pagination"></div>
         </div>
     </div>
 </section>
+
 
 @endsection

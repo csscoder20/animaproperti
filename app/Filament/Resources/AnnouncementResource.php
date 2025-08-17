@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Fieldset;
 
 class AnnouncementResource extends Resource
 {
@@ -26,34 +27,55 @@ class AnnouncementResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('type')
-                    ->options([
-                        'Info' => 'Info',
-                        'Promo' => 'Promo',
-                        'Lelang' => 'Lelang',
-                        'Iklan' => 'Iklan',
-                        'Karir' => 'Karir',
-                    ]),
-                Forms\Components\DatePicker::make('start_date')
-                    ->default(true)
-                    ->native(false)
-                    ->seconds(false)
-                    ->displayFormat('d/m/Y')
-                    ->default(now())
-                    ->required(),
-                Forms\Components\DatePicker::make('end_date')
-                    ->default(true)
-                    ->native(false)
-                    ->seconds(false)
-                    ->displayFormat('d/m/Y')
-                    ->default(now())
-                    ->required(),
-                Forms\Components\RichEditor::make('content')
-                    ->columnSpanFull()
-                    ->required(),
+                Fieldset::make('Detail Info')
+                    ->schema([
+                        Forms\Components\TextInput::make('title')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Select::make('type')
+                            ->options([
+                                'Info' => 'Info',
+                                'Promo' => 'Promo',
+                                'Lelang' => 'Lelang',
+                                'Iklan' => 'Iklan',
+                                'Karir' => 'Karir',
+                            ]),
+                        Forms\Components\DatePicker::make('start_date')
+                            ->default(true)
+                            ->native(false)
+                            ->seconds(false)
+                            ->displayFormat('d/m/Y')
+                            ->default(now())
+                            ->required(),
+                        Forms\Components\DatePicker::make('end_date')
+                            ->default(true)
+                            ->native(false)
+                            ->seconds(false)
+                            ->displayFormat('d/m/Y')
+                            ->default(now())
+                            ->required(),
+                    ])->columns(2),
+                Fieldset::make('Deskripsi dan Gambar')
+                    ->schema([
+                        Forms\Components\RichEditor::make('content')
+                            ->required()
+                            ->columnSpan(2),
+                        Forms\Components\FileUpload::make('image_path')
+                            ->label('Gambar')
+                            ->previewable(true)
+                            ->image()
+                            ->maxSize(1024)
+                            ->maxFiles(1)
+                            ->directory('info')
+                            ->openable()
+                            ->imageEditor()
+                            ->imageEditorAspectRatios([
+                                '16:9',
+                                '4:3',
+                                '1:1',
+                            ])
+                            ->dehydrated(),
+                    ])->columns(3),
                 Forms\Components\Toggle::make('is_active')
                     ->label('Aktif')
                     ->default(true),

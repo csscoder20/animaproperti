@@ -16,7 +16,17 @@ class RegistrationController extends Controller
 
         $provinsi = MasterWilayah::whereRaw('CHAR_LENGTH(REPLACE(kode, ".", "")) = 2')->get();
 
-        return view('frontend.pages.register-form', compact('title', 'provinsi'));
+        return view('frontend.pages.agent-register', compact('title', 'provinsi'));
+    }
+
+    public function form_registrasi_agen(Request $request)
+    {
+
+        $title = 'Tentang Kami';
+
+        $provinsi = MasterWilayah::whereRaw('CHAR_LENGTH(REPLACE(kode, ".", "")) = 2')->get();
+
+        return view('frontend.pages.agen-register-form', compact('title', 'provinsi'));
     }
 
     public function store(Request $request)

@@ -107,6 +107,7 @@
 
     .newestPropertiSwiper .swiper-wrapper,
     .kenapaPilihKami .swiper-wrapper,
+    .testimonialSwiper .swiper-wrapper,
     .recentSwiper .swiper-wrapper {
         height: auto !important;
     }
