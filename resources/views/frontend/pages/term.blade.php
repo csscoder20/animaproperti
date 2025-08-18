@@ -7,7 +7,9 @@
         <div class="container" data-aos="fade-up">
             <!-- Page Header -->
             <div class="tos-header text-center" data-aos="fade-up">
-                <span class="last-updated">Last Updated: {{ $data->updated_at->format('F d, Y') }}</span>
+                <span class="last-updated">
+                    Terakhir Diperbarui: {{ $data->updated_at->translatedFormat('d F Y') }}
+                </span>
                 <h2>{{ $data->judul }}</h2>
             </div>
 
