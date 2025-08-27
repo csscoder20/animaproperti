@@ -35,11 +35,11 @@ class CreatePropertisTable extends Migration
             $table->string('link_spesifikasi')->nullable();
             $table->string('link_site_plan')->nullable();
             $table->string('gbr_primary_properti')->nullable();
-            $table->string('alamat_lengkap');
-            $table->integer('jumlah_kamar_tidur');
-            $table->integer('jumlah_kamar_mandi');
-            $table->integer('luas_bangunan');
-            $table->integer('luas_tanah');
+            $table->string('alamat_lengkap')->nullable();
+            $table->integer('jumlah_kamar_tidur')->nullable();
+            $table->integer('jumlah_kamar_mandi')->nullable();
+            $table->integer('luas_bangunan')->nullable();
+            $table->integer('luas_tanah')->nullable();
             $table->integer('tahun_dibangun')->nullable();
             $table->boolean('unggulan')->default(false);
             $table->timestamps();

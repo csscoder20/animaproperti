@@ -121,4 +121,8 @@
         width: 15px;
         border-radius: 5px;
     }
+
+    .swal2-container.swal2-center.swal2-backdrop-show p {
+        font-size: 16px;
+    }
 </style>

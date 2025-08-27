@@ -8,6 +8,7 @@ use App\Models\Properti;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use App\Models\JenisProperti;
 use App\Models\MasterWilayah;
 use Filament\Resources\Resource;
 use Illuminate\Support\HtmlString;
@@ -75,14 +76,19 @@ class PropertiResource extends Resource
                                 ->readonly()
                                 ->dehydrated(),
 
-
                             Select::make('jenis_properti_id')
                                 ->label('Jenis Properti')
                                 ->relationship('jenisProperti', 'nama')
                                 ->searchable()
                                 ->preload()
+                                ->reactive()
+                                ->afterStateUpdated(function ($state, callable $set) {
+                                    $nama = JenisProperti::find($state)?->nama;
+                                    $set('jenis_properti_nama', $nama);
+                                })
                                 ->required(),
 
+                            Forms\Components\Hidden::make('jenis_properti_nama'),
 
                             Forms\Components\TextInput::make('harga')
                                 ->label('Harga')
@@ -94,7 +100,10 @@ class PropertiResource extends Resource
                                 ->numeric()
                                 ->minValue(1900)
                                 ->maxValue(now()->year)
-                                ->nullable(),
+                                ->nullable()
+                                ->default('0')
+                                ->dehydrateStateUsing(fn($state, $get) => $get('jenis_properti_nama') === 'Tanah' ? '-' : $state)
+                                ->visible(fn($get) => $get('jenis_properti_nama') !== 'Tanah'),
 
                             Select::make('status')
                                 ->label('Status')
@@ -220,37 +229,59 @@ class PropertiResource extends Resource
                                 ->placeholder('Nama Jalan, No. Rumah, RT/RW')
                                 ->nullable(),
                         ]),
+
                     Wizard\Step::make('Spesifikasi')
                         ->columns(6)
                         ->schema([
                             Forms\Components\TextInput::make('jenis_cluster')
                                 ->label('Cluster')
-                                ->required(),
+                                ->default('-')
+                                ->dehydrateStateUsing(fn($state, $get) => $get('jenis_properti_nama') === 'Tanah' ? '-' : $state)
+                                ->required()
+                                ->dehydrated()
+                                ->visible(fn($get) => $get('jenis_properti_nama') !== 'Tanah'),
 
                             Forms\Components\TextInput::make('tipe_perumahan')
                                 ->label('Tipe')
-                                ->required(),
+                                ->default('-')
+                                ->dehydrateStateUsing(fn($state, $get) => $get('jenis_properti_nama') === 'Tanah' ? '-' : $state)
+                                ->required()
+                                ->dehydrated()
+                                ->visible(fn($get) => $get('jenis_properti_nama') !== 'Tanah'),
 
                             Forms\Components\TextInput::make('jumlah_kamar_tidur')
                                 ->label('Kamar Tidur')
                                 ->numeric()
-                                ->required(),
+                                ->default(0)
+                                ->dehydrateStateUsing(fn($state, $get) => $get('jenis_properti_nama') === 'Tanah' ? 0 : $state)
+                                ->required()
+                                ->dehydrated()
+                                ->visible(fn($get) => $get('jenis_properti_nama') !== 'Tanah'),
 
                             Forms\Components\TextInput::make('jumlah_kamar_mandi')
                                 ->label('Kamar Mandi')
                                 ->numeric()
-                                ->required(),
+                                ->default(0)
+                                ->dehydrateStateUsing(fn($state, $get) => $get('jenis_properti_nama') === 'Tanah' ? 0 : $state)
+                                ->required()
+                                ->dehydrated()
+                                ->visible(fn($get) => $get('jenis_properti_nama') !== 'Tanah'),
 
                             Forms\Components\TextInput::make('luas_bangunan')
                                 ->label('Luas Bangunan (m²)')
                                 ->numeric()
-                                ->required(),
+                                ->default(0)
+                                ->dehydrateStateUsing(fn($state, $get) => $get('jenis_properti_nama') === 'Tanah' ? 0 : $state)
+                                ->required()
+                                ->dehydrated()
+                                ->visible(fn($get) => $get('jenis_properti_nama') !== 'Tanah'),
 
                             Forms\Components\TextInput::make('luas_tanah')
                                 ->label('Luas Tanah (m²)')
                                 ->numeric()
                                 ->required(),
                         ]),
+
                     Wizard\Step::make('Data Pendukung')
                         ->schema([
                             Section::make('Link')
@@ -317,11 +348,8 @@ class PropertiResource extends Resource
                 ])
                     ->columnSpanFull()
                     ->submitAction(new HtmlString(Blade::render(<<<BLADE
-                            <x-filament::button
-                                type="submit"
-                                size="sm"
-                            >
-                                Submit
+                            <x-filament::button form="create" type="submit">
+                                Upload File
                             </x-filament::button>
                         BLADE)))
                     ->skippable(),

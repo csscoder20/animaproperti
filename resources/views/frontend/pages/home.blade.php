@@ -4,6 +4,10 @@
         box-shadow: 0 0 1px rgba(40, 41, 61, .04), 0 2px 4px rgba(96, 97, 112, .16);
         border: 1px solid #fff;
     }
+
+    span.status-badge.featured.small.text-muted {
+        color: #103524;
+    }
 </style>
 @section('content')
 @section('title', $title)
@@ -322,7 +326,9 @@
                                     <h4>
                                         <a href="{{ route('property.show', $property->id) }}">
                                             {{ $property->judul }}
-                                        </a>
+                                        </a> -
+                                        <span
+                                            class="status-badge featured small">{{ $property->jenisProperti->nama ?? '-' }}</span>
                                     </h4>
                                     <div class="sidebar-location">
                                         <i class="bi bi-pin-map"></i>
@@ -330,18 +336,24 @@
                                             {{ $property->provinsi }}</span>
                                     </div>
                                     <div class="sidebar-specs">
-                                        <span><i class="bi bi-house"></i> KT: {{ $property->jumlah_kamat_tidur }}
-                                            BR</span>
-                                        <span><i class="bi bi-droplet"></i> KM:
-                                            {{ $property->jumlah_kamar_mandi }}
-                                            BA</span>
-                                        <span><i class="bi bi-rulers"></i>
-                                            LB: {{ number_format($property->luas_bangunan ?? 0) }}
-                                            M<sup>2</sup></span>
-                                        <span><i class="bi bi-rulers"></i>
-                                            LT: {{ number_format($property->luas_tanah ?? 0) }}
-                                            M<sup>2</sup></span>
+                                        @if ($property->jenisProperti->nama == 'Tanah')
+                                            <span><i class="bi bi-rulers"></i>
+                                                LT: {{ number_format($property->luas_tanah ?? 0) }} M<sup>2</sup>
+                                            </span>
+                                        @else
+                                            <span><i class="bi bi-house"></i> KT: {{ $property->jumlah_kamat_tidur }}
+                                                BR</span>
+                                            <span><i class="bi bi-droplet"></i> KM:
+                                                {{ $property->jumlah_kamar_mandi }} BA</span>
+                                            <span><i class="bi bi-rulers"></i>
+                                                LB: {{ number_format($property->luas_bangunan ?? 0) }} M<sup>2</sup>
+                                            </span>
+                                            <span><i class="bi bi-rulers"></i>
+                                                LT: {{ number_format($property->luas_tanah ?? 0) }} M<sup>2</sup>
+                                            </span>
+                                        @endif
                                     </div>
+
                                     <div class="sidebar-price-row">
                                         <div class="sidebar-price">Rp
                                             {{ number_format($property->harga, 0, ',', '.') }}</div>
@@ -389,24 +401,33 @@
                                 <h4>
                                     <a href="{{ route('property.show', $property->id) }}">
                                         {{ $property->judul }}
-                                    </a>
+                                    </a> -
+                                    <span
+                                        class="status-badge featured small">{{ $property->jenisProperti->nama ?? '-' }}</span>
                                 </h4>
                                 <div class="sidebar-location">
                                     <i class="bi bi-pin-map"></i>
                                     <span>{{ $property->alamat_lengkap }}, {{ $property->kabupaten }},
                                         {{ $property->provinsi }}</span>
                                 </div>
+
                                 <div class="sidebar-specs">
-                                    <span><i class="bi bi-house"></i> KT: {{ $property->jumlah_kamat_tidur }}
-                                        BR</span>
-                                    <span><i class="bi bi-droplet"></i> KM: {{ $property->jumlah_kamar_mandi }}
-                                        BA</span>
-                                    <span><i class="bi bi-rulers"></i>
-                                        LB: {{ number_format($property->luas_bangunan ?? 0) }}
-                                        M<sup>2</sup></span>
-                                    <span><i class="bi bi-rulers"></i>
-                                        LT: {{ number_format($property->luas_tanah ?? 0) }}
-                                        M<sup>2</sup></span>
+                                    @if ($property->jenisProperti->nama == 'Tanah')
+                                        <span><i class="bi bi-rulers"></i>
+                                            LT: {{ number_format($property->luas_tanah ?? 0) }} M<sup>2</sup>
+                                        </span>
+                                    @else
+                                        <span><i class="bi bi-house"></i> KT: {{ $property->jumlah_kamat_tidur }}
+                                            BR</span>
+                                        <span><i class="bi bi-droplet"></i> KM:
+                                            {{ $property->jumlah_kamar_mandi }} BA</span>
+                                        <span><i class="bi bi-rulers"></i>
+                                            LB: {{ number_format($property->luas_bangunan ?? 0) }} M<sup>2</sup>
+                                        </span>
+                                        <span><i class="bi bi-rulers"></i>
+                                            LT: {{ number_format($property->luas_tanah ?? 0) }} M<sup>2</sup>
+                                        </span>
+                                    @endif
                                 </div>
                                 <div class="sidebar-price-row">
                                     <div class="sidebar-price">Rp
@@ -453,7 +474,9 @@
                                     <h4>
                                         <a href="{{ route('property.show', $property->id) }}">
                                             {{ $property->judul }}
-                                        </a>
+                                        </a> -
+                                        <span
+                                            class="status-badge featured small">{{ $property->jenisProperti->nama ?? '-' }}</span>
                                     </h4>
                                     <div class="sidebar-location">
                                         <i class="bi bi-pin-map"></i>
@@ -461,17 +484,22 @@
                                             {{ $property->provinsi }}</span>
                                     </div>
                                     <div class="sidebar-specs">
-                                        <span><i class="bi bi-house"></i> KT: {{ $property->jumlah_kamat_tidur }}
-                                            BR</span>
-                                        <span><i class="bi bi-droplet"></i> KM:
-                                            {{ $property->jumlah_kamar_mandi }}
-                                            BA</span>
-                                        <span><i class="bi bi-rulers"></i>
-                                            LB: {{ number_format($property->luas_bangunan ?? 0) }}
-                                            M<sup>2</sup></span>
-                                        <span><i class="bi bi-rulers"></i>
-                                            LT: {{ number_format($property->luas_tanah ?? 0) }}
-                                            M<sup>2</sup></span>
+                                        @if ($property->jenisProperti->nama == 'Tanah')
+                                            <span><i class="bi bi-rulers"></i>
+                                                LT: {{ number_format($property->luas_tanah ?? 0) }} M<sup>2</sup>
+                                            </span>
+                                        @else
+                                            <span><i class="bi bi-house"></i> KT: {{ $property->jumlah_kamat_tidur }}
+                                                BR</span>
+                                            <span><i class="bi bi-droplet"></i> KM:
+                                                {{ $property->jumlah_kamar_mandi }} BA</span>
+                                            <span><i class="bi bi-rulers"></i>
+                                                LB: {{ number_format($property->luas_bangunan ?? 0) }} M<sup>2</sup>
+                                            </span>
+                                            <span><i class="bi bi-rulers"></i>
+                                                LT: {{ number_format($property->luas_tanah ?? 0) }} M<sup>2</sup>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="sidebar-price-row">
                                         <div class="sidebar-price">Rp

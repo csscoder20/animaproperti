@@ -93,15 +93,21 @@
                         <p>{{ strip_tags($property->deskripsi ?? '-') }}</p>
 
                         <ul class="list-unstyled mt-3">
-                            <i class="bi bi-house-door me-2"></i>
-                            <strong>KT:</strong> {{ $property->jumlah_kamar_tidur ?? '-' }}
-                            <i class="bi bi-droplet me-2"></i>
-                            <strong>KM:</strong> {{ $property->jumlah_kamar_mandi ?? '-' }}
-                            <i class="bi bi-aspect-ratio me-2"></i>
-                            <strong>LB:</strong> {{ $property->luas_bangunan ?? '-' }} m<sup>2</sup>
-                            <i class="bi bi-bounding-box me-2"></i>
-                            <strong>LT:</strong> {{ $property->luas_tanah ?? '-' }} m<sup>2</sup>
+                            @if ($property->jenisProperti->nama == 'Tanah')
+                                <i class="bi bi-bounding-box me-2"></i>
+                                <span>Luas Tanah:</span> <strong>{{ $property->luas_tanah ?? '-' }} m<sup>2</sup></strong>
+                            @else
+                                <i class="bi bi-house-door me-2"></i>
+                                <span>KT:</span> <strong>{{ $property->jumlah_kamar_tidur ?? '-' }}</strong>
+                                <i class="bi bi-droplet me-2"></i>
+                                <span>KM:</span> <strong>{{ $property->jumlah_kamar_mandi ?? '-' }}</strong>
+                                <i class="bi bi-aspect-ratio me-2"></i>
+                                <span>LB:</span> <strong>{{ $property->luas_bangunan ?? '-' }} m<sup>2</sup></strong>
+                                <i class="bi bi-bounding-box me-2"></i>
+                                <span>LT:</span> <strong>{{ $property->luas_tanah ?? '-' }} m<sup>2</sup></strong>
+                            @endif
                         </ul>
+
 
                         <div class="features-grid mt-4">
                             <div class="row">

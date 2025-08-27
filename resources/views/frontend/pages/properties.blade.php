@@ -194,18 +194,29 @@
                                             {{ $property->jenisProperti->nama ?? '-' }}
                                         </p>
                                         <div class="property-specs">
-                                            <div class="spec-item">
-                                                <i class="bi bi-house-door"></i>
-                                                <span>{{ $property->jumlah_kamar_tidur }} Kamar Tidur</span>
-                                            </div>
-                                            <div class="spec-item">
-                                                <i class="bi bi-droplet"></i>
-                                                <span>{{ $property->jumlah_kamar_mandi }} Kamar Mandi</span>
-                                            </div>
-                                            <div class="spec-item">
-                                                <i class="bi bi-arrows-angle-expand"></i>
-                                                <span>{{ $property->luas_tanah }} m2</span>
-                                            </div>
+                                            @if ($property->jenisProperti->nama == 'Tanah')
+                                                <div class="spec-item">
+                                                    <i class="bi bi-arrows-angle-expand"></i>
+                                                    <span>LT: {{ $property->luas_tanah }} m²</span>
+                                                </div>
+                                            @else
+                                                <div class="spec-item">
+                                                    <i class="bi bi-house-door"></i>
+                                                    <span>{{ $property->jumlah_kamar_tidur }} KT</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <i class="bi bi-droplet"></i>
+                                                    <span>{{ $property->jumlah_kamar_mandi }} KM</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <i class="bi bi-arrows-angle-expand"></i>
+                                                    <span>LT: {{ $property->luas_tanah }} m²</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <i class="bi bi-arrows-angle-expand"></i>
+                                                    <span>LB: {{ $property->luas_bangunan }} m²</span>
+                                                </div>
+                                            @endif
                                         </div>
                                     </a>
                                     @php
