@@ -30,7 +30,7 @@ class AgenResource extends Resource
     protected static ?string $navigationLabel = 'Agen';
     protected static ?string $pluralLabel = 'Agen';
     protected static ?string $slug = 'data-agen-properti';
-
+    protected static ?int $navigationSort = 2;
     protected static ?string $navigationGroup = 'Proses';
 
 

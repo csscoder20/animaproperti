@@ -32,8 +32,9 @@ class PropertiResource extends Resource
     protected static ?string $navigationLabel = 'Properti';
     protected static ?string $pluralModelLabel = 'Properti';
     protected static ?string $modelLabel = 'Properti';
+    protected static ?string $slug = 'data-properti';
     protected static ?string $navigationGroup = 'Proses';
-
+    protected static ?int $navigationSort = 1;
 
     public static function getNavigationSort(): ?int
     {
@@ -161,11 +162,11 @@ class PropertiResource extends Resource
                                 ->options(
                                     fn(callable $get) =>
                                     $get('provinsi')
-                                        ? MasterWilayah::query()
+                                    ? MasterWilayah::query()
                                         ->whereRaw("LENGTH(REPLACE(kode, '.', '')) = 4")
                                         ->where('kode', 'like', substr(str_replace('.', '', $get('provinsi')), 0, 2) . '%')
                                         ->pluck('nama', 'kode')
-                                        : []
+                                    : []
                                 )
                                 ->reactive()
                                 ->afterStateUpdated(fn($state, callable $set) => [
@@ -181,11 +182,11 @@ class PropertiResource extends Resource
                                 ->options(
                                     fn(callable $get) =>
                                     $get('kabupaten')
-                                        ? MasterWilayah::query()
+                                    ? MasterWilayah::query()
                                         ->whereRaw("LENGTH(REPLACE(kode, '.', '')) = 6")
                                         ->where('kode', 'like', MasterWilayah::formatKodeWithDots(substr(str_replace('.', '', $get('kabupaten')), 0, 4)) . '.%')
                                         ->pluck('nama', 'kode')
-                                        : []
+                                    : []
                                 )
                                 ->reactive()
                                 ->afterStateUpdated(fn($state, callable $set) => $set('kelurahan', null))
@@ -199,11 +200,11 @@ class PropertiResource extends Resource
                                 ->options(
                                     fn(callable $get) =>
                                     $get('kecamatan')
-                                        ? MasterWilayah::query()
+                                    ? MasterWilayah::query()
                                         ->whereRaw("LENGTH(REPLACE(kode, '.', '')) IN (10, 12)")
                                         ->where('kode', 'like', MasterWilayah::formatKodeWithDots(substr(str_replace('.', '', $get('kecamatan')), 0, 6)) . '.%')
                                         ->pluck('nama', 'kode')
-                                        : []
+                                    : []
                                 )
                                 ->reactive()
                                 ->required()
@@ -281,6 +282,30 @@ class PropertiResource extends Resource
                                 ->numeric()
                                 ->required(),
                         ]),
+
+                    Wizard\Step::make('Ketersediaan (Sewa)')
+                        ->columns(2)
+                        ->schema([
+                            Forms\Components\TextInput::make('jumlah_kamar')
+                                ->label('Jumlah Kamar Tersedia')
+                                ->numeric()
+                                ->default(1)
+                                ->required(),
+                            Forms\Components\TextInput::make('kapasitas_tamu')
+                                ->label('Kapasitas Tamu per Kamar')
+                                ->numeric()
+                                ->default(1)
+                                ->required(),
+                            Forms\Components\DatePicker::make('tersedia_dari')
+                                ->label('Tersedia Dari')
+                                ->native(false)
+                                ->displayFormat('d M Y'),
+                            Forms\Components\DatePicker::make('tersedia_sampai')
+                                ->label('Tersedia Sampai')
+                                ->native(false)
+                                ->displayFormat('d M Y'),
+                        ])
+                        ->visible(fn($get) => $get('penawaran') === 'Disewa'),
 
                     Wizard\Step::make('Data Pendukung')
                         ->schema([
@@ -414,6 +439,14 @@ class PropertiResource extends Resource
 
                 Tables\Columns\TextColumn::make('penawaran')
                     ->label('Penawaran'),
+
+                Tables\Columns\TextColumn::make('jumlah_kamar')
+                    ->label('Jml Kamar')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('kapasitas_tamu')
+                    ->label('Kps Tamu')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

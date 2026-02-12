@@ -90,7 +90,7 @@ class AnnouncementResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\ImageColumn::make('image'),
+                Tables\Columns\ImageColumn::make('image_path')->defaultImageUrl(asset('themes/frontend/assets/img/default.png')),
                 Tables\Columns\BadgeColumn::make('type'),
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean(),

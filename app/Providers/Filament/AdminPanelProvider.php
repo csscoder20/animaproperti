@@ -23,6 +23,8 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
+
+
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -40,11 +42,11 @@ class AdminPanelProvider extends PanelProvider
             ])
 
             ->path('admin')
-            ->brandName('ANIMA PROPERTI')
+            ->brandName('SISPENDIK BINTUNI')
             ->sidebarFullyCollapsibleOnDesktop()
             ->defaultThemeMode(ThemeMode::Light)
             ->favicon(function () {
-                $favicon = Pengaturan::where('key', 'favicon')->value('value');
+                $favicon = Pengaturan::getValue('favicon');
 
                 return $favicon
                     ? asset('storage/' . $favicon)
@@ -53,6 +55,8 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(fn() => view('filament.admin.logo'))
             ->brandLogoHeight('4rem')
             ->login()
+            ->passwordReset()
+            ->emailVerification()
             ->colors([
                 'danger' => Color::Red,
                 'gray' => Color::Slate,

@@ -4,7 +4,7 @@
                 <div class="col-lg-6 col-md-12 footer-about">
                     <a href="{{ '/' }}" class="logo d-flex align-items-center">
                         <img class="rounded"
-                            src="{{ $settings['logo'] ? asset('storage/' . $settings['logo']) : asset('themes/frontend/assets/img/android-chrome-512x512.png') }}"
+                            src="{{ ($settings['logo'] ?? false) ? asset('storage/' . $settings['logo']) : asset('themes/frontend/assets/img/android-chrome-512x512.png') }}"
                             alt="Logo">
                         <span class="sitename">{{ $settings['site_name'] ?? 'ANIMA PROPERTI' }}</span>
                     </a>

@@ -87,7 +87,7 @@ class PropertyController extends Controller
         }
 
         // Paginate hasil
-        $properties = $query->paginate(6)->appends($request->query());
+        $properties = $query->paginate(12)->appends($request->query());
         $totalResults = $properties->total();
 
         $Tipepropertis = JenisProperti::all();

@@ -2,7 +2,7 @@
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
         <a href="{{ url('/') }}" class="logo d-flex align-items-center">
             <img class="rounded"
-                src="{{ $settings['logo'] ? asset('storage/' . $settings['logo']) : asset('themes/frontend/assets/img/android-chrome-512x512.png') }}"
+                src="{{ ($settings['logo'] ?? false) ? asset('storage/' . $settings['logo']) : asset('themes/frontend/assets/img/android-chrome-512x512.png') }}"
                 alt="Logo">
             <h1 class="sitename">{{ $settings['site_name'] ?? 'ANIMA PROPERTI' }}</h1>
         </a>
@@ -13,6 +13,8 @@
                 <li><a href="{{ url('/tentang-kami') }}"
                         class="{{ Request::is('tentang-kami') ? 'active' : '' }}">Tentang Kami</a></li>
                 <li><a href="{{ url('/properti') }}" class="{{ Request::is('properti*') ? 'active' : '' }}">Properti</a>
+                </li>
+                <li><a href="{{ url('/sewa') }}" class="{{ Request::is('sewa*') ? 'active' : '' }}">Sewa Properti</a>
                 </li>
 
                 <li

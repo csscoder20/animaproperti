@@ -48,8 +48,11 @@ class MasterWilayah extends Model
         };
     }
 
-    public static function getNamaByKode(string $kode): ?string
+    public static function getNamaByKode(?string $kode): ?string
     {
+        if (!$kode) {
+            return null;
+        }
         $kodeFormatted = self::formatKodeWithDots($kode);
         return self::where('kode', $kodeFormatted)->value('nama');
     }

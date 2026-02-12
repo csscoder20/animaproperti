@@ -29,9 +29,9 @@ class PenjualanResource extends Resource
     protected static ?string $navigationGroup = 'Proses';
     protected static ?string $navigationLabel = 'Penjualan';
     protected static ?string $pluralModelLabel = 'Penjualan';
+    protected static ?string $slug = 'data-penjualan-properti';
     protected static ?string $modelLabel = 'Penjualan';
-
-
+    protected static ?int $navigationSort = 3;
     public static function form(Form $form): Form
     {
         return $form

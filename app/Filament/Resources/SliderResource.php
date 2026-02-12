@@ -89,7 +89,7 @@ class SliderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image_path'),
+                Tables\Columns\ImageColumn::make('image_path')->defaultImageUrl(asset('themes/frontend/assets/img/default.png')),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('order')

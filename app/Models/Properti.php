@@ -44,6 +44,10 @@ class Properti extends Model
         'kabupaten',
         'kecamatan',
         'kelurahan',
+        'jumlah_kamar',
+        'kapasitas_tamu',
+        'tersedia_dari',
+        'tersedia_sampai',
     ];
 
     public function jenisProperti()

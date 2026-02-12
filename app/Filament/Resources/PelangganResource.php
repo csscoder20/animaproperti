@@ -124,13 +124,15 @@ class PelangganResource extends Resource
                     ->label('Foto KTP')
                     ->disk('public')
                     ->toggleable(isToggledHiddenByDefault: true)
-                    ->height(40),
+                    ->height(40)
+                    ->defaultImageUrl(asset('themes/frontend/assets/img/default.png')),
 
                 Tables\Columns\ImageColumn::make('foto_npwp')
                     ->label('Foto NPWP')
                     ->disk('public')
                     ->toggleable(isToggledHiddenByDefault: true)
-                    ->height(40),
+                    ->height(40)
+                    ->defaultImageUrl(asset('themes/frontend/assets/img/default.png')),
 
                 TextColumn::make('created_at')
                     ->label('Dibuat')
