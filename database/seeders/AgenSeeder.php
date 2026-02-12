@@ -13,43 +13,37 @@ class AgenSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
-        foreach (range(1, 5) as $i) {
-            $gender = $faker->randomElement(['Laki-laki', 'Perempuan']);
-            $firstName = $faker->firstName($gender === 'Laki-laki' ? 'male' : 'female');
-            $lastName = $faker->lastName;
-            $namalengkap = $firstName . ' ' . $lastName;
+        DB::table('agens')->delete();
 
-            DB::table('agens')->insert([
-                'id' => Str::uuid(),
-                'nama_lengkap' => $namalengkap,
-                'gender' => $gender,
-                'birth_city' => $faker->city,
-                'birth_date' => $faker->date('Y-m-d', '-20 years'),
-                'no_hp' => $faker->phoneNumber,
-                'email' => $faker->unique()->safeEmail,
-                'social_media' => 'Instagram',
-                'social_media_id' => '@' . Str::slug($namalengkap),
-                'kode_pos' => $faker->postcode,
-                'alamat_lengkap' => $faker->address,
-                'pendidikan' => $faker->randomElement(['SMA', 'D3', 'S1', 'S2']),
-                'nama_sekolah' => $faker->company . ' University',
-                'tahun_lulus' => $faker->year('-2 years'),
-                'nilai_ipk' => $faker->randomFloat(2, 2.00, 4.00),
-                'nama_perusahaan' => $faker->company,
-                'tahun_masuk' => $faker->year('-5 years'),
-                'tahun_keluar' => $faker->year('-1 years'),
-                'alasan_keluar' => $faker->sentence,
-                'status' => 'Pending',
-                'pas_foto' => '',
-                'kartu_nama' => '',
-                'ktp' => '',
-                'cv' => '',
-                'sertifikat_kompetensi' => '',
-                'perjanjian' => $faker->boolean(80),
-
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
+        DB::table('agens')->insert([
+            'id' => '78c2af7e-e11b-487f-af37-053b0c9676d9',
+            'nama_lengkap' => 'Anita Maya Kesuma',
+            'gender' => 'Perempuan',
+            'birth_city' => 'Solok',
+            'birth_date' => '1999-07-07',
+            'no_hp' => '+628114617733',
+            'email' => 'nita@wicom.co.id',
+            'social_media' => 'instagram',
+            'social_media_id' => 'anima.properti',
+            'kode_pos' => '35073',
+            'alamat_lengkap' => 'makassar',
+            'pendidikan' => 'D3',
+            'nama_sekolah' => 'CV Prastuti Purwanti University',
+            'tahun_lulus' => '1991',
+            'nilai_ipk' => 2.66,
+            'sertifikat_kompetensi' => null,
+            'nama_perusahaan' => 'PD Kuswandari Mulyani',
+            'tahun_masuk' => '1986',
+            'tahun_keluar' => '2020',
+            'alasan_keluar' => 'Aut et nostrum totam.',
+            'pas_foto' => 'data-agen/01K246A20JRJB05GTA62672V45.png',
+            'ktp' => null,
+            'cv' => null,
+            'kartu_nama' => null,
+            'perjanjian' => 1,
+            'status' => 'Approved',
+            'created_at' => '2025-08-05 13:28:29',
+            'updated_at' => '2025-08-08 06:36:19',
+        ]);
     }
 }
