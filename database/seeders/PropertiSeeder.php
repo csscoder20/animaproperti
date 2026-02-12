@@ -360,6 +360,7 @@ class PropertiSeeder extends Seeder
             ],
         ];
 
+        $this->command->info('DEBUG: Inserting Property with ID: ' . $data[0]['id']);
         DB::table('propertis')->insert($data);
     }
 }

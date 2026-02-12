@@ -20,11 +20,15 @@
         padding: 0.75rem;
         border: 1px solid #eee;
     }
-    .search-btn {
-        padding: 0.75rem;
-        font-weight: 600;
+    .properties .search-bar .search-wrapper .search-field .search-btn {
+        background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color), #0066cc 20%));
+        border: none;
         border-radius: 8px;
-        margin-top: 1.8rem;
+        padding: 12px 20px;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--contrast-color);
+        transition: all 0.3s ease;
     }
 </style>
 
@@ -110,9 +114,11 @@
 
                         {{-- Button Cari --}}
                         <div class="col-12 mt-4">
-                            <button type="submit" class="btn btn-primary w-100 py-3 btn-custom-accent">
-                                <i class="bi bi-search me-2"></i> Cari Properti
-                            </button>
+                            <div class="search-field">
+                                <button type="submit" class="search-btn">
+                                    <i class="bi bi-search me-2"></i> Cari Properti
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

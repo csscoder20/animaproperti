@@ -23,7 +23,7 @@ class MasterWilayahSeeder extends Seeder
         fgetcsv($file);
 
         while (($row = fgetcsv($file)) !== false) {
-            DB::table('master_wilayahs')->insert([
+            DB::table('master_wilayahs')->insertOrIgnore([
                 'kode' => $row[0],
                 'nama' => $row[1],
                 'created_at' => $row[2],
