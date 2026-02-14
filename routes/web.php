@@ -67,3 +67,6 @@ Route::get('/berita/{slug}', [InformasiController::class, 'detail_berita'])->nam
 
 
 Route::get('/api/announcement/active', [AnnouncementController::class, 'getActive']);
+
+
+

@@ -1,5 +1,27 @@
 @extends('frontend.layouts.app')
 @section('title', $title)
+
+@push('styles')
+<style>
+.pricing-section {
+  background: linear-gradient( 135deg, var(--accent-color), color-mix(in srgb, var(--accent-color), #6a11cb 30%) );
+  padding: 25px;
+  border-radius: 20px;
+  margin-bottom: 30px;
+  color: #ffffff;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.pricing-section .main-price {
+    color: #ffffff;
+    font-weight: 800;
+    margin-bottom: 0;
+    font-size: 1.5rem;
+}
+</style>
+@endpush
+
 @section('content')
     <section id="property-details" class="property-details section">
         <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -71,61 +93,10 @@
                         </div>
                     </div>
 
-                    <div class="property-info mb-5" data-aos="fade-up" data-aos-delay="300">
-                        <div class="property-header">
-                            <h1 class="property-title">{{ $property->judul ?? '-' }}</h1><span></span>
-                            <div class="property-meta">
-                                <span class="address">
-                                    <i class="bi bi-geo-alt"></i>
-                                    {{ $alamatLengkap }}
-                                </span>
-                            </div>
-                        </div>
 
-                        <div class="pricing-section">
-                            <div class="main-price fs-5">Rp. {{ number_format($property->harga, 0, ',', '.') }}<span
-                                    class="period"></span></div>
-
-                        </div>
-                    </div>
                     <div class="property-details mb-5" data-aos="fade-up" data-aos-delay="400">
                         <h3 class="fw-bold">Deskripsi Properti</h3>
                         <p>{{ strip_tags($property->deskripsi ?? '-') }}</p>
-
-                        <ul class="list-unstyled mt-3">
-                            @if ($property->jenisProperti->nama == 'Tanah')
-                                <i class="bi bi-bounding-box me-2"></i>
-                                <span>Luas Tanah:</span> <strong>{{ $property->luas_tanah ?? '-' }} m<sup>2</sup></strong>
-                            @else
-                                <i class="bi bi-house-door me-2"></i>
-                                <span>KT:</span> <strong>{{ $property->jumlah_kamar_tidur ?? '-' }}</strong>
-                                <i class="bi bi-droplet me-2"></i>
-                                <span>KM:</span> <strong>{{ $property->jumlah_kamar_mandi ?? '-' }}</strong>
-                                <i class="bi bi-aspect-ratio me-2"></i>
-                                <span>LB:</span> <strong>{{ $property->luas_bangunan ?? '-' }} m<sup>2</sup></strong>
-                                <i class="bi bi-bounding-box me-2"></i>
-                                <span>LT:</span> <strong>{{ $property->luas_tanah ?? '-' }} m<sup>2</sup></strong>
-                            @endif
-                        </ul>
-
-
-                        <div class="features-grid mt-4">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h5 class="fw-bold">Fasilitas</h5>
-                                    <ul class="feature-list">
-                                        @if ($property->facilities && $property->facilities->count())
-                                            @foreach ($property->facilities as $feature)
-                                                <li>
-                                                    <i class="{{ $feature->icon ?? 'bi bi-check2' }}"></i>
-                                                    {{ $feature->name }}
-                                                </li>
-                                            @endforeach
-                                        @endif
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <h3 class="fw-bold">Lokasi Properti</h3>
@@ -147,6 +118,44 @@
 
                 <div class="col-lg-5">
                     <div class="sticky-sidebar">
+                        
+
+                        <div class="card border-0 shadow-sm mb-4" data-aos="fade-up" data-aos-delay="350">
+                            <div class="card-body p-4">
+                                <div class="property-header mb-3">
+                                    <h1 class="fw-bold fs-4 mb-2">{{ $property->judul ?? '-' }}</h1>
+                                    <p class="text-muted small mb-3">
+                                        <i class="bi bi-geo-alt me-1"></i> {{ $alamatLengkap }}
+                                    </p>
+                                   
+                                </div>
+
+                                <hr>
+
+                                <div class="facilities-section mt-3">
+                                    <h5 class="fw-bold fs-6 mb-3">Fasilitas</h5>
+                                    <div class="row g-2">
+                                        <ul class="list-unstyled mt-3">
+                                            @if ($property->fasilitas->count() > 0)
+                                                @foreach ($property->fasilitas as $fasilitas)
+                                                    <li class="mb-2">
+                                                        <i class="bi {{ $fasilitas->icon ?? 'bi-check-circle' }} me-2"></i>
+                                                        <span>{{ $fasilitas->nama }}</span>
+                                                    </li>
+                                                @endforeach
+                                            @else
+                                                <li class="text-muted">Currently no facilities data available.</li>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                    <div class="pricing-section">
+                                        <h3 class="main-price fs-5">
+                                            Rp. {{ number_format($property->harga, 0, ',', '.') }}
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         @php
                             $agens = $property->agens;
                         @endphp
@@ -159,86 +168,6 @@
                                 </a>
                             </div>
                         </div>
-
-                        <div class="agent-card mb-4" data-aos="fade-up" data-aos-delay="350">
-                            <h4 class="fw-bold mb-3">Kontak Agen</h4>
-                            <p>Agen kami siap membantu Anda mendapatkan properti idaman Anda!</p>
-                            <hr>
-                            <div class="row">
-                                <div id="agentCarousel" class="carousel slide" data-bs-ride="false">
-                                    <div class="carousel-inner">
-                                        @foreach ($agens as $index => $agen)
-                                            <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                                <div
-                                                    class="agent-header d-flex gap-4 p-4 d-flex align-items-center justify-content-center">
-                                                    <div class="agent-avatar">
-                                                        @if ($agen->pas_foto)
-                                                            <img src="{{ asset('storage/' . $agen->pas_foto) }}"
-                                                                alt="{{ $agen->nama_lengkap }}">
-                                                        @else
-                                                            <img src="{{ asset('themes/frontend/assets/img/default.png') }}"
-                                                                alt="Agen Default">
-                                                        @endif
-                                                        <div class="online-status"></div>
-                                                    </div>
-                                                    <div class="agent-info">
-                                                        <h4 class="fw-bold">{{ $agen->nama_lengkap }}</h4>
-                                                        <div class="contact-item mt-2">
-                                                            <i class="bi bi-envelope"></i>
-                                                            <span>{{ $agen->email }}</span>
-                                                        </div>
-
-                                                        @php
-                                                            $socialMap = [
-                                                                'instagram' => 'instagram',
-                                                                'facebook' => 'facebook',
-                                                                'twitter' => 'twitter-x',
-                                                                'tiktok' => 'tiktok',
-                                                                'linkedin' => 'linkedin',
-                                                                'youtube' => 'youtube',
-                                                                'whatsapp' => 'whatsapp',
-                                                            ];
-                                                        @endphp
-
-                                                        @if ($agen->social_media && $agen->social_media_id)
-                                                            <div class="contact-item mt-2">
-                                                                <i
-                                                                    class="bi bi-{{ $socialMap[strtolower($agen->social_media)] ?? 'question-circle' }}"></i>
-                                                                <span>{{ $agen->social_media_id }}</span>
-                                                            </div>
-                                                        @endif
-
-                                                        {{-- ✅ Tombol WA sesuai agen --}}
-                                                        @if ($agen->no_hp)
-                                                            <div class="agent-actions mt-3">
-                                                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $agen->no_hp) }}?text={{ urlencode('Halo, saya tertarik dengan properti ini: ' . $property->judul . '. Apakah masih tersedia?') }}"
-                                                                    class="btn btn-success w-100 mb-2" target="_blank">
-                                                                    <i class="bi bi-whatsapp"></i> WA Sekarang
-                                                                </a>
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-
-                                    </div>
-
-                                    <!-- Controls -->
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#agentCarousel"
-                                        data-bs-slide="prev">
-                                        <i class="bi bi-chevron-left fs-5 text-success"></i>
-                                        <span class="visually-hidden">Previous</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#agentCarousel"
-                                        data-bs-slide="next">
-                                        <i class="bi bi-chevron-right fs-5 text-success"></i>
-                                        <span class="visually-hidden">Next</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
 
 
 

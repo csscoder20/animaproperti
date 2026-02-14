@@ -12,6 +12,8 @@ return new class extends Migration {
     {
         Schema::create('fasilitas_properti', function (Blueprint $table) {
             $table->id();
+            $table->foreignUuid('properti_id')->constrained('propertis')->cascadeOnDelete();
+            $table->foreignUuid('fasilitas_id')->constrained('fasilitas')->cascadeOnDelete();
             $table->timestamps();
         });
     }

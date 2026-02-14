@@ -23,12 +23,42 @@ class SewaController extends Controller
             })
             ->latest();
 
-        // Filter Lokasi
+        // Filter Keyword (Lokasi / Nama Kost / Apartemen)
+        if ($request->filled('keyword')) {
+            $keyword = $request->keyword;
+
+            // 1. Cari kode wilayah yang namanya cocok dengan keyword (LIKE or SOUNDEX)
+            $matchingWilayahCodes = MasterWilayah::where(function ($q) use ($keyword) {
+                $q->where('nama', 'LIKE', '%' . $keyword . '%')
+                    ->orWhereRaw('SOUNDEX(nama) = SOUNDEX(?)', [$keyword])
+                    ->orWhereRaw("SOUNDEX(REPLACE(nama, 'Kota ', '')) = SOUNDEX(?)", [$keyword])
+                    ->orWhereRaw("SOUNDEX(REPLACE(nama, 'Kabupaten ', '')) = SOUNDEX(?)", [$keyword]);
+            })
+                ->pluck('kode')
+                ->toArray();
+
+            $query->where(function ($q) use ($keyword, $matchingWilayahCodes) {
+                // Search by Property Title
+                $q->where('judul', 'LIKE', '%' . $keyword . '%')
+                    // Search by Full Address
+                    ->orWhere('alamat_lengkap', 'LIKE', '%' . $keyword . '%')
+                    // OR Search by Location (Kecamatan, Kabupaten, Provinsi) matches
+                    ->orWhere(function ($subQ) use ($matchingWilayahCodes) {
+                        if (!empty($matchingWilayahCodes)) {
+                            $subQ->whereIn('kecamatan', $matchingWilayahCodes)
+                                ->orWhereIn('kabupaten', $matchingWilayahCodes)
+                                ->orWhereIn('provinsi', $matchingWilayahCodes);
+                        }
+                    });
+            });
+        }
+
+        // Keep legacy legacy filters for backward compatibility if needed, 
+        // but UI doesn't use them anymore.
         if ($request->filled('lokasi')) {
             $query->where('kecamatan', $request->lokasi);
         }
 
-        // Filter Tipe Properti (Kost or Apartemen)
         if ($request->filled('tipe')) {
             $query->whereHas('jenisProperti', function ($q) use ($request) {
                 $q->where('slug', $request->tipe);
@@ -120,7 +150,7 @@ class SewaController extends Controller
 
     public function booking($slug)
     {
-        $property = Properti::with(['jenisProperti', 'images', 'agens'])
+        $property = Properti::with(['jenisProperti', 'images', 'agens', 'fasilitas'])
             ->where('slug', $slug)
             ->firstOrFail();
 

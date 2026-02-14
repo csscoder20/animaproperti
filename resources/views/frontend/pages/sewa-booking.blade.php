@@ -24,6 +24,26 @@
                         <h5 class="card-title fw-bold">{{ $property->judul }}</h5>
                         <p class="text-primary fw-bold mb-1">Rp {{ number_format($property->harga, 0, ',', '.') }} <span class="text-muted small">/ kamar /hari</span></p>
                         <p class="text-muted small mb-0"><i class="bi bi-geo-alt me-1"></i> {{ $alamatLengkap }}</p>
+
+                        <hr class="my-3">
+
+                        <h6 class="fw-bold mb-2">Fasilitas</h6>
+                        <ul class="list-unstyled mb-4">
+                            @if ($property->fasilitas->count() > 0)
+                                @foreach ($property->fasilitas as $fasilitas)
+                                    <li class="mb-1 small">
+                                        <i class="bi {{ $fasilitas->icon ?? 'bi-check-circle' }} me-2 text-primary"></i>
+                                        {{ $fasilitas->nama }}
+                                    </li>
+                                @endforeach
+                            @else
+                                <li class="text-muted small">Tidak ada data fasilitas.</li>
+                            @endif
+                        </ul>
+
+                        <button type="button" class="btn btn-custom-accent w-100 py-3 fw-bold shadow-sm" onclick="submitBooking()">
+                            <i class="bi bi-check-circle me-2"></i> Pesan Sekarang
+                        </button>
                     </div>
                 </div>
             </div>
@@ -114,10 +134,8 @@
                                 </div>
                             </div>
                             
-                            <div class="col-12 mt-4 text-start">
-                                <button type="button" class="btn btn-custom-accent w-auto" onclick="submitBooking()">
-                                    <i class="bi bi-check-circle me-2"></i> Pesan Sekarang
-                                </button>
+                            <div class="col-12 mt-4 text-start d-none">
+                                <!-- Button Moved to Sidebar -->
                             </div>
                         </div>
                     </form>

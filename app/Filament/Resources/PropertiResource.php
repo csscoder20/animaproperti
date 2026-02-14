@@ -133,6 +133,16 @@ class PropertiResource extends Resource
                                 ->label('Deskripsi')
                                 ->columnSpanFull()
                                 ->required(),
+                            
+                            Section::make('Fasilitas')
+                                ->schema([
+                                    Forms\Components\CheckboxList::make('fasilitas')
+                                        ->label('Fasilitas Properti')
+                                        ->relationship('fasilitas', 'nama')
+                                        ->columns(3)
+                                        ->gridDirection('row')
+                                        ->bulkToggleable()
+                                ]),
                         ]),
                     Wizard\Step::make('Lokasi')
                         ->columns(4)

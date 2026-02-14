@@ -24,6 +24,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#ffffff">
     @include('frontend.layouts.style')
+    @stack('styles')
 </head>
 
 <body class="index-page">

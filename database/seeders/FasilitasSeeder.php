@@ -12,6 +12,19 @@ class FasilitasSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $fasilitas = [
+            ['nama' => 'AC', 'icon' => 'bi-snow'],
+            ['nama' => 'Wifi', 'icon' => 'bi-wifi'],
+            ['nama' => 'TV', 'icon' => 'bi-tv'],
+            ['nama' => 'Dapur', 'icon' => 'bi-cup-hot'],
+            ['nama' => 'Parkir', 'icon' => 'bi-car-front'],
+            ['nama' => 'Kolam Renang', 'icon' => 'bi-water'],
+            ['nama' => 'Kamar Mandi Dalam', 'icon' => 'bi-droplet'],
+            ['nama' => 'Pemanas Air', 'icon' => 'bi-thermometer-half'],
+        ];
+
+        foreach ($fasilitas as $f) {
+            \App\Models\Fasilitas::create($f);
+        }
     }
 }

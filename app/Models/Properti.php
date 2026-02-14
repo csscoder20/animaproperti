@@ -60,6 +60,11 @@ class Properti extends Model
         return $this->belongsTo(MasterWilayah::class, 'kelurahan', 'kode');
     }
 
+    public function fasilitas()
+    {
+        return $this->belongsToMany(Fasilitas::class, 'fasilitas_properti', 'properti_id', 'fasilitas_id');
+    }
+
     public function agens()
     {
         return $this->belongsToMany(Agen::class, 'agen_properti');
