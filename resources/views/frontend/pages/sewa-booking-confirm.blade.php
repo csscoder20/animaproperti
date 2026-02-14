@@ -19,7 +19,7 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="card border-0 shadow-lg overflow-hidden">
-                    <div class="card-header bg-primary text-white p-4">
+                    <div class="card-header bg-success text-white p-4">
                         <h4 class="mb-0 fw-bold text-white"><i class="bi bi-cart-check me-2 text-white"></i> Detail Pesanan</h4>
                     </div>
                     <div class="card-body p-5">

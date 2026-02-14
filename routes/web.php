@@ -16,6 +16,7 @@ Route::get('/sewa', [SewaController::class, 'index'])->name('sewa.index');
 Route::get('/sewa/{slug}', [SewaController::class, 'show'])->name('sewa.show');
 Route::get('/sewa/{slug}/booking', [SewaController::class, 'booking'])->name('sewa.booking');
 Route::post('/sewa/{slug}/booking/confirm', [SewaController::class, 'confirmBooking'])->name('sewa.booking.confirm');
+Route::get('/sewa/{slug}/check-availability', [SewaController::class, 'checkAvailability'])->name('sewa.check.availability');
 Route::get('/sewa/{slug}/booking/confirm', function ($slug) {
     return redirect()->route('sewa.booking', $slug);
 });

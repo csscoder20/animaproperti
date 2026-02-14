@@ -87,7 +87,7 @@
                                     <div class="swiper-wrapper">
                                         @forelse($agents as $index => $agen)
                                             <div class="swiper-slide">
-                                                <div class="card h-100 border-0 shadow-sm agent-card-item">
+                                                <div id="agent-card-{{ $index }}" class="card h-100 border-0 shadow-sm agent-card-item cursor-pointer" onclick="selectAgent('{{ $agen->no_hp }}', '{{ $agen->nama_lengkap }}', 'agent-card-{{ $index }}')" style="cursor: pointer; transition: all 0.3s ease;">
                                                     <div class="card-body text-center p-4">
                                                         <div class="avatar mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; background: #f0f0f0;">
                                                             @if($agen->pas_foto)
@@ -97,10 +97,7 @@
                                                             @endif
                                                         </div>
                                                         <h6 class="fw-bold mb-1">{{ $agen->nama_lengkap }}</h6>
-                                                        <p class="text-muted small mb-3">Agen Properti</p>
-                                                        <button type="button" class="btn btn-whatsapp btn-success btn-sm text-white w-100 rounded-pill" onclick="selectAgent('{{ $agen->no_hp }}', '{{ $agen->nama_lengkap }}')">
-                                                            <i class="bi bi-whatsapp me-2"></i> Pesan
-                                                        </button>
+                                                        <p class="text-muted small mb-0">Agen Properti</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -110,10 +107,17 @@
                                             </div>
                                         @endforelse
                                     </div>
+                                    </div>
                                     <div class="swiper-pagination"></div>
                                     <div class="swiper-button-next"></div>
                                     <div class="swiper-button-prev"></div>
                                 </div>
+                            </div>
+                            
+                            <div class="col-12 mt-4 text-start">
+                                <button type="button" class="btn btn-custom-accent w-auto" onclick="submitBooking()">
+                                    <i class="bi bi-check-circle me-2"></i> Pesan Sekarang
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -131,12 +135,42 @@
         Swal.close();
     });
 
-    function selectAgent(phone, agentName) {
-        if (!phone) {
+    let selectedAgentPhone = '';
+    let selectedAgentName = '';
+
+    function selectAgent(phone, agentName, elementId) {
+        // Clean phone number
+        let cleanPhone = phone.replace(/\D/g, '');
+        if (cleanPhone.startsWith('0')) {
+            cleanPhone = '62' + cleanPhone.substring(1);
+        }
+
+        selectedAgentPhone = cleanPhone;
+        selectedAgentName = agentName;
+
+        // Visual selection
+        document.querySelectorAll('.agent-card-item').forEach(el => {
+            el.classList.remove('border-success', 'border-2', 'bg-light');
+            el.classList.add('border-0');
+        });
+
+        const selectedEl = document.getElementById(elementId);
+        if (selectedEl) {
+            selectedEl.classList.remove('border-0');
+            selectedEl.classList.add('border-success', 'border-2', 'bg-light');
+        }
+
+        // Update Hidden Inputs
+        document.getElementById('agent_name').value = selectedAgentName;
+        document.getElementById('agent_phone').value = selectedAgentPhone;
+    }
+
+    function submitBooking() {
+        if (!selectedAgentPhone) {
             Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Nomor agen tidak valid.',
+                icon: 'warning',
+                title: 'Agen Belum Dipilih',
+                text: 'Silakan pilih agen terlebih dahulu.',
             });
             return;
         }
@@ -170,11 +204,14 @@
         }
 
         // Validation: Availability
-        if (rooms > maxRooms) {
+        // Use the fetched available rooms if set, otherwise fallback to maxRooms
+        const limitRooms = window.currentAvailableRooms !== undefined ? window.currentAvailableRooms : maxRooms;
+
+        if (rooms > limitRooms) {
             Swal.fire({
                 icon: 'error',
                 title: 'Kamar Tidak Cukup',
-                text: `Maaf, hanya tersedia ${maxRooms} kamar untuk properti ini.`,
+                text: `Maaf, hanya tersedia ${limitRooms} kamar pada tanggal tersebut.`,
             });
             return;
         }
@@ -190,18 +227,8 @@
             return;
         }
 
-        // Clean phone number
-        phone = phone.replace(/\D/g, '');
-        if (phone.startsWith('0')) {
-            phone = '62' + phone.substring(1);
-        }
-
-        // Set Hidden Values and Submit
+        // Show Loading
         try {
-            document.getElementById('agent_name').value = agentName;
-            document.getElementById('agent_phone').value = phone;
-            
-            // Show Loading
             Swal.fire({
                 title: 'Memproses...',
                 text: 'Mohon tunggu sebentar',
@@ -226,12 +253,72 @@
     
     // Set min date to today (Local Time)
     const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    document.getElementById('checkin').min = now.toISOString().slice(0, 16);
+    // Adjust for timezone offset to get local ISO string part correct
+    // However, input type="datetime-local" expects local time roughly. 
+    // Simplified:
+    const nowISO = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+    document.getElementById('checkin').min = nowISO;
+    document.getElementById('checkout').min = nowISO;
 
-    document.getElementById('checkin').addEventListener('change', function() {
+    const checkinInput = document.getElementById('checkin');
+    const checkoutInput = document.getElementById('checkout');
+
+    checkinInput.addEventListener('change', function() {
         document.getElementById('checkout').min = this.value;
+        checkAvailability();
     });
+
+    checkoutInput.addEventListener('change', function() {
+        checkAvailability();
+    });
+
+    function checkAvailability() {
+        const checkin = checkinInput.value;
+        const checkout = checkoutInput.value;
+
+        if (!checkin || !checkout) return;
+
+        // Show loading indicator if needed, or just silent check
+        // For better UX, we can disable the submit button or show a spinner
+        
+        fetch(`{{ route('sewa.check.availability', $property->slug) }}?checkin=${checkin}&checkout=${checkout}`)
+            .then(response => response.json())
+            .then(data => {
+                const availableRooms = data.available_rooms;
+                const totalRooms = data.total_rooms;
+                
+                if (availableRooms === 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Tidak Tersedia',
+                        text: `Maaf, semua kamar (${totalRooms}) sudah penuh dipesan pada tanggal tersebut.`,
+                    });
+                    // Reset dates or inputs? 
+                    // Maybe just reset dates to force user to pick another
+                    checkinInput.value = '';
+                    checkoutInput.value = '';
+                } else {
+                    // Alert that rooms are available (optional, or just update UI text)
+                    // The user requested: "if available, show alert compatibility room and guest count"
+                    // But usually we just let them proceed.
+                    // Let's store available rooms in a variable to validate later too
+                    document.getElementById('rooms').max = availableRooms;
+                    // Update the maxRooms variable for the validation function
+                    window.currentAvailableRooms = availableRooms;
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Tersedia',
+                        text: `Tersedia ${availableRooms} kamar untuk tanggal tersebut.`,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error checking availability:', error);
+            });
+    }
     // Initialize Swiper for Agents
     document.addEventListener('DOMContentLoaded', function() {
         new Swiper('.agent-booking-slider', {

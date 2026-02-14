@@ -264,4 +264,38 @@ class SewaController extends Controller
             $property->kode_pos,
         ]));
     }
+
+    public function checkAvailability(Request $request, $slug)
+    {
+        $request->validate([
+            'checkin' => 'required|date',
+            'checkout' => 'required|date|after:checkin',
+        ]);
+
+        $property = Properti::where('slug', $slug)->firstOrFail();
+
+        $checkin = $request->checkin;
+        $checkout = $request->checkout;
+
+        // Count overlapping bookings that are confirmed
+        // Overlap logic: (StartA <= EndB) and (EndA >= StartB)
+        $bookedRooms = \App\Models\Booking::where('properti_id', $property->id)
+            ->where('status', 'confirmed')
+            ->where(function ($query) use ($checkin, $checkout) {
+                $query->where('checkin', '<', $checkout)
+                    ->where('checkout', '>', $checkin);
+            })
+            ->sum('rooms');
+
+        $availableRooms = $property->jumlah_kamar - $bookedRooms;
+
+        // Ensure available rooms doesn't go below zero (though DB logic should prevent this)
+        $availableRooms = max($availableRooms, 0);
+
+        return response()->json([
+            'available_rooms' => $availableRooms,
+            'total_rooms' => $property->jumlah_kamar,
+            'booked_rooms' => $bookedRooms
+        ]);
+    }
 }

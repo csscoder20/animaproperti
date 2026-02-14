@@ -22,7 +22,8 @@ class BookingResource extends Resource
     protected static ?string $navigationLabel = 'Riwayat Sewa';
     protected static ?string $modelLabel = 'Riwayat Sewa';
     protected static ?string $pluralModelLabel = 'Riwayat Sewa';
-    protected static ?string $navigationGroup = 'Manajemen Sewa';
+    protected static ?string $navigationGroup = 'Proses';
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {
