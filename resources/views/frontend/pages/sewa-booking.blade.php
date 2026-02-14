@@ -165,7 +165,7 @@
         document.getElementById('agent_phone').value = selectedAgentPhone;
     }
 
-    function submitBooking() {
+    async function submitBooking() {
         if (!selectedAgentPhone) {
             Swal.fire({
                 icon: 'warning',
@@ -179,7 +179,7 @@
             return;
         }
 
-        // Validate Form
+        // Validate Form Inputs
         const checkin = document.getElementById('checkin').value;
         const checkout = document.getElementById('checkout').value;
         const rooms = parseInt(document.getElementById('rooms').value) || 0;
@@ -203,32 +203,54 @@
             return;
         }
 
-        // Validation: Availability
-        // Use the fetched available rooms if set, otherwise fallback to maxRooms
-        const limitRooms = window.currentAvailableRooms !== undefined ? window.currentAvailableRooms : maxRooms;
+        // Show Loading during validation
+        Swal.fire({
+            title: 'Sedang Memeriksa...',
+            text: 'Mohon tunggu sebentar',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
 
-        if (rooms > limitRooms) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Kamar Tidak Cukup',
-                text: `Maaf, hanya tersedia ${limitRooms} kamar pada tanggal tersebut.`,
-            });
-            return;
-        }
-
-        // Validation: Capacity
-        const maxGuestsAllowed = rooms * maxGuestsPerRoom;
-        if (guests > maxGuestsAllowed) {
-             Swal.fire({
-                icon: 'error',
-                title: 'Melebihi Kapasitas',
-                text: `Maaf, kapasitas maksimal untuk ${rooms} kamar adalah ${maxGuestsAllowed} tamu (${maxGuestsPerRoom} orang/kamar).`,
-            });
-            return;
-        }
-
-        // Show Loading
         try {
+            // Server-side Availability Check
+            const response = await fetch(`{{ route('sewa.check.availability', $property->slug) }}?checkin=${checkin}&checkout=${checkout}`);
+            const data = await response.json();
+            
+            const availableRooms = data.available_rooms;
+            const totalRooms = data.total_rooms;
+
+            if (availableRooms === 0) {
+                 Swal.fire({
+                    icon: 'error',
+                    title: 'Tidak Tersedia',
+                    text: `Maaf, semua kamar (${totalRooms}) sudah penuh dipesan pada tanggal tersebut.`,
+                });
+                return;
+            }
+
+            if (rooms > availableRooms) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Kamar Tidak Cukup',
+                    text: `Maaf, hanya tersedia ${availableRooms} kamar pada tanggal tersebut.`,
+                });
+                return;
+            }
+
+            // Capacity Validation
+            const maxGuestsAllowed = rooms * maxGuestsPerRoom;
+            if (guests > maxGuestsAllowed) {
+                 Swal.fire({
+                    icon: 'error',
+                    title: 'Melebihi Kapasitas',
+                    text: `Maaf, kapasitas maksimal untuk ${rooms} kamar adalah ${maxGuestsAllowed} tamu (${maxGuestsPerRoom} orang/kamar).`,
+                });
+                return;
+            }
+
+            // Success - Proceed to Submit
             Swal.fire({
                 title: 'Memproses...',
                 text: 'Mohon tunggu sebentar',
@@ -239,9 +261,10 @@
             });
 
             document.getElementById('bookingForm').submit();
-        } catch (e) {
-            console.error(e);
-            Swal.fire('Error', 'Terjadi kesalahan: ' + e.message, 'error');
+
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Error', 'Gagal memeriksa ketersediaan. Silakan coba lagi.', 'error');
         }
     }
 
@@ -265,60 +288,8 @@
 
     checkinInput.addEventListener('change', function() {
         document.getElementById('checkout').min = this.value;
-        checkAvailability();
     });
 
-    checkoutInput.addEventListener('change', function() {
-        checkAvailability();
-    });
-
-    function checkAvailability() {
-        const checkin = checkinInput.value;
-        const checkout = checkoutInput.value;
-
-        if (!checkin || !checkout) return;
-
-        // Show loading indicator if needed, or just silent check
-        // For better UX, we can disable the submit button or show a spinner
-        
-        fetch(`{{ route('sewa.check.availability', $property->slug) }}?checkin=${checkin}&checkout=${checkout}`)
-            .then(response => response.json())
-            .then(data => {
-                const availableRooms = data.available_rooms;
-                const totalRooms = data.total_rooms;
-                
-                if (availableRooms === 0) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Tidak Tersedia',
-                        text: `Maaf, semua kamar (${totalRooms}) sudah penuh dipesan pada tanggal tersebut.`,
-                    });
-                    // Reset dates or inputs? 
-                    // Maybe just reset dates to force user to pick another
-                    checkinInput.value = '';
-                    checkoutInput.value = '';
-                } else {
-                    // Alert that rooms are available (optional, or just update UI text)
-                    // The user requested: "if available, show alert compatibility room and guest count"
-                    // But usually we just let them proceed.
-                    // Let's store available rooms in a variable to validate later too
-                    document.getElementById('rooms').max = availableRooms;
-                    // Update the maxRooms variable for the validation function
-                    window.currentAvailableRooms = availableRooms;
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Tersedia',
-                        text: `Tersedia ${availableRooms} kamar untuk tanggal tersebut.`,
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error checking availability:', error);
-            });
-    }
     // Initialize Swiper for Agents
     document.addEventListener('DOMContentLoaded', function() {
         new Swiper('.agent-booking-slider', {
