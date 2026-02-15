@@ -26,6 +26,7 @@ class Booking extends Model
         'duration',
         'total_price',
         'status',
+        'payment_method',
     ];
 
     public function properti()

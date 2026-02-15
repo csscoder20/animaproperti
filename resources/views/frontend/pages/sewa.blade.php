@@ -6,7 +6,7 @@
 
 <section id="sewa-properties" class="properties section">
     <div class="container" data-aos="fade-up" data-aos-delay="100">
-        <form action="{{ route('sewa.index') }}" method="GET">
+        <form id="searchForm" action="{{ route('sewa.index') }}" method="GET">
             <div class="search-bar mb-5" data-aos="fade-up" data-aos-delay="150">
                 <div class="row justify-content-center">
                     <div class="col-lg-12">
@@ -38,7 +38,7 @@
                                         <label class="field-label">Tamu & Kamar</label>
                                         <div class="dropdown">
                                             <input type="text" id="guestRoomDisplay" class="form-control"
-                                                placeholder="1 Dewasa, 0 Anak, 1 Kamar" readonly data-bs-toggle="dropdown"
+                                                placeholder="0 Dewasa, 0 Anak, 0 Kamar" readonly data-bs-toggle="dropdown"
                                                 aria-expanded="false" style="background-color: #fff; cursor: pointer;">
                                             <ul class="dropdown-menu p-3 border-0 shadow" aria-labelledby="guestRoomDisplay"
                                                 style="width: 100%; min-width: 300px; border-radius: 12px; margin-top: 10px;">
@@ -54,7 +54,7 @@
                                                             class="btn btn-sm btn-outline-secondary rounded-circle"
                                                             onclick="updateCounter('adult', -1)"
                                                             style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">-</button>
-                                                        <span id="adultCount" class="mx-3 fw-bold" style="min-width: 20px; text-align: center;">1</span>
+                                                        <span id="adultCount" class="mx-3 fw-bold" style="min-width: 20px; text-align: center;">0</span>
                                                         <button type="button"
                                                             class="btn btn-sm btn-outline-primary rounded-circle"
                                                             onclick="updateCounter('adult', 1)"
@@ -104,7 +104,7 @@
                                                             class="btn btn-sm btn-outline-secondary rounded-circle"
                                                             onclick="updateCounter('room', -1)"
                                                             style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">-</button>
-                                                        <span id="roomCount" class="mx-3 fw-bold" style="min-width: 20px; text-align: center;">1</span>
+                                                        <span id="roomCount" class="mx-3 fw-bold" style="min-width: 20px; text-align: center;">0</span>
                                                         <button type="button"
                                                             class="btn btn-sm btn-outline-primary rounded-circle"
                                                             onclick="updateCounter('room', 1)"
@@ -121,11 +121,11 @@
 
                                         {{-- Hidden Inputs for Form Submission --}}
                                         <input type="hidden" name="guests" id="totalGuests"
-                                            value="{{ request('guests', 1) }}">
+                                            value="{{ request('guests', 0) }}">
                                         <input type="hidden" name="rooms" id="totalRooms"
-                                            value="{{ request('rooms', 1) }}">
+                                            value="{{ request('rooms', 0) }}">
                                         {{-- Store detailed state for UI consistency on reload --}}
-                                        <input type="hidden" name="adults" id="inputAdults" value="{{ request('adults', 1) }}">
+                                        <input type="hidden" name="adults" id="inputAdults" value="{{ request('adults', 0) }}">
                                         <input type="hidden" name="children" id="inputChildren" value="{{ request('children', 0) }}">
                                     </div>
                                 </div>
@@ -145,6 +145,159 @@
                 </div>
             </div>
         </form>
+
+        {{-- Search Results Section --}}
+        @if(isset($isSearch) && $isSearch && isset($properties) && $properties->count() > 0)
+            <div class="row mb-5" data-aos="fade-up" data-aos-delay="200">
+                {{-- Sidebar: Booking Summary --}}
+                {{-- Sidebar: Booking Summary --}}
+                <div class="col-lg-3">
+                    <div class="card border-0 shadow-sm p-4 mb-4 sticky-top rounded-4" style="top: 2rem; z-index: 1;">
+                        <h5 class="fw-bold mb-4 text-dark">Booking Summary</h5>
+                        
+                        {{-- Check-in --}}
+                        <div class="mb-4">
+                            <label class="small text-muted text-uppercase fw-bold mb-2">Check-in</label>
+                            @if(request('checkin'))
+                                <div class="d-flex align-items-center border-start border-4 border-danger ps-3">
+                                    <div class="display-5 fw-bold me-3 lh-1">{{ \Carbon\Carbon::parse(request('checkin'))->format('d') }}</div>
+                                    <div class="lh-sm">
+                                        <div class="fw-bold small">{{ \Carbon\Carbon::parse(request('checkin'))->translatedFormat('F Y') }}</div>
+                                        <div class="small text-muted">{{ \Carbon\Carbon::parse(request('checkin'))->translatedFormat('l') }}</div>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="text-muted fst-italic ps-3 border-start border-4 border-light">-</div>
+                            @endif
+                        </div>
+
+                        {{-- Check-out --}}
+                        <div class="mb-4">
+                            <label class="small text-muted text-uppercase fw-bold mb-2">Check-out</label>
+                            @if(request('checkout'))
+                                <div class="d-flex align-items-center border-start border-4 border-danger ps-3">
+                                    <div class="display-5 fw-bold me-3 lh-1">{{ \Carbon\Carbon::parse(request('checkout'))->format('d') }}</div>
+                                    <div class="lh-sm">
+                                        <div class="fw-bold small">{{ \Carbon\Carbon::parse(request('checkout'))->translatedFormat('F Y') }}</div>
+                                        <div class="small text-muted">{{ \Carbon\Carbon::parse(request('checkout'))->translatedFormat('l') }}</div>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="text-muted fst-italic ps-3 border-start border-4 border-light">-</div>
+                            @endif
+                        </div>
+                        
+                        <hr class="my-3 opacity-25">
+                        
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Durasi</span>
+                            <span class="fw-bold">
+                                @if(request('checkin') && request('checkout'))
+                                    {{ \Carbon\Carbon::parse(request('checkin'))->diffInDays(\Carbon\Carbon::parse(request('checkout'))) }} Malam
+                                @else
+                                    -
+                                @endif
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Tamu</span>
+                            <span class="fw-bold">{{ request('guests', 0) }} Orang</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Kamar</span>
+                            <span class="fw-bold">{{ request('rooms', 0) }} Kamar</span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Results List --}}
+                <div class="col-lg-9">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold mb-0">Select Room</h4>
+                        <span class="text-muted small">{{ $totalResults }} Results Found</span>
+                    </div>
+
+                    <div class="d-flex flex-column gap-3">
+                        @foreach ($properties as $property)
+                            <div class="card border mb-3 shadow-sm overflow-hidden">
+                                <div class="row g-0">
+                                    <div class="col-md-4">
+                                        {{-- Image --}}
+                                        @php
+                                            $imageUrl = null;
+                                            if ($property->gbr_primary_properti) {
+                                                $imageUrl = asset('storage/' . $property->gbr_primary_properti);
+                                            } elseif ($property->images->isNotEmpty()) {
+                                                $imageUrl = asset('storage/' . $property->images->first()->path);
+                                            } else {
+                                                $imageUrl = asset('themes/frontend/assets/img/default.png');
+                                            }
+                                        @endphp
+                                        <div style="height: 100%; min-height: 200px;">
+                                            <img src="{{ $imageUrl }}" class="img-fluid w-100 h-100" style="object-fit: cover;" alt="{{ $property->judul }}">
+                                            @if($property->penawaran)
+                                                <div class="position-absolute top-0 start-0 m-2">
+                                                    <span class="badge bg-primary">{{ $property->penawaran }}</span>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="card-body h-100 d-flex flex-column justify-content-between">
+                                            <div>
+                                                <div class="mb-2">
+                                                    <h5 class="card-title fw-bold mb-1">{{ $property->judul }}</h5>
+                                                    <p class="card-text text-muted small mb-2">
+                                                    {{ $property->jenisProperti->nama ?? '' }} &bull; 
+                                                    </p>
+                                                </div>
+                                                
+                                                <div class="row g-2">
+                                                    <div class="d-flex flex-wrap gap-2 mt-3">
+                                                        @if ($property->fasilitas->count() > 0)
+                                                            @foreach ($property->fasilitas as $fasilitas)
+                                                                <div class="d-flex align-items-center text-muted small me-2">
+                                                                    <i class="bi {{ $fasilitas->icon ?? 'bi-check-circle' }} me-1 text-primary"></i>
+                                                                    <span>{{ $fasilitas->nama }}</span>
+                                                                </div>
+                                                            @endforeach
+                                                        @else
+                                                            <div class="text-muted small fst-italic">No facilities data available.</div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                                <div class="text-start me-3">
+                                                    <h4 class="fw-bold mb-0 text-primary">Rp {{ number_format($property->harga, 0, ',', '.') }}</h4>
+                                                    <small class="text-muted d-block">Per Malam</small>
+                                                </div>
+                                                <a href="{{ route('sewa.show', array_merge(['slug' => $property->slug], request()->query())) }}" class="btn btn-outline-primary px-4 rounded-pill btn-custom-accent w-auto">Pilih</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <nav class="pagination-wrapper mt-4">
+                        {{ $properties->links() }}
+                    </nav>
+                </div>
+            </div>
+        @elseif(isset($isSearch) && $isSearch)
+            <div class="col-12 text-center py-5 mb-5">
+                <div class="empty-results">
+                    <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
+                    <h3>Properti tidak ditemukan</h3>
+                    <p class="text-muted">Coba ubah filter pencarian Anda</p>
+                </div>
+            </div>
+        @endif
+
+
 
         {{-- Features Section --}}
         <div class="features-section mb-5" data-aos="fade-up" data-aos-delay="200">
@@ -185,85 +338,40 @@
             </div>
         </div>
 
-        <div class="results-header mb-4" data-aos="fade-up" data-aos-delay="200">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <div class="results-info">
-                        <h5>{{ $totalResults }} Properti Ditemukan</h5>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="properties-container">
-            <div class="properties-masonry view-masonry active" data-aos="fade-up" data-aos-delay="250">
-                <div class="row g-4">
-                    @forelse ($properties as $property)
-                        <div class="col-lg-4 col-md-6">
-                            <div class="property-item">
-                                <a href="{{ route('sewa.show', $property->slug) }}" class="property-link">
-                                    <div class="property-image-wrapper">
-                                        @php
-                                            $imageUrl = null;
-                                            if ($property->gbr_primary_properti) {
-                                                $imageUrl = asset('storage/' . $property->gbr_primary_properti);
-                                            } elseif ($property->images->isNotEmpty()) {
-                                                $imageUrl = asset('storage/' . $property->images->first()->path);
-                                            } else {
-                                                $imageUrl = asset('themes/frontend/assets/img/default.png');
-                                            }
-                                        @endphp
-                                        <img src="{{ $imageUrl }}" alt="{{ $property->judul }}" class="img-fluid">
-                                        <div class="property-status">
-                                            <span class="status-badge sale">{{ $property->penawaran }}</span>
-                                        </div>
-                                    </div>
+        {{-- Slider Section --}}
+        @if(isset($activeSliders) && $activeSliders->count() > 0)
+            <div class="swiper mySwiper mt-4 mb-5" data-aos="fade-up" data-aos-delay="200">
+                <div class="swiper-wrapper mb-3">
+                    @foreach ($activeSliders as $slider)
+                        <div class="swiper-slide position-relative">
+
+                            @php
+                                $imagePath =
+                                    $slider->image_path &&
+                                    file_exists(storage_path('app/public/' . $slider->image_path))
+                                        ? asset('storage/' . $slider->image_path)
+                                        : asset('images/no-image.jpg');
+                            @endphp
+
+                            @if ($slider->link_url)
+                                <a href="{{ $slider->link_url }}">
+                                    <img src="{{ $imagePath }}" alt="{{ $slider->title ?? 'Slider Image' }}"
+                                        class="img-fluid w-100 rounded">
                                 </a>
-                                <div class="property-details">
-                                    <a href="{{ route('sewa.show', $property->slug) }}" class="property-link">
-                                        <h4 class="property-title">{{ $property->judul }}</h4>
-                                        <div class="property-header">
-                                            <span class="property-price">Rp {{ number_format($property->harga, 0, ',', '.') }}</span>
-                                            <div class="property-type">{{ $property->jenisProperti->nama ?? '-' }}</div>
-                                        </div>
-                                        @if($property->tersedia_dari)
-                                            <div class="mb-2 text-success small">
-                                                <i class="bi bi-calendar-check me-1"></i> 
-                                                Tersedia: {{ \Carbon\Carbon::parse($property->tersedia_dari)->translatedFormat('d M Y') }}
-                                            </div>
-                                        @endif
-                                        <div class="property-specs">
-                                            <div class="spec-item"><i class="bi bi-door-open"></i> <span>{{ $property->jumlah_kamar }} Room</span></div>
-                                            <div class="spec-item"><i class="bi bi-people"></i> <span>Max {{ $property->kapasitas_tamu }} Orang</span></div>
-                                            <div class="spec-item"><i class="bi bi-arrows-angle-expand"></i> <span>{{ $property->luas_tanah }} m²</span></div>
-                                        </div>
-                                    </a>
-                                    
-                                    <div class="property-footer mt-3">
-                                        <a href="{{ route('sewa.show', $property->slug) }}" class="btn btn-primary w-100 rounded-pill btn-custom-accent">
-                                            Lihat Detail
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+                            @else
+                                <img src="{{ $imagePath }}" alt="{{ $slider->title ?? 'Slider Image' }}"
+                                    class="img-fluid w-100 rounded">
+                            @endif
                         </div>
-                    @empty
-                        <div class="col-12 text-center py-5">
-                            <div class="empty-results">
-                                <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
-                                <h3>Properti tidak ditemukan</h3>
-                                <p class="text-muted">Coba ubah filter pencarian Anda</p>
-                            </div>
-                        </div>
-                    @endforelse
+                    @endforeach
                 </div>
+                <div class="swiper-pagination"></div>
             </div>
-        </div>
+        @endif
 
-        <nav class="pagination-wrapper mt-5" data-aos="fade-up" data-aos-delay="350">
-            {{ $properties->links() }}
-        </nav>
-    </div>
+
+
 </section>
 
 
@@ -289,8 +397,8 @@
                 LockPlugin: {
                     minDate: new Date(),
                 },
-                calendars: 2,
-                grid: 2,
+                calendars: 1,
+                grid: 1,
                 zIndex: 10,
                 format: 'D MMM YYYY',
                 setup(picker) {
@@ -319,9 +427,9 @@
 
             // Guest & Room Counter Logic
             let counts = {
-                adult: parseInt(document.getElementById('inputAdults').value) || 1,
+                adult: parseInt(document.getElementById('inputAdults').value) || 0,
                 child: parseInt(document.getElementById('inputChildren').value) || 0,
-                room: parseInt(document.getElementById('totalRooms').value) || 1
+                room: parseInt(document.getElementById('totalRooms').value) || 0
             };
 
             function updateDisplay() {
@@ -378,11 +486,11 @@
 
             window.updateCounter = function(type, change) {
                 if (type === 'adult') {
-                    if (counts.adult + change >= 1) counts.adult += change;
+                    if (counts.adult + change >= 0) counts.adult += change;
                 } else if (type === 'child') {
                     if (counts.child + change >= 0) counts.child += change;
                 } else if (type === 'room') {
-                    if (counts.room + change >= 1) counts.room += change;
+                    if (counts.room + change >= 0) counts.room += change;
                 }
                 updateDisplay();
             };
@@ -403,6 +511,67 @@
                     e.stopPropagation();
                 });
             });
+
+            // Swiper Initialization
+            @if(isset($activeSliders) && $activeSliders->count() > 0)
+                var slideCount = {{ $activeSliders->count() }};
+                var swiper = new Swiper(".mySwiper", {
+                    slidesPerView: slideCount === 1 ? 1 : 1,
+                    spaceBetween: 10,
+                    breakpoints: slideCount === 1 ? {} : {
+                        768: {
+                            slidesPerView: 1.5,
+                            spaceBetween: 20
+                        },
+                        992: {
+                            slidesPerView: 1.5,
+                            spaceBetween: 20
+                        },
+                    },
+                    freeMode: true,
+                    grabCursor: true,
+                    pagination: {
+                        el: ".mySwiper .swiper-pagination",
+                        clickable: true
+                    }
+                });
+            @endif
+            // Form Validation (Validation for required fields)
+            const searchForm = document.getElementById('searchForm');
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    const keyword = this.querySelector('input[name="keyword"]').value;
+                    const checkin = document.getElementById('checkin').value;
+                    const checkout = document.getElementById('checkout').value;
+                    const rooms = parseInt(document.getElementById('totalRooms').value) || 0;
+                    const guests = parseInt(document.getElementById('totalGuests').value) || 0;
+
+                    let errors = [];
+
+                    if (!keyword.trim()) errors.push("Lokasi harus diisi");
+                    if (!checkin || !checkout) errors.push("Tanggal sewa harus dipilih");
+                    if (rooms <= 0) errors.push("Jumlah kamar minimal 1");
+                    if (guests <= 0) errors.push("Jumlah tamu minimal 1");
+
+                    if (errors.length > 0) {
+                        e.preventDefault();
+                        
+                        // Check if Swal is defined, otherwise fallback to alert
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Mohon Lengkapi Data',
+                                html: '<ul style="text-align: left; margin-left: 1rem;">' + errors.map(err => `<li>${err}</li>`).join('') + '</ul>',
+                                confirmButtonColor: '#0d6efd', // Bootstrap primary
+                                confirmButtonText: 'OK'
+                            });
+                        } else {
+                            alert("Mohon lengkapi data pencarian:\n- " + errors.join("\n- "));
+                        }
+                    }
+                });
+            }
         });
+
     </script>
 @endsection

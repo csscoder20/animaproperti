@@ -37,6 +37,8 @@
             class="bi bi-arrow-up-short"></i></a>
     <div id="preloader"></div>
     @include('frontend.layouts.script')
+    @stack('scripts')
+
 
 </body>
 
