@@ -136,7 +136,10 @@
                                 <h5 class="fw-bold border-bottom pb-2 mb-3">Rincian Biaya</h5>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Harga per Kamar (per Malam)</span>
-                                    <span>Rp {{ number_format($property->harga, 0, ',', '.') }}</span>
+                                    @php
+                                        $pricePerNight = $property->harga_sewa_per_malam ?? $property->harga;
+                                    @endphp
+                                    <span>Rp {{ number_format($pricePerNight, 0, ',', '.') }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Jumlah Kamar</span>

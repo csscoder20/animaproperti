@@ -91,21 +91,6 @@ class PropertiResource extends Resource
 
                             Forms\Components\Hidden::make('jenis_properti_nama'),
 
-                            Forms\Components\TextInput::make('harga')
-                                ->label('Harga')
-                                ->numeric()
-                                ->required(),
-
-                            Forms\Components\TextInput::make('tahun_dibangun')
-                                ->label('Tahun Dibangun')
-                                ->numeric()
-                                ->minValue(1900)
-                                ->maxValue(now()->year)
-                                ->nullable()
-                                ->default('0')
-                                ->dehydrateStateUsing(fn($state, $get) => $get('jenis_properti_nama') === 'Tanah' ? '-' : $state)
-                                ->visible(fn($get) => $get('jenis_properti_nama') !== 'Tanah'),
-
                             Select::make('status')
                                 ->label('Status')
                                 ->options([
@@ -126,26 +111,13 @@ class PropertiResource extends Resource
                                 ])
                                 ->required(),
 
-                            Toggle::make('unggulan')
-                                ->label('Unggulan'),
-
                             RichEditor::make('deskripsi')
                                 ->label('Deskripsi')
                                 ->columnSpanFull()
                                 ->required(),
-                            
-                            Section::make('Fasilitas')
-                                ->schema([
-                                    Forms\Components\CheckboxList::make('fasilitas')
-                                        ->label('Fasilitas Properti')
-                                        ->relationship('fasilitas', 'nama')
-                                        ->columns(3)
-                                        ->gridDirection('row')
-                                        ->bulkToggleable()
-                                ]),
                         ]),
                     Wizard\Step::make('Lokasi')
-                        ->columns(4)
+                        ->columns(3)
                         ->schema([
                             Select::make('provinsi')
                                 ->label('Provinsi')
@@ -242,7 +214,7 @@ class PropertiResource extends Resource
                         ]),
 
                     Wizard\Step::make('Spesifikasi')
-                        ->columns(6)
+                        ->columns(4)
                         ->schema([
                             Forms\Components\TextInput::make('jenis_cluster')
                                 ->label('Cluster')
@@ -258,6 +230,16 @@ class PropertiResource extends Resource
                                 ->dehydrateStateUsing(fn($state, $get) => $get('jenis_properti_nama') === 'Tanah' ? '-' : $state)
                                 ->required()
                                 ->dehydrated()
+                                ->visible(fn($get) => $get('jenis_properti_nama') !== 'Tanah'),
+
+                            Forms\Components\TextInput::make('tahun_dibangun')
+                                ->label('Tahun Dibangun')
+                                ->numeric()
+                                ->minValue(1900)
+                                ->maxValue(now()->year)
+                                ->nullable()
+                                ->default('0')
+                                ->dehydrateStateUsing(fn($state, $get) => $get('jenis_properti_nama') === 'Tanah' ? '-' : $state)
                                 ->visible(fn($get) => $get('jenis_properti_nama') !== 'Tanah'),
 
                             Forms\Components\TextInput::make('jumlah_kamar_tidur')
@@ -291,31 +273,83 @@ class PropertiResource extends Resource
                                 ->label('Luas Tanah (m²)')
                                 ->numeric()
                                 ->required(),
-                        ]),
 
-                    Wizard\Step::make('Ketersediaan (Sewa)')
-                        ->columns(2)
-                        ->schema([
-                            Forms\Components\TextInput::make('jumlah_kamar')
-                                ->label('Jumlah Kamar Tersedia')
+                            Section::make('Harga & Aturan')
+                                ->columns(3)
+                                ->schema([
+                                Toggle::make('unggulan')
+                                    ->helperText('Jika properti ini diunggulkan, maka akan ditampilkan di halaman utama')
+                                    ->label('Unggulan')
+                                    ->columnSpanFull(),
+
+                                Toggle::make('disewa_per_kamar')
+                                    ->label('Disewa per kamar?')
+                                    ->reactive()
+                                    ->default(false)
+                                    ->columnSpanFull(),
+                            
+                            Forms\Components\TextInput::make('harga')
+                                ->label('Harga')
                                 ->numeric()
-                                ->default(1)
-                                ->required(),
-                            Forms\Components\TextInput::make('kapasitas_tamu')
-                                ->label('Kapasitas Tamu per Kamar')
+                                ->prefix('Rp')
+                                ->required(fn($get) => $get('disewa_per_kamar') !== true)
+                                ->visible(fn($get) => $get('disewa_per_kamar') !== true)
+                                ->columnSpanFull(),
+                            
+                            Forms\Components\TextInput::make('harga_sewa_per_malam')
+                                ->label('Harga Sewa per Malam')
                                 ->numeric()
-                                ->default(1)
-                                ->required(),
-                            Forms\Components\DatePicker::make('tersedia_dari')
+                                ->prefix('Rp')
+                                ->required()
+                                ->visible(fn($get) => $get('disewa_per_kamar') === true)
+                                ->columnSpan(1),
+                            
+                            Forms\Components\DatePicker::make('tersedia_dari_kamar')
                                 ->label('Tersedia Dari')
                                 ->native(false)
-                                ->displayFormat('d M Y'),
-                            Forms\Components\DatePicker::make('tersedia_sampai')
+                                ->displayFormat('d M Y')
+                                ->visible(fn($get) => $get('disewa_per_kamar') === true)
+                                ->columnSpan(1),
+                            
+                            Forms\Components\DatePicker::make('tersedia_sampai_kamar')
                                 ->label('Tersedia Sampai')
                                 ->native(false)
-                                ->displayFormat('d M Y'),
-                        ])
-                        ->visible(fn($get) => $get('penawaran') === 'Disewa'),
+                                ->displayFormat('d M Y')
+                                ->visible(fn($get) => $get('disewa_per_kamar') === true)
+                                ->columnSpan(1),
+                            
+                            Forms\Components\TextInput::make('kapasitas_dewasa_per_kamar')
+                                ->label('Kapasitas Tamu Dewasa per Kamar')
+                                ->numeric()
+                                ->default(1)
+                                ->minValue(1)
+                                ->required()
+                                ->visible(fn($get) => $get('disewa_per_kamar') === true)
+                                ->columnSpan(1),
+                            
+                            Forms\Components\TextInput::make('kapasitas_anak_per_kamar')
+                                ->label('Kapasitas Tamu Anak per Kamar')
+                                ->numeric()
+                                ->default(0)
+                                ->minValue(0)
+                                ->required()
+                                ->visible(fn($get) => $get('disewa_per_kamar') === true)
+                                ->columnSpan(1),
+                                ])
+                                ->columnSpanFull(),
+                            
+                            Section::make('Fasilitas Kamar')
+                                ->schema([
+                                    Forms\Components\CheckboxList::make('fasilitas')
+                                        ->label('Fasilitas Kamar')
+                                        ->helperText('Jika tidak menemukan fasilitas yang diinginkan, silahkan tambahkan terlebih dahulu di halaman Fasilitas')
+                                        ->relationship('fasilitas', 'nama')
+                                        ->columns(3)
+                                        ->gridDirection('row')
+                                        ->bulkToggleable()
+                                ])
+                                ->columnSpanFull(),
+                        ]),
 
                     Wizard\Step::make('Data Pendukung')
                         ->schema([
@@ -335,6 +369,15 @@ class PropertiResource extends Resource
                                         ->required(),
                                 ])->columns(2),
                             Section::make('Gambar')
+                                ->headerActions([
+                                    Forms\Components\Actions\Action::make('addImage')
+                                        ->label('Tambah Gambar Properti')
+                                        ->action(function ($livewire, $get, $set) {
+                                            $images = $get('images') ?? [];
+                                            $images[] = ['path' => null];
+                                            $set('images', $images);
+                                        })
+                                ])
                                 ->schema([
                                     FileUpload::make('gbr_primary_properti')
                                         ->label('Properti')
@@ -353,7 +396,7 @@ class PropertiResource extends Resource
                                         ->dehydrated(),
 
                                     Forms\Components\Repeater::make('images')
-                                        ->label('')
+                                        ->label('Gambar Properti Lainnya')
                                         ->schema([
                                             Forms\Components\FileUpload::make('path')
                                                 ->label('')
@@ -369,22 +412,22 @@ class PropertiResource extends Resource
                                                 ])
                                                 ->required(),
                                         ])
-                                        ->columnSpan(6)
-                                        ->grid(6)
-                                        ->createItemButtonLabel('Tambah Gambar Properti')
+                                        ->grid(3)
+                                        ->addable(false)
                                         ->collapsible()
                                         ->collapsed(false)
                                         ->dehydrated(true)
                                         ->relationship('images')
                                         ->deletable(true)
-                                        ->default([]),
-                                ])->columns(2)
+                                        ->default([])
+                                        ->columnSpanFull(),
+                                ])->columns(2),
                         ]),
                 ])
                     ->columnSpanFull()
                     ->submitAction(new HtmlString(Blade::render(<<<BLADE
                             <x-filament::button form="create" type="submit">
-                                Upload File
+                                Simpan Data
                             </x-filament::button>
                         BLADE)))
                     ->skippable(),

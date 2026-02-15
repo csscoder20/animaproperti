@@ -56,7 +56,7 @@ Route::get('/api/wilayah/{parentKode}', [RegistrationController::class, 'getChil
 
 // Cetak invoice penjualan
 Route::get('/invoice/{id}', [InvoiceController::class, 'show'])->name('invoice.show');
-Route::get('/invoice/penyewaan/{id}', [InvoiceController::class, 'showPenyewaan'])->name('invoice.penyewaan.show');
+
 
 Route::get('/kontak-agen', [AgenController::class, 'index']);
 Route::get('/agen/{id}/properti', [AgenController::class, 'showProperti'])->name('agen.properti');

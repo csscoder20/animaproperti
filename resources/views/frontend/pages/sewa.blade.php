@@ -147,7 +147,7 @@
         </form>
 
         {{-- Search Results Section --}}
-        @if(isset($isSearch) && $isSearch && isset($properties) && $properties->count() > 0)
+        @if(isset($properties) && $properties->count() > 0)
             <div class="row mb-5" data-aos="fade-up" data-aos-delay="200">
                 {{-- Sidebar: Booking Summary --}}
                 {{-- Sidebar: Booking Summary --}}
@@ -248,7 +248,21 @@
                                                 <div class="mb-2">
                                                     <h5 class="card-title fw-bold mb-1">{{ $property->judul }}</h5>
                                                     <p class="card-text text-muted small mb-2">
-                                                    {{ $property->jenisProperti->nama ?? '' }} &bull; 
+                                                    @php
+                                                        $type = $property->jenisProperti->slug ?? '';
+                                                        $badgeClass = match($type) {
+                                                            'kost' => 'bg-success',
+                                                            'apartemen' => 'bg-info text-dark',
+                                                            'rumah' => 'bg-primary',
+                                                            'villa' => 'bg-warning text-dark',
+                                                            'kantor' => 'bg-secondary',
+                                                            default => 'bg-light text-dark border',
+                                                        };
+                                                    @endphp
+                                                    <span class="badge {{ $badgeClass }} mb-2">{{ $property->jenisProperti->nama ?? '' }}</span>
+                                                    </p>
+                                                    <p class="text-muted small mb-2">
+                                                        <i class="bi bi-geo-alt me-1"></i> {{ $property->alamat_lengkap ?? 'Alamat tidak tersedia' }}
                                                     </p>
                                                 </div>
                                                 
@@ -270,7 +284,10 @@
 
                                             <div class="d-flex justify-content-between align-items-center mt-3">
                                                 <div class="text-start me-3">
-                                                    <h4 class="fw-bold mb-0 text-primary">Rp {{ number_format($property->harga, 0, ',', '.') }}</h4>
+                                                    @php
+                                                        $pricePerNight = $property->harga_sewa_per_malam ?? $property->harga;
+                                                    @endphp
+                                                    <h4 class="fw-bold mb-0 text-primary">Rp {{ number_format($pricePerNight, 0, ',', '.') }}</h4>
                                                     <small class="text-muted d-block">Per Malam</small>
                                                 </div>
                                                 <a href="{{ route('sewa.show', array_merge(['slug' => $property->slug], request()->query())) }}" class="btn btn-outline-primary px-4 rounded-pill btn-custom-accent w-auto">Pilih</a>
@@ -291,8 +308,16 @@
             <div class="col-12 text-center py-5 mb-5">
                 <div class="empty-results">
                     <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
-                    <h3>Properti tidak ditemukan</h3>
+                    <h4 class="text-muted">Properti tidak ditemukan</h4>
                     <p class="text-muted">Coba ubah filter pencarian Anda</p>
+                </div>
+            </div>
+        @else
+            <div class="col-12 text-center py-5 mb-5">
+                <div class="empty-results">
+                    <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
+                    <h4 class="text-muted">Mulai Pencarian Anda</h4>
+                    <p class="text-muted">Gunakan filter di atas untuk menemukan properti impian Anda</p>
                 </div>
             </div>
         @endif

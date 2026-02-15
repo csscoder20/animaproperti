@@ -47,11 +47,16 @@ class SewaController extends Controller
                     ->pluck('kode')
                     ->toArray();
 
+                // dd($matchingWilayahCodes); // DEBUG
+
                 $query->where(function ($q) use ($keyword, $matchingWilayahCodes) {
-                    // Search by Property Title
                     $q->where('judul', 'LIKE', '%' . $keyword . '%')
                         // Search by Full Address
                         ->orWhere('alamat_lengkap', 'LIKE', '%' . $keyword . '%')
+                        // Search by Type Name (e.g. "Apartemen", "Kost")
+                        ->orWhereHas('jenisProperti', function ($qType) use ($keyword) {
+                            $qType->where('nama', 'LIKE', '%' . $keyword . '%');
+                        })
                         // OR Search by Location (Kecamatan, Kabupaten, Provinsi) matches
                         ->orWhere(function ($subQ) use ($matchingWilayahCodes) {
                             if (!empty($matchingWilayahCodes)) {
@@ -80,9 +85,35 @@ class SewaController extends Controller
                 $query->where('jumlah_kamar', '>=', $request->rooms);
             }
 
-            // Filter Guests (Orang)
+            // Filter Guests (Orang) - Advanced Utilization Logic
             if ($request->filled('guests') && $request->guests !== 'any') {
-                $query->where('kapasitas_tamu', '>=', $request->guests);
+                $adults = (int) $request->input('adults', 0);
+                $children = (int) $request->input('children', 0);
+                $rooms = (int) $request->input('rooms', 1);
+                $totalGuests = (int) $request->guests; // Fallback for simple search
+
+                // If granular inputs are missing but we have total guests, treat as Adults=Total
+                if ($adults == 0 && $children == 0 && $totalGuests > 0) {
+                    $adults = $totalGuests;
+                }
+
+                $query->where(function ($q) use ($adults, $children, $rooms, $totalGuests) {
+                    // Logic A: Granular Columns Exist -> Check Utilization
+                    $q->where(function ($sub) use ($adults, $children, $rooms) {
+                        $sub->whereRaw('(COALESCE(kapasitas_dewasa_per_kamar, 0) > 0 OR COALESCE(kapasitas_anak_per_kamar, 0) > 0)')
+                            ->whereRaw("
+                                (
+                                    IF(COALESCE(kapasitas_dewasa_per_kamar, 0) > 0, ? / kapasitas_dewasa_per_kamar, IF(? > 0, 1000, 0)) +
+                                    IF(COALESCE(kapasitas_anak_per_kamar, 0) > 0, ? / kapasitas_anak_per_kamar, IF(? > 0, 1000, 0))
+                                ) <= ?
+                            ", [$adults, $adults, $children, $children, $rooms]);
+                    })
+                    // Logic B: Legacy / No Granular -> Check Total Capacity
+                    ->orWhere(function ($sub) use ($totalGuests) {
+                        $sub->whereRaw('(COALESCE(kapasitas_dewasa_per_kamar, 0) = 0 AND COALESCE(kapasitas_anak_per_kamar, 0) = 0)')
+                            ->where('kapasitas_tamu', '>=', $totalGuests);
+                    });
+                });
             }
 
             // Filter Dates (Availability)
@@ -100,9 +131,9 @@ class SewaController extends Controller
                 });
             }
 
-            // Paginate results
-            $properties = $query->paginate(12)->appends($request->query());
-            $totalResults = $properties->total();
+        // Paginate results
+        $properties = $query->paginate(12)->appends($request->query());
+        $totalResults = $properties->total();
         }
 
         // Data for filters
@@ -183,7 +214,9 @@ class SewaController extends Controller
         $duration = $checkin->diffInDays($checkout);
 
         // Calculation: Rooms * Price * Duration
-        $totalPrice = $request->rooms * $property->harga * $duration;
+        // Use harga_sewa_per_malam for rental properties (Kost/Apartemen)
+        $pricePerNight = $property->harga_sewa_per_malam ?? $property->harga;
+        $totalPrice = $request->rooms * $pricePerNight * $duration;
 
         $bookingData = $request->all();
         $bookingData['duration'] = $duration;
@@ -220,7 +253,9 @@ class SewaController extends Controller
         $checkin = \Carbon\Carbon::parse($request->checkin);
         $checkout = \Carbon\Carbon::parse($request->checkout);
         $duration = $checkin->diffInDays($checkout) ?: 1;
-        $totalPrice = $request->rooms * $property->harga * $duration;
+        // Use harga_sewa_per_malam for rental properties (Kost/Apartemen)
+        $pricePerNight = $property->harga_sewa_per_malam ?? $property->harga;
+        $totalPrice = $request->rooms * $pricePerNight * $duration;
 
         // Find the selected agent
         $agent = Agen::where('no_hp', 'LIKE', '%' . substr($request->agent_phone, -8))->first();

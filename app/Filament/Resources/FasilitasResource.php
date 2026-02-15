@@ -19,6 +19,13 @@ class FasilitasResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationLabel = 'Fasilitas';
+    protected static ?string $pluralModelLabel = 'Fasilitas';
+    protected static ?string $modelLabel = 'Fasilitas';
+    protected static ?string $slug = 'data-fasilitas';
+    protected static ?string $navigationGroup = 'Master Data';
+    protected static ?int $navigationSort = 4;
+
     public static function form(Form $form): Form
     {
         return $form

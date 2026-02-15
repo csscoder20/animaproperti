@@ -50,11 +50,30 @@ class BookingResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required(),
+                        Forms\Components\Select::make('agent_id')
+                            ->label('Agen')
+                            ->relationship('agent', 'nama_lengkap')
+                            ->searchable()
+                            ->preload()
+                            ->required(),
                         Forms\Components\DatePicker::make('checkin')
                             ->label('Tanggal Check-in')
                             ->required(),
+                        Forms\Components\DatePicker::make('checkout')
+                            ->label('Tanggal Check-out')
+                            ->required(),
                         Forms\Components\TextInput::make('duration')
                             ->label('Durasi (Malam)')
+                            ->numeric()
+                            ->required()
+                            ->minValue(1),
+                        Forms\Components\TextInput::make('rooms')
+                            ->label('Jumlah Kamar')
+                            ->numeric()
+                            ->required()
+                            ->minValue(1),
+                        Forms\Components\TextInput::make('guests')
+                            ->label('Jumlah Tamu')
                             ->numeric()
                             ->required()
                             ->minValue(1),
@@ -63,12 +82,19 @@ class BookingResource extends Resource
                             ->prefix('Rp')
                             ->numeric()
                             ->required(),
+                        Forms\Components\TextInput::make('payment_method')
+                            ->label('Metode Pembayaran')
+                            ->required()
+                            ->maxLength(255),
                         Forms\Components\Select::make('status')
                             ->label('Status Pesanan')
                             ->options([
                                 'pending' => 'Pending',
                                 'confirmed' => 'Confirmed',
-                                'cancelled' => 'Cancelled',
+                                'paid' => 'Dibayar',
+                                'completed' => 'Selesai',
+                                'cancelled' => 'Dibatalkan',
+                                'refunded' => 'Dikembalikan',
                             ])
                             ->required()
                             ->native(false),
@@ -106,12 +132,18 @@ class BookingResource extends Resource
                     ->label('Total')
                     ->money('IDR')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('payment_method')
+                    ->label('Metode Bayar')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
                         'pending' => 'warning',
-                        'confirmed' => 'success',
+                        'confirmed' => 'primary',
+                        'paid' => 'success',
+                        'completed' => 'success',
                         'cancelled' => 'danger',
+                        'refunded' => 'danger',
                         default => 'gray',
                     }),
             ])

@@ -23,11 +23,7 @@ class JenisPropertiResource extends Resource
     protected static ?string $slug = 'jenis-properti';
     protected static ?string $navigationGroup = 'Master Data';
 
-
-    public static function getNavigationSort(): ?int
-    {
-        return 2;
-    }
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {

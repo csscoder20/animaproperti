@@ -5,8 +5,6 @@
 <style>
 .pricing-section {
   background: linear-gradient( 135deg, var(--accent-color), color-mix(in srgb, var(--accent-color), #6a11cb 30%) );
-  padding: 25px;
-  border-radius: 20px;
   margin-bottom: 30px;
   color: #ffffff;
   text-align: center;
@@ -46,7 +44,8 @@
                         $rooms = (int) request('rooms', 1);
                         $guests = (int) request('guests', 1);
                         $duration = $checkin->diffInDays($checkout) ?: 1; // Minimum 1 day
-                        $totalPrice = $rooms * $property->harga * $duration;
+                        $pricePerNight = $property->harga_sewa_per_malam ?? $property->harga;
+                        $totalPrice = $rooms * $pricePerNight * $duration;
                     @endphp
 
                     <div class="booking-form-container mb-5" data-aos="fade-up" data-aos-delay="400">
@@ -131,7 +130,7 @@
                                         </div>
                                     </div>
 
-                                    <button type="button" class="btn btn-success w-auto py-2 fw-bold shadow-sm btn-custom-accent " onclick="submitFinalBooking()">
+                                    <button type="button" class="btn btn-success w-auto py-2 fw-bold btn-custom-accent " onclick="submitFinalBooking()">
                                         <i class="bi bi-whatsapp me-2"></i> Proses Sekarang
                                     </button>
                                 </form>

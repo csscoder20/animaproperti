@@ -19,6 +19,7 @@ class MasterWilayahResource extends Resource
     protected static ?string $pluralLabel = 'Data Wilayah';
     protected static ?string $slug = 'master-wilayah';
     protected static ?string $navigationGroup = 'Master Data';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {

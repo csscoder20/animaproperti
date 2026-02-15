@@ -48,6 +48,12 @@ class Properti extends Model
         'kapasitas_tamu',
         'tersedia_dari',
         'tersedia_sampai',
+        'disewa_per_kamar',
+        'harga_sewa_per_malam',
+        'tersedia_dari_kamar',
+        'tersedia_sampai_kamar',
+        'kapasitas_dewasa_per_kamar',
+        'kapasitas_anak_per_kamar',
     ];
 
     public function jenisProperti()
