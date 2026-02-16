@@ -331,12 +331,17 @@
                                         <span class="fw-bold" id="summary-unit">{{ $rooms }} Kamar, {{ $guests }} Tamu</span>
                                         <small class="d-block text-primary fw-bold" id="summary-room-type"></small>
                                     </div>
-                                    <div class="col-12 border-top pt-2 mt-2">
+                                    <div class="col-12 border-top pt-2 mt-2" id="total-price-section" @if($property->disewa_per_kamar) style="display: none;" @endif>
                                         <div class="d-flex justify-content-between align-items-center">
                                             <span class="fw-bold">Total Biaya:</span>
                                             <span class="fw-bold text-primary fs-5" id="summary-total-price">Rp {{ number_format($totalPrice, 0, ',', '.') }}</span>
                                         </div>
                                     </div>
+                                    @if($property->disewa_per_kamar)
+                                    <div id="select-room-warning" class="col-12 border-top pt-2 mt-2 text-center">
+                                        <small class="text-muted fst-italic">Silakan pilih tipe kamar untuk melihat total biaya</small>
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
                         @php
@@ -430,6 +435,12 @@
             document.getElementById('summary-room-type').innerText = name;
             document.getElementById('summary-total-price').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalPrice);
             
+            // Show total price section and hide warning if rented per room
+            const priceSection = document.getElementById('total-price-section');
+            const warningSection = document.getElementById('select-room-warning');
+            if (priceSection) priceSection.style.display = 'block';
+            if (warningSection) warningSection.style.display = 'none';
+
             // Update hidden input total price for final form
             document.querySelector('input[name="total_price"]').value = totalPrice;
         }
