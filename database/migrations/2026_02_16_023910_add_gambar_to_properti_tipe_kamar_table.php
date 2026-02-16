@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('bookings', function (Blueprint $table) {
-            if (!Schema::hasColumn('bookings', 'payment_method')) {
-                $table->string('payment_method')->nullable()->after('status');
-            }
+        Schema::table('properti_tipe_kamar', function (Blueprint $table) {
+            $table->json('gambar')->nullable()->after('tipe_kamar_id');
         });
     }
 
@@ -23,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('bookings', function (Blueprint $table) {
-            $table->dropColumn('payment_method');
+        Schema::table('properti_tipe_kamar', function (Blueprint $table) {
+            $table->dropColumn('gambar');
         });
     }
 };

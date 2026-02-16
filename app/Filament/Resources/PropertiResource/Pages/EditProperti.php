@@ -39,4 +39,35 @@ class EditProperti extends EditRecord
             'kelurahan' => $this->record->kelurahan,
         ]);
     }
+    protected array $tipeKamarImages = [];
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $this->record->load('tipeKamars');
+        
+        foreach ($this->record->tipeKamars as $tipeKamar) {
+            if ($tipeKamar->pivot->gambar) {
+                $data['tipe_kamar_images'][$tipeKamar->id] = $tipeKamar->pivot->gambar;
+            }
+        }
+    
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $this->tipeKamarImages = $data['tipe_kamar_images'] ?? [];
+        unset($data['tipe_kamar_images']);
+    
+        return $data;
+    }
+
+    protected function afterSave(): void
+    {
+        if (!empty($this->tipeKamarImages)) {
+            foreach ($this->tipeKamarImages as $tipeKamarId => $imagePath) {
+                $this->record->tipeKamars()->updateExistingPivot($tipeKamarId, ['gambar' => $imagePath]);
+            }
+        }
+    }
 }

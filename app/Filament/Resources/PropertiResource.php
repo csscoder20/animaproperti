@@ -337,12 +337,26 @@ class PropertiResource extends Resource
                                 ->columnSpan(1),
                                 ])
                                 ->columnSpanFull(),
+
+                             Section::make('Tipe Kamar')
+                                ->schema([
+                                    Forms\Components\CheckboxList::make('tipeKamars')
+                                        ->label('Tipe Kamar')
+                                        ->helperText('Pilih tipe kamar yang tersedia')
+                                        ->relationship('tipeKamars', 'nama')
+                                        ->columns(3)
+                                        ->gridDirection('row')
+                                        ->bulkToggleable()
+                                        ->live()
+                                ])
+                                ->visible(fn($get) => $get('disewa_per_kamar') === true)
+                                ->columnSpanFull(),
                             
                             Section::make('Fasilitas Kamar')
                                 ->schema([
                                     Forms\Components\CheckboxList::make('fasilitas')
                                         ->label('Fasilitas Kamar')
-                                        ->helperText('Jika tidak menemukan fasilitas yang diinginkan, silahkan tambahkan terlebih dahulu di halaman Fasilitas')
+                                        ->helperText('Jika tidak menemukan fasilitas yang diinginkan, silakan tambahkan terlebih dahulu di halaman Fasilitas')
                                         ->relationship('fasilitas', 'nama')
                                         ->columns(3)
                                         ->gridDirection('row')
@@ -422,6 +436,29 @@ class PropertiResource extends Resource
                                         ->default([])
                                         ->columnSpanFull(),
                                 ])->columns(2),
+
+                            Section::make('Foto Tipe Kamar')
+                                ->schema(function (Forms\Get $get) {
+                                    $tipeKamars = $get('tipeKamars') ?? [];
+                                    if (empty($tipeKamars)) {
+                                        return [];
+                                    }
+                                    
+                                    $names = \App\Models\TipeKamar::whereIn('id', $tipeKamars)->pluck('nama', 'id');
+                                    $schema = [];
+                                    foreach ($names as $id => $nama) {
+                                        $schema[] = FileUpload::make("tipe_kamar_images.{$id}")
+                                            ->label("Foto {$nama}")
+                                            ->image()
+                                            ->directory('tipe-kamar-images')
+                                            ->maxSize(1024)
+                                            ->imageEditor()
+                                            ->columnSpan(1);
+                                    }
+                                    return $schema;
+                                })
+                                ->visible(fn(Forms\Get $get) => $get('disewa_per_kamar') === true && !empty($get('tipeKamars')))
+                                ->columns(3),
                         ]),
                 ])
                     ->columnSpanFull()

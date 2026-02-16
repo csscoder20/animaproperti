@@ -76,6 +76,11 @@ class Properti extends Model
         return $this->belongsToMany(Agen::class, 'agen_properti');
     }
 
+    public function tipeKamars()
+    {
+        return $this->belongsToMany(TipeKamar::class, 'properti_tipe_kamar', 'properti_id', 'tipe_kamar_id')->withPivot('gambar');
+    }
+
     public function images()
     {
         return $this->hasMany(PropertyImage::class);
