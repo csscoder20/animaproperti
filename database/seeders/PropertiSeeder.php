@@ -3,18 +3,21 @@
 namespace Database\Seeders;
 
 use App\Models\Properti;
+use App\Models\TipeKamar;
+use App\Models\PropertiTipeKamar;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use App\Models\MasterWilayah;
 use Carbon\Carbon;
 
 class PropertiSeeder extends Seeder
 {
-
     public function run(): void
     {
+        // Bersihkan data lama
         DB::table('propertis')->delete();
+
+        $this->command->info('DEBUG: Inserting Properties...');
 
         $data = [
             [
@@ -84,7 +87,7 @@ class PropertiSeeder extends Seeder
                 'judul' => 'Rumah Secondary di Perum Dosen UMI Tipe 54',
                 'slug' => 'rumah-secondary-di-perum-dosen-umi-tipe-54',
                 'jenis_properti_id' => 'a6023ab6-4e6e-4add-b2aa-9ef2e39e2bfa',
-                'deskripsi' => '<p>Rumah Second Dijual – Perumahan Dosen UMI, Blok M4 No.1, Rama Sejahtera, Makassar<br><br>Temukan hunian nyaman untuk keluarga Anda di Perumahan Dosen UMI, Makassar. Rumah second ini berada di lokasi strategis dengan lingkungan yang sudah tertata rapi dan akses mudah ke berbagai fasilitas umum.<br><br>Dengan ukuran tanah 9 x 13 m dan tipe bangunan 54, rumah ini memiliki ruang yang cukup luas untuk menunjang aktivitas keluarga. Cocok untuk Anda yang mencari hunian dekat sekolah, fasilitas kesehatan, maupun pusat aktivitas kota.<br><br>Spesifikasi Rumah:<br><br>Luas tanah: 117 m² (9 x 13)<br>Luas bangunan: 54 m²<br>Kamar tidur: 4<br>Kamar mandi: 1<br>Ruang tamu &amp; ruang keluarga<br>Dapur &amp; area belakang<br><br>Lokasi: Perumahan Dosen UMI Blok M4 No.1, Rama Sejahtera, Makassar<br><br><br>Keunggulan Lokasi:<br><br>Dekat sekolah dan kampus UMI<br>Lingkungan perumahan tertata &amp; nyaman<br>Akses mudah ke pasar, rumah sakit, dan pusat perbelanjaan<br>Jalan kompleks lebar &amp; akses kendaraan lancar<br><br><br>✨ Hunian ini sangat cocok untuk keluarga yang mengutamakan kenyamanan, keamanan, dan lokasi strategis di kota Makassar.</p>',
+                'deskripsi' => '<p>Rumah Second Dijual – Perumahan Dosen UMI, Blok M4 No.1, Makassar<br><br>Temukan hunian nyaman untuk keluarga Anda di Perumahan Dosen UMI, Makassar. Rumah second ini berada di lokasi strategis dengan lingkungan yang sudah tertata rapi dan akses mudah ke berbagai fasilitas umum.<br><br>Dengan ukuran tanah 9 x 13 m dan tipe bangunan 54, rumah ini memiliki ruang yang cukup luas untuk menunjang aktivitas keluarga. Cocok untuk Anda yang mencari hunian dekat sekolah, fasilitas kesehatan, maupun pusat aktivitas kota.<br><br>Spesifikasi Rumah:<br><br>Luas tanah: 117 m² (9 x 13)<br>Luas bangunan: 54 m²<br>Kamar tidur: 4<br>Kamar mandi: 1<br>Ruang tamu &amp; ruang keluarga<br>Dapur &amp; area belakang<br><br>Lokasi: Perumahan Dosen UMI Blok M4 No.1, Rama Sejahtera, Makassar<br><br><br>Keunggulan Lokasi:<br><br>Dekat sekolah dan kampus UMI<br>Lingkungan perumahan tertata &amp; nyaman<br>Akses mudah ke pasar, rumah sakit, dan pusat perbelanjaan<br>Jalan kompleks lebar &amp; akses kendaraan lancar<br><br><br>✨ Hunian ini sangat cocok untuk keluarga yang mengutamakan kenyamanan, keamanan, dan lokasi strategis di kota Makassar.</p>',
                 'harga' => 1400000000.00,
                 'status' => 'Tersedia',
                 'penawaran' => 'Dijual',
@@ -105,7 +108,7 @@ class PropertiSeeder extends Seeder
                 'jumlah_kamar_mandi' => 2,
                 'luas_bangunan' => 100,
                 'luas_tanah' => 117,
-                'tahun_dibangun' => 2020,
+                'tahun_dibangun' => null,
                 'unggulan' => false,
                 'created_at' => '2025-08-27 01:35:56',
                 'updated_at' => '2025-08-27 01:38:53'
@@ -136,7 +139,7 @@ class PropertiSeeder extends Seeder
                 'jumlah_kamar_mandi' => 3,
                 'luas_bangunan' => 162,
                 'luas_tanah' => 130,
-                'tahun_dibangun' => 2020,
+                'tahun_dibangun' => null,
                 'unggulan' => false,
                 'created_at' => '2025-08-27 02:01:31',
                 'updated_at' => '2025-08-27 02:02:00'
@@ -167,7 +170,7 @@ class PropertiSeeder extends Seeder
                 'jumlah_kamar_mandi' => 0,
                 'luas_bangunan' => 0,
                 'luas_tanah' => 200,
-                'tahun_dibangun' => NULL,
+                'tahun_dibangun' => null,
                 'unggulan' => false,
                 'created_at' => '2025-08-27 02:15:53',
                 'updated_at' => '2025-08-27 02:17:02'
@@ -198,7 +201,7 @@ class PropertiSeeder extends Seeder
                 'jumlah_kamar_mandi' => 3,
                 'luas_bangunan' => 90,
                 'luas_tanah' => 105,
-                'tahun_dibangun' => 2020,
+                'tahun_dibangun' => null,
                 'unggulan' => false,
                 'created_at' => '2025-08-27 02:36:31',
                 'updated_at' => '2025-08-27 02:36:31'
@@ -229,7 +232,7 @@ class PropertiSeeder extends Seeder
                 'jumlah_kamar_mandi' => 2,
                 'luas_bangunan' => 117,
                 'luas_tanah' => 59,
-                'tahun_dibangun' => 2020,
+                'tahun_dibangun' => null,
                 'unggulan' => false,
                 'created_at' => '2025-08-27 09:38:35',
                 'updated_at' => '2025-08-27 09:38:35'
@@ -243,8 +246,8 @@ class PropertiSeeder extends Seeder
                 'harga' => 1500000.00,
                 'status' => 'Tersedia',
                 'penawaran' => 'Dijual',
-                'jenis_cluster' => NULL,
-                'tipe_perumahan' => NULL,
+                'jenis_cluster' => null,
+                'tipe_perumahan' => null,
                 'provinsi' => '73',
                 'kabupaten' => '73.71',
                 'kecamatan' => '73.71.14',
@@ -256,11 +259,11 @@ class PropertiSeeder extends Seeder
                 'link_site_plan' => '#',
                 'gbr_primary_properti' => 'data-pendukung/01K6AB32R0J8SEQJR85XK9MQK9.jpg',
                 'alamat_lengkap' => 'Jl. Jalur Lingkaran Barat - Makassar',
-                'jumlah_kamar_tidur' => NULL,
-                'jumlah_kamar_mandi' => NULL,
-                'luas_bangunan' => NULL,
+                'jumlah_kamar_tidur' => null,
+                'jumlah_kamar_mandi' => null,
+                'luas_bangunan' => null,
                 'luas_tanah' => 165,
-                'tahun_dibangun' => NULL,
+                'tahun_dibangun' => null,
                 'unggulan' => false,
                 'created_at' => '2025-09-29 08:58:07',
                 'updated_at' => '2025-09-29 08:58:07'
@@ -357,76 +360,12 @@ class PropertiSeeder extends Seeder
                 'unggulan' => false,
                 'created_at' => '2025-08-05 13:28:29',
                 'updated_at' => '2025-08-08 10:38:41'
-            ],
-            [
-                'id' => '0198eae4-bd2e-733d-beb3-d749677c0d64',
-                'judul' => 'Vida View Apartment - Luxury Unit ready to stay',
-                'slug' => 'vida-view-apartment-luxury-unit-ready-to-stay',
-                'jenis_properti_id' => 'c3d05c3e-a3d2-48f2-b5b6-006a6d43d3c5',
-                'deskripsi' => '<p>Nikmati hunian vertikal di jantung kota Makassar. Vida View Apartment hadir dengan fasilitas bintang 5.</p>',
-                'harga' => 850000000.00,
-                'status' => 'Tersedia',
-                'penawaran' => 'Disewa',
-                'jenis_cluster' => 'Brentwood',
-                'tipe_perumahan' => '2BR',
-                'provinsi' => '73',
-                'kabupaten' => '73.71',
-                'kecamatan' => '73.71.13',
-                'kelurahan' => '73.71.13.1009',
-                'kode_pos' => '90221',
-                'link_brosur' => '#',
-                'link_layout' => '#',
-                'link_spesifikasi' => '#',
-                'link_site_plan' => '#',
-                'gbr_primary_properti' => 'data-pendukung/01K3NE9F97TV6X45GHD9MX8BV8.jpeg',
-                'alamat_lengkap' => 'Jl. Topaz Raya, Makassar',
-                'jumlah_kamar_tidur' => 2,
-                'jumlah_kamar_mandi' => 1,
-                'luas_bangunan' => 42,
-                'luas_tanah' => 45,
-                'tahun_dibangun' => 2018,
-                'unggulan' => true,
-                'disewa_per_kamar' => true,
-                'created_at' => '2025-08-27 09:38:35',
-                'updated_at' => '2025-08-27 09:38:35'
-            ],
-            [
-                'id' => '0198eae4-bd2e-733d-beb3-d749677c0d65',
-                'judul' => 'Kost Eksklusif Pettarani - Dekat Kampus dan Perkantoran',
-                'slug' => 'kost-eksklusif-pettarani-dekat-kampus-dan-perkantoran',
-                'jenis_properti_id' => 'ef178b65-0ccb-4a26-a5d2-584f8ccf2523',
-                'deskripsi' => '<p>Kost nyaman dengan fasilitas lengkap di pusat bisnis Makassar.</p>',
-                'harga' => 2500000.00,
-                'status' => 'Tersedia',
-                'penawaran' => 'Disewa',
-                'jenis_cluster' => 'Eksklusif',
-                'tipe_perumahan' => 'Standar',
-                'provinsi' => '73',
-                'kabupaten' => '73.71',
-                'kecamatan' => '73.71.13',
-                'kelurahan' => '73.71.13.1009',
-                'kode_pos' => '90221',
-                'link_brosur' => '#',
-                'link_layout' => '#',
-                'link_spesifikasi' => '#',
-                'link_site_plan' => '#',
-                'gbr_primary_properti' => 'data-pendukung/01K3NE9F97TV6X45GHD9MX8BV9.jpeg',
-                'alamat_lengkap' => 'Jl. A.P. Pettarani, Makassar',
-                'jumlah_kamar_tidur' => 1,
-                'jumlah_kamar_mandi' => 1,
-                'luas_bangunan' => 15,
-                'luas_tanah' => 100,
-                'tahun_dibangun' => 2022,
-                'unggulan' => true,
-                'disewa_per_kamar' => true,
-                'created_at' => '2025-08-27 09:38:35',
-                'updated_at' => '2025-08-27 09:38:35'
-            ],
+            ]
         ];
 
-        $this->command->info('DEBUG: Inserting Properties...');
         foreach ($data as $item) {
-            $properti = \App\Models\Properti::create($item);
+            // Create property
+            $properti = Properti::create($item);
 
             // Attach 3 random facilities
             $randomFasilitas = \App\Models\Fasilitas::inRandomOrder()->take(3)->pluck('id');
@@ -437,24 +376,83 @@ class PropertiSeeder extends Seeder
                 'c3d05c3e-a3d2-48f2-b5b6-006a6d43d3c5', // Apartemen
                 'ef178b65-0ccb-4a26-a5d2-584f8ccf2523'  // Kost
             ])) {
-                $tipeKamars = \App\Models\TipeKamar::inRandomOrder()->take(2)->get();
-                foreach ($tipeKamars as $tk) {
-                    $properti->tipeKamars()->attach($tk->id, [
-                        'id' => \Illuminate\Support\Str::uuid(),
-                        'harga_per_malam' => $properti->harga / 30, // Rough estimate
+                
+                // Define 2 room types specifically for this property
+                $hargaPerMalam = $item['penawaran'] === 'Disewa' ? $item['harga'] / 30 : $item['harga'] / 360;
+                
+                $roomTypesData = [
+                    [
+                        'nama' => 'Standard Room',
+                        'harga_per_malam' => $hargaPerMalam,
+                        'jumlah_kamar' => 1,
+                        'kapasitas_dewasa' => 1,
+                        'kapasitas_anak' => 0,
+                        'luas_kamar' => '16',
+                        'tipe_bed' => 'Single Bed',
                         'tersedia_dari' => now(),
-                        'tersedia_sampai' => now()->addMonths(6),
-                        'kapasitas_dewasa' => rand(1, 2),
-                        'kapasitas_anak' => rand(0, 1),
-                        'jumlah_kamar' => rand(5, 10),
-                        'luas_kamar' => rand(15, 30),
-                        'tipe_bed' => 'Double Bed',
+                        'tersedia_sampai' => now()->addYear(),
+                        'gambar' => 'https://placehold.co/600x400?text=Standard+Room',
+                    ],
+                    [
+                        'nama' => 'Deluxe Room',
+                        'harga_per_malam' => $hargaPerMalam * 1.5,
+                        'jumlah_kamar' => 1,
+                        'kapasitas_dewasa' => 2,
+                        'kapasitas_anak' => 1,
+                        'luas_kamar' => '24',
+                        'tipe_bed' => 'Queen Bed',
+                        'tersedia_dari' => now(),
+                        'tersedia_sampai' => now()->addYear(),
+                        'gambar' => 'https://placehold.co/600x400?text=Deluxe+Room',
+                    ]
+                ];
+
+                foreach ($roomTypesData as $rtData) {
+                    // Create TipeKamar
+                    $tipeKamar = TipeKamar::create([
+                        'id' => Str::uuid(),
+                        'nama' => $rtData['nama'],
+                        'harga_per_malam' => $rtData['harga_per_malam'],
+                        'jumlah_kamar' => $rtData['jumlah_kamar'],
+                        'kapasitas_dewasa' => $rtData['kapasitas_dewasa'],
+                        'kapasitas_anak' => $rtData['kapasitas_anak'],
+                        'luas_kamar' => $rtData['luas_kamar'],
+                        'tipe_bed' => $rtData['tipe_bed'],
+                        'tersedia_dari' => $rtData['tersedia_dari'],
+                        'tersedia_sampai' => $rtData['tersedia_sampai'],
+                        'gambar' => $rtData['gambar'],
                         'created_at' => now(),
-                        'updated_at' => now(),
+                        'updated_at' => now()
+                    ]);
+                    
+                    // Attach random facilities to this room type
+                    $roomFasilitas = \App\Models\Fasilitas::inRandomOrder()->take(2)->pluck('id');
+                    $tipeKamar->fasilitas()->attach($roomFasilitas);
+
+                    // Using the pivot model directly
+                    PropertiTipeKamar::create([
+                        'id' => Str::uuid(),
+                        'properti_id' => $properti->id,
+                        'tipe_kamar_id' => $tipeKamar->id,
+                        'harga_per_malam' => $rtData['harga_per_malam'],
+                        'tersedia_dari' => $rtData['tersedia_dari'],
+                        'tersedia_sampai' => $rtData['tersedia_sampai'],
+                        'kapasitas_dewasa' => $rtData['kapasitas_dewasa'],
+                        'kapasitas_anak' => $rtData['kapasitas_anak'],
+                        'jumlah_kamar' => $rtData['jumlah_kamar'],
+                        'luas_kamar' => $rtData['luas_kamar'],
+                        'tipe_bed' => $rtData['tipe_bed'],
+                        'gambar' => $rtData['gambar'],
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ]);
                 }
+                
+                // Update room statistics for the property
                 $properti->updateRoomStats();
             }
         }
+
+        $this->command->info('Properties seeded successfully! Total: ' . count($data) . ' properties.');
     }
 }

@@ -30,6 +30,7 @@ class Booking extends Model
         'status',
         'payment_method',
         'room_number',
+        'tipe_kamar_id',
     ];
 
     public function properti()
@@ -40,5 +41,10 @@ class Booking extends Model
     public function agent()
     {
         return $this->belongsTo(Agen::class);
+    }
+
+    public function tipeKamar()
+    {
+        return $this->belongsTo(TipeKamar::class);
     }
 }

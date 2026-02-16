@@ -283,60 +283,19 @@ class PropertiResource extends Resource
                                         ->default(false)
                                         ->columnSpanFull(),
 
-                                    Forms\Components\Repeater::make('propertiTipeKamars')
+                                    Forms\Components\CheckboxList::make('tipeKamars')
                                         ->label('Daftar Tipe Kamar')
-                                        ->relationship()
-                                        ->schema([
-                                            Select::make('tipe_kamar_id')
-                                                ->label('Tipe Kamar')
-                                                ->options(TipeKamar::all()->pluck('nama', 'id'))
-                                                ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                                ->required()
-                                                ->columnSpanFull(),
-                                            
-                                            TextInput::make('harga_per_malam')
-                                                ->label('Harga per Malam')
-                                                ->numeric()
-                                                ->prefix('Rp')
-                                                ->required(),
-                                            
-                                            TextInput::make('jumlah_kamar')
-                                                ->label('Jumlah Kamar')
-                                                ->numeric()
-                                                ->default(1)
-                                                ->required(),
-
-                                            TextInput::make('kapasitas_dewasa')
-                                                ->label('Max Dewasa')
-                                                ->numeric()
-                                                ->default(2)
-                                                ->required(),
-
-                                            TextInput::make('kapasitas_anak')
-                                                ->label('Max Anak')
-                                                ->numeric()
-                                                ->default(0)
-                                                ->required(),
-
-                                            Forms\Components\DatePicker::make('tersedia_dari')
-                                                ->label('Tersedia Dari')
-                                                ->native(false)
-                                                ->displayFormat('d M Y'),
-                                            
-                                            Forms\Components\DatePicker::make('tersedia_sampai')
-                                                ->label('Tersedia Sampai')
-                                                ->native(false)
-                                                ->displayFormat('d M Y'),
-
-                                            FileUpload::make('gambar')
-                                                ->label('Foto Kamar')
-                                                ->image()
-                                                ->directory('tipe-kamar-images')
-                                                ->columnSpanFull(),
-                                        ])
-                                        ->columns(2)
+                                        ->relationship('tipeKamars', 'nama')
+                                        ->columns(3)
+                                        ->gridDirection('row')
+                                        ->bulkToggleable()
                                         ->visible(fn (Forms\Get $get) => $get('disewa_per_kamar'))
-                                        ->columnSpanFull(),
+                                        ->columnSpanFull()
+                                        ->afterStateUpdated(function ($state, $record) {
+                                            if ($record) {
+                                                $record->updateRoomStats();
+                                            }
+                                        }),
                                 ])
                                 ->columnSpanFull(),
 
@@ -370,6 +329,7 @@ class PropertiResource extends Resource
                                         ->gridDirection('row')
                                         ->bulkToggleable()
                                 ])
+                                ->visible(fn (Forms\Get $get) => !$get('disewa_per_kamar'))
                                 ->columnSpanFull(),
                         ]),
 

@@ -26,14 +26,21 @@
                         {{-- 1. Detail Properti --}}
                         <div class="row mb-4">
                             <div class="col-md-4 mb-3 mb-md-0">
-                                <img src="{{ $property->primary_image_url }}" class="img-fluid rounded shadow-sm mb-3" alt="{{ $property->judul }}">
+                                <img src="{{ isset($tipeKamar) && $tipeKamar->gambar ? asset('storage/' . $tipeKamar->gambar) : $property->primary_image_url }}" class="img-fluid rounded shadow-sm mb-3" alt="{{ $property->judul }}">
                                 
                                 {{-- Fasilitas Kamar --}}
-                                @if($property->fasilitas->count() > 0)
+                                {{-- Fasilitas Kamar --}}
+                                @php
+                                    $facilitiesToDisplay = isset($tipeKamar) && $tipeKamar->fasilitas->count() > 0 
+                                        ? $tipeKamar->fasilitas 
+                                        : $property->fasilitas;
+                                @endphp
+
+                                @if($facilitiesToDisplay->count() > 0)
                                     <div class="facilities-section">
                                         <small class="text-muted d-block mb-2 fw-semibold"><i class="bi bi-stars me-1"></i>Fasilitas Kamar</small>
                                         <div class="d-flex flex-wrap gap-2">
-                                            @foreach($property->fasilitas as $fasilitas)
+                                            @foreach($facilitiesToDisplay as $fasilitas)
                                                 <span class="badge bg-light text-dark border" style="font-weight: 500; padding: 5px 10px; font-size: 0.85rem;">
                                                     <i class="bi {{ $fasilitas->icon ?? 'bi-check-circle' }} me-1 text-primary"></i>
                                                     {{ $fasilitas->nama }}
@@ -169,7 +176,7 @@
                             <div class="d-flex justify-content-between mb-2" style="font-size: 0.9rem;">
                                 <span>Harga per Kamar (per Malam)</span>
                                 @php
-                                    $pricePerNight = $property->harga_sewa_per_malam ?? $property->harga;
+                                    $pricePerNight = isset($tipeKamar) ? $tipeKamar->harga_per_malam : ($property->harga_sewa_per_malam ?? $property->harga);
                                 @endphp
                                 <span class="text-end">Rp {{ number_format($pricePerNight, 0, ',', '.') }}</span>
                             </div>

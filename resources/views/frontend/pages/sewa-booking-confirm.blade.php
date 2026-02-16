@@ -67,6 +67,7 @@
                             <input type="hidden" name="guests" value="{{ $bookingData['guests'] }}">
                             <input type="hidden" name="duration" value="{{ $bookingData['duration'] }}">
                             <input type="hidden" name="total_price" value="{{ $bookingData['total_price'] }}">
+                            <input type="hidden" name="tipe_kamar_id" value="{{ $bookingData['tipe_kamar_id'] ?? '' }}">
                             
                             {{-- Agent Data (Hidden) --}}
                             <input type="hidden" name="agent_name" id="agent_name">

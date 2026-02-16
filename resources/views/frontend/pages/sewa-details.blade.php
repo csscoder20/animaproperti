@@ -109,12 +109,123 @@
                                 <form id="bookingConfirmForm" action="{{ route('sewa.booking.summary', $property->slug) }}" method="POST">
                                     @csrf
                                     {{-- Hidden Inputs --}}
-                                    <input type="hidden" name="checkin" value="{{ $checkin->format('Y-m-d\TH:i') }}">
-                                    <input type="hidden" name="checkout" value="{{ $checkout->format('Y-m-d\TH:i') }}">
-                                    <input type="hidden" name="rooms" value="{{ $rooms }}">
-                                    <input type="hidden" name="guests" value="{{ $guests }}">
-                                    <input type="hidden" name="duration" value="{{ $duration }}">
-                                    <input type="hidden" name="total_price" value="{{ $totalPrice }}">
+                                    @if(request()->filled('checkin'))
+                                        {{-- Hidden Inputs when coming from search --}}
+                                        <input type="hidden" name="checkin" value="{{ $checkin->format('Y-m-d\TH:i') }}">
+                                        <input type="hidden" name="checkout" value="{{ $checkout->format('Y-m-d\TH:i') }}">
+                                        <input type="hidden" name="rooms" value="{{ $rooms }}">
+                                        <input type="hidden" name="guests" value="{{ $guests }}">
+                                        <input type="hidden" name="duration" value="{{ $duration }}">
+                                    @else
+                                        {{-- Visible Inputs when direct booking --}}
+                                        <h5 class="fw-bold border-bottom pb-2 mb-3">Detail Pesanan</h5>
+                                        <div class="row g-3 mb-4">
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-bold small">Tanggal Sewa</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-calendar3 text-primary"></i></span>
+                                                    <input type="text" id="details-datepicker" class="form-control border-start-0" placeholder="Pilih Tanggal Check-in - Check-out" readonly style="background-color: #fff; cursor: pointer;">
+                                                </div>
+                                                <input type="hidden" name="checkin" id="input-checkin" value="{{ now()->format('Y-m-d') }}">
+                                                <input type="hidden" name="checkout" id="input-checkout" value="{{ now()->addDay()->format('Y-m-d') }}">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-bold small">Tamu & Kamar</label>
+                                                <div class="dropdown">
+                                                    <input type="text" id="detailsGuestRoomDisplay" class="form-control"
+                                                        placeholder="1 Dewasa, 0 Anak, 1 Kamar" readonly data-bs-toggle="dropdown"
+                                                        aria-expanded="false" style="background-color: #fff; cursor: pointer;">
+                                                    <ul class="dropdown-menu p-3 border-0 shadow" aria-labelledby="detailsGuestRoomDisplay"
+                                                        style="width: 100%; min-width: 300px; border-radius: 12px; margin-top: 10px;">
+                                                        
+                                                        {{-- Adult --}}
+                                                        <li class="d-flex justify-content-between align-items-center mb-3">
+                                                            <div>
+                                                                <h6 class="mb-0 fw-bold">Dewasa</h6>
+                                                                <small class="text-muted">Usia 13+</small>
+                                                            </div>
+                                                            <div class="d-flex align-items-center">
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-outline-secondary rounded-circle"
+                                                                    onclick="updateCounter('adult', -1)"
+                                                                    style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">-</button>
+                                                                <span id="detailsAdultCount" class="mx-3 fw-bold" style="min-width: 20px; text-align: center;">1</span>
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-outline-primary rounded-circle"
+                                                                    onclick="updateCounter('adult', 1)"
+                                                                    style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">+</button>
+                                                            </div>
+                                                        </li>
+        
+                                                        {{-- Children --}}
+                                                        <li class="d-flex justify-content-between align-items-center mb-3">
+                                                            <div>
+                                                                <h6 class="mb-0 fw-bold">Anak</h6>
+                                                                <small class="text-muted">Usia 0-12</small>
+                                                            </div>
+                                                            <div class="d-flex align-items-center">
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-outline-secondary rounded-circle"
+                                                                    onclick="updateCounter('child', -1)"
+                                                                    style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">-</button>
+                                                                <span id="detailsChildCount" class="mx-3 fw-bold" style="min-width: 20px; text-align: center;">0</span>
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-outline-primary rounded-circle"
+                                                                    onclick="updateCounter('child', 1)"
+                                                                    style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">+</button>
+                                                            </div>
+                                                        </li>
+        
+                                                        {{-- Result Children Age Section --}}
+                                                        <li id="childrenAgeSection" class="mb-3" style="display: none;">
+                                                            <div class="p-0">
+                                                                <h6 class="fw-bold mb-1" style="font-size: 0.9rem;">Masukkan Umur Anak</h6>
+                                                                <small class="text-muted d-block mb-3" style="font-size: 0.8rem; line-height: 1.2;">
+                                                                    Mengetahui umur anak akan membantu kami menemukan properti yang cocok
+                                                                </small>
+                                                                <div id="childrenAgeInputs" class="row g-2">
+                                                                    {{-- Dynamic inputs will appear here --}}
+                                                                </div>
+                                                            </div>
+                                                        </li>
+        
+                                                        {{-- Room --}}
+                                                        <li class="d-flex justify-content-between align-items-center mb-4">
+                                                            <div>
+                                                                <h6 class="mb-0 fw-bold">Kamar</h6>
+                                                            </div>
+                                                            <div class="d-flex align-items-center">
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-outline-secondary rounded-circle"
+                                                                    onclick="updateCounter('room', -1)"
+                                                                    style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">-</button>
+                                                                <span id="detailsRoomCount" class="mx-3 fw-bold" style="min-width: 20px; text-align: center;">1</span>
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-outline-primary rounded-circle"
+                                                                    onclick="updateCounter('room', 1)"
+                                                                    style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">+</button>
+                                                            </div>
+                                                        </li>
+        
+                                                        {{-- Done Button --}}
+                                                        <li>
+                                                            <button type="button" class="btn btn-primary w-100 rounded-pill" onclick="document.getElementById('detailsGuestRoomDisplay').click()">Selesai</button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                            {{-- Hidden Inputs for Form --}}
+                                            <input type="hidden" name="rooms" id="input-rooms" value="1">
+                                            <input type="hidden" name="guests" id="input-guests" value="1">
+                                            <input type="hidden" name="adults" id="input-adults" value="1">
+                                            <input type="hidden" name="children" id="input-children" value="0">
+                                            
+                                            <input type="hidden" name="duration" id="input-duration" value="1">
+                                        </div>
+                                    @endif
+                                    
+                                    <input type="hidden" name="total_price" id="input-total-price" value="{{ $totalPrice }}">
                                     <input type="hidden" name="agent_name" id="agent_name">
                                     <input type="hidden" name="agent_phone" id="agent_phone">
                                     <input type="hidden" name="tipe_kamar_id" id="tipe_kamar_id">
@@ -145,8 +256,8 @@
                                         <div class="d-flex flex-column gap-3 mb-4">
                                             @foreach($property->tipeKamars as $tipe)
                                                 @php
-                                                    $imagePath = $tipe->pivot->gambar 
-                                                        ? asset('storage/' . $tipe->pivot->gambar) 
+                                                    $imagePath = $tipe->gambar 
+                                                        ? asset('storage/' . $tipe->gambar) 
                                                         : asset('themes/frontend/assets/img/default-room.jpg');
                                                 @endphp
                                                 <div class="card border tipekamar-card-item" id="tipe-card-{{ $tipe->id }}">
@@ -165,7 +276,7 @@
                                                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                                                     <h5 class="fw-bold mb-0 text-dark">{{ $tipe->nama }}</h5>
                                                                     <div class="text-end">
-                                                                        <h5 class="fw-bold mb-0 text-success">Rp {{ number_format($tipe->pivot->harga_per_malam, 0, ',', '.') }}</h5>
+                                                                        <h5 class="fw-bold mb-0 text-success">Rp {{ number_format($tipe->harga_per_malam, 0, ',', '.') }}</h5>
                                                                         <small class="text-muted">Room Total</small>
                                                                     </div>
                                                                 </div>
@@ -177,24 +288,24 @@
                                                                         <div class="col-sm-6">
                                                                             <div class="d-flex align-items-center mb-1 small">
                                                                                 <i class="bi bi-people room-specs-icon"></i>
-                                                                                <span>Max {{ $tipe->pivot->kapasitas_dewasa }} Dewasa, {{ $tipe->pivot->kapasitas_anak }} Anak</span>
+                                                                                <span>Max {{ $tipe->kapasitas_dewasa }} Dewasa, {{ $tipe->kapasitas_anak }} Anak</span>
                                                                             </div>
                                                                             <div class="d-flex align-items-center small">
                                                                                 <i class="bi bi-arrows-fullscreen room-specs-icon" style="font-size: 0.8rem;"></i>
-                                                                                <span>{{ $tipe->pivot->luas_kamar ?? '-' }} m²</span>
+                                                                                <span>{{ $tipe->luas_kamar ?? '-' }} m²</span>
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-sm-6">
                                                                             <div class="d-flex align-items-center small">
                                                                                 <i class="bi bi-briefcase room-specs-icon"></i>
-                                                                                <span>{{ $tipe->pivot->tipe_bed ?? '-' }}</span>
+                                                                                <span>{{ $tipe->tipe_bed ?? '-' }}</span>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="text-end">
-                                                                    <button type="button" class="btn btn-outline-success tipekamar-select-btn" id="btn-select-{{ $tipe->id }}" onclick="selectTipeKamar(this, '{{ $tipe->id }}', {{ $tipe->pivot->harga_per_malam }}, '{{ $tipe->nama }}')">
+                                                                    <button type="button" class="btn btn-outline-success tipekamar-select-btn" id="btn-select-{{ $tipe->id }}" onclick="selectTipeKamar(this, '{{ $tipe->id }}', {{ $tipe->harga_per_malam }}, '{{ $tipe->nama }}')">
                                                                         Select
                                                                     </button>
                                                                 </div>
@@ -323,8 +434,8 @@
                             <div class="row g-3 small">
                                 <div class="col-md-6">
                                     <span class="text-muted d-block">Tanggal:</span>
-                                        <span class="fw-bold">{{ $checkin->translatedFormat('d M Y') }} - {{ $checkout->translatedFormat('d M Y') }}</span>
-                                        <span class="ms-1">({{ $duration }} Malam)</span>
+                                        <span class="fw-bold" id="summary-dates">{{ $checkin->translatedFormat('d M Y') }} - {{ $checkout->translatedFormat('d M Y') }}</span>
+                                        <span class="ms-1" id="summary-duration">({{ $duration }} Malam)</span>
                                     </div>
                                     <div class="col-md-6">
                                         <span class="text-muted d-block">Unit:</span>
@@ -359,8 +470,63 @@
 
 
     @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.umd.min.js"></script>
     <script>
+        let basePrice = {{ $pricePerNight }};
+        let currentRoomPrice = null;
+        let selectedRoomName = null;
+
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if details-datepicker exists (direct booking mode)
+            const datepickerEl = document.getElementById('details-datepicker');
+            if (datepickerEl) {
+                const picker = new easepick.create({
+                    element: datepickerEl,
+                    css: [
+                        'https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css',
+                    ],
+                    plugins: ['RangePlugin', 'LockPlugin'],
+                    RangePlugin: {
+                        tooltipNumber(num) {
+                            return num - 1;
+                        },
+                        locale: {
+                            one: 'night',
+                            other: 'nights',
+                        },
+                    },
+                    LockPlugin: {
+                        minDate: new Date(),
+                    },
+                    calendars: 1,
+                    grid: 1,
+                    zIndex: 10,
+                    format: 'D MMM YYYY',
+                    setup(picker) {
+                        picker.on('select', (e) => {
+                            const {
+                                start,
+                                end
+                            } = e.detail;
+                            document.getElementById('input-checkin').value = start ? start.format('YYYY-MM-DD') : '';
+                            document.getElementById('input-checkout').value = end ? end.format('YYYY-MM-DD') : '';
+                            
+                            calculateBooking(); // Recalculate duration and price
+                        });
+                    },
+                });
+
+                // Pre-fill dates from hidden inputs
+                const checkinVal = document.getElementById('input-checkin').value;
+                const checkoutVal = document.getElementById('input-checkout').value;
+
+                if (checkinVal && checkoutVal) {
+                    const start = new Date(checkinVal);
+                    const end = new Date(checkoutVal);
+                    picker.setDateRange(start, end);
+                }
+            }
+
             var gallerySwiper = new Swiper('.property-gallery-slider', {
                 spaceBetween: 0,
                 loop: true,
@@ -382,8 +548,186 @@
                 selector: '.glightbox'
             });
 
-            // Agent Selection Logic (Event Delegation not needed with onclick)
+            // Initial calculation if inputs exist
+            if(document.getElementById('input-checkin')) {
+                updateDisplay(); // Initialize dropdown display and hidden inputs
+                calculateBooking();
+            }
+
+            // Prevent dropdown from closing when clicking inside
+            document.querySelectorAll('.dropdown-menu').forEach(function(element) {
+                element.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            });
         });
+
+        // Guest & Room Counter Logic
+        let counts = {
+            adult: 1,
+            child: 0,
+            room: 1
+        };
+
+        function updateDisplay() {
+            // Update UI Counters
+            const adultCountEl = document.getElementById('detailsAdultCount');
+            const childCountEl = document.getElementById('detailsChildCount');
+            const roomCountEl = document.getElementById('detailsRoomCount');
+
+            if(adultCountEl) adultCountEl.innerText = counts.adult;
+            if(childCountEl) childCountEl.innerText = counts.child;
+            if(roomCountEl) roomCountEl.innerText = counts.room;
+
+            // Update Hidden Inputs
+            const inputAdults = document.getElementById('input-adults');
+            const inputChildren = document.getElementById('input-children');
+            const inputRooms = document.getElementById('input-rooms');
+            const inputGuests = document.getElementById('input-guests');
+
+            if(inputAdults) inputAdults.value = counts.adult;
+            if(inputChildren) inputChildren.value = counts.child;
+            if(inputRooms) inputRooms.value = counts.room;
+            if(inputGuests) inputGuests.value = counts.adult + counts.child;
+
+            // Update Dropdown Button Text
+            let displayText = `${counts.adult} Dewasa, ${counts.child} Anak, ${counts.room} Kamar`;
+            const displayEl = document.getElementById('detailsGuestRoomDisplay');
+            if(displayEl) displayEl.value = displayText;
+
+            updateChildrenAgeInputs();
+            calculateBooking(); // Recalculate price when counts change
+        }
+
+        function updateChildrenAgeInputs() {
+            const container = document.getElementById('childrenAgeInputs');
+            const section = document.getElementById('childrenAgeSection');
+            
+            if (!container || !section) return;
+
+            if (counts.child > 0) {
+                section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
+                container.innerHTML = '';
+                return;
+            }
+
+            const currentInputs = container.querySelectorAll('.child-age-group');
+            const currentCount = currentInputs.length;
+            const targetCount = counts.child;
+
+            if (targetCount > currentCount) {
+                // Add inputs
+                for (let i = currentCount; i < targetCount; i++) {
+                    const col = document.createElement('div');
+                    col.className = 'col-6 child-age-group';
+                    col.innerHTML = `
+                        <label class="form-label small text-muted mb-1">Anak ${i + 1} (Bulan)</label>
+                        <input type="number" name="child_ages[]" class="form-control form-control-sm" min="0" placeholder="Bulan" style="border-radius: 8px;" oninput="convertMonthToYear(this, ${i})">
+                        <small id="age-conversion-${i}" class="text-primary" style="font-size: 0.75rem; display: block; margin-top: 2px;">0 Tahun</small>
+                    `;
+                    container.appendChild(col);
+                }
+            } else if (targetCount < currentCount) {
+                // Remove inputs
+                for (let i = currentCount - 1; i >= targetCount; i--) {
+                    currentInputs[i].remove();
+                }
+            }
+        }
+
+        function updateCounter(type, change) {
+            if (type === 'adult') {
+                if (counts.adult + change >= 1) counts.adult += change; // Min 1 adult
+            } else if (type === 'child') {
+                if (counts.child + change >= 0) counts.child += change;
+            } else if (type === 'room') {
+                if (counts.room + change >= 1) counts.room += change; // Min 1 room
+            }
+            updateDisplay();
+        }
+
+        function convertMonthToYear(input, index) {
+            const months = parseInt(input.value) || 0;
+            const years = (months / 12).toFixed(1);
+            const display = document.getElementById(`age-conversion-${index}`);
+            if(display) display.innerText = `${years} Tahun`;
+        }
+
+        function getBookingState() {
+            // Check if we have editable inputs
+            const checkinInput = document.getElementById('input-checkin');
+            const checkoutInput = document.getElementById('input-checkout');
+            const roomsInput = document.getElementById('input-rooms');
+            const guestsInput = document.getElementById('input-guests');
+
+            if (checkinInput) {
+                const checkin = new Date(checkinInput.value);
+                const checkout = new Date(checkoutInput.value);
+                
+                // Calculate duration in days
+                const oneDay = 24 * 60 * 60 * 1000;
+                let duration = Math.round(Math.abs((checkout - checkin) / oneDay));
+                if (isNaN(duration) || duration < 1) duration = 1;
+
+                return {
+                    rooms: parseInt(roomsInput.value) || 1,
+                    guests: parseInt(guestsInput.value) || 1,
+                    duration: duration,
+                    checkinDate: checkin,
+                    checkoutDate: checkout
+                };
+            } else {
+                // Return fixed values from PHP if no inputs (search mode)
+                return {
+                    rooms: {{ $rooms }},
+                    guests: {{ $guests }},
+                    duration: {{ $duration }},
+                    checkinDate: new Date('{{ $checkin }}'),
+                    checkoutDate: new Date('{{ $checkout }}')
+                };
+            }
+        }
+
+        function calculateBooking() {
+            const state = getBookingState();
+            
+            // Update hidden duration input if it exists
+            const durationInput = document.getElementById('input-duration');
+            if (durationInput) durationInput.value = state.duration;
+
+            // Update Summary Text
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            // Ensure dates are valid before formatting
+            if (!isNaN(state.checkinDate) && !isNaN(state.checkoutDate)) {
+                 const dateText = `${state.checkinDate.toLocaleDateString('id-ID', options)} - ${state.checkoutDate.toLocaleDateString('id-ID', options)}`;
+                 const summaryDates = document.getElementById('summary-dates');
+                 if(summaryDates) summaryDates.innerText = dateText;
+            }
+           
+            const summaryDuration = document.getElementById('summary-duration');
+            if(summaryDuration) summaryDuration.innerText = `(${state.duration} Malam)`;
+            
+            const summaryUnit = document.getElementById('summary-unit');
+            if(summaryUnit) summaryUnit.innerText = `${state.rooms} Kamar, ${state.guests} Tamu`;
+
+            // Calculate Total Price
+            // Use currentRoomPrice if set, otherwise basePrice
+            const price = currentRoomPrice !== null ? currentRoomPrice : basePrice;
+            const totalPrice = price * state.rooms * state.duration;
+
+            // Update Price Display
+            const summaryTotalPrice = document.getElementById('summary-total-price');
+            if(summaryTotalPrice) summaryTotalPrice.innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalPrice);
+
+            // Update Hidden Total Price Input
+            const inputTotalPrice = document.getElementById('input-total-price');
+            if(inputTotalPrice) inputTotalPrice.value = totalPrice;
+            
+             // Also update the form total_price hidden input if it's different (it shouldn't be, IDs match)
+             document.querySelector('input[name="total_price"]').value = totalPrice;
+        }
 
         function selectAgent(element) {
             // Get data from attributes
@@ -412,12 +756,17 @@
 
         function selectTipeKamar(btn, id, price, name) {
              document.getElementById('tipe_kamar_id').value = id;
+             
+             // Update global state
+             currentRoomPrice = price;
+             selectedRoomName = name;
 
              // Update visual cards
              document.querySelectorAll('.tipekamar-card-item').forEach(c => {
                 c.classList.remove('selected');
             });
-            document.getElementById('tipe-card-' + id).classList.add('selected');
+            const card = document.getElementById('tipe-card-' + id);
+            if(card) card.classList.add('selected');
 
             // Update visual buttons
             document.querySelectorAll('.tipekamar-select-btn').forEach(b => {
@@ -427,13 +776,9 @@
             btn.classList.add('selected');
             btn.innerHTML = 'Select <i class="bi bi-check-lg ms-1"></i>';
 
-            // Update Sidebar Summary
-            const duration = {{ $duration }};
-            const rooms = {{ $rooms }};
-            const totalPrice = price * rooms * duration;
-            
-            document.getElementById('summary-room-type').innerText = name;
-            document.getElementById('summary-total-price').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalPrice);
+            // Update Sidebar Summary Room Type Name
+            const summaryRoomType = document.getElementById('summary-room-type');
+            if(summaryRoomType) summaryRoomType.innerText = name;
             
             // Show total price section and hide warning if rented per room
             const priceSection = document.getElementById('total-price-section');
@@ -441,8 +786,8 @@
             if (priceSection) priceSection.style.display = 'block';
             if (warningSection) warningSection.style.display = 'none';
 
-            // Update hidden input total price for final form
-            document.querySelector('input[name="total_price"]').value = totalPrice;
+            // Recalculate totals
+            calculateBooking();
         }
 
         function submitFinalBooking() {
@@ -463,10 +808,6 @@
 
             // Validate Tipe Kamar if applicable
             const tipekamarInput = document.getElementById('tipe_kamar_id');
-            // Check if tipe kamar section exists by checking if input exists (it always does)
-            // We need to check if we SHOULD validate it. 
-            // The section is conditionally rendered. If it's visible, we should probably validate it if we can detect it.
-            // Or easier, just check if the card items exist.
             if (document.querySelector('.tipekamar-card-item') && !tipekamarInput.value) {
                  Swal.fire({
                     icon: 'warning',

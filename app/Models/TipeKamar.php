@@ -14,10 +14,27 @@ class TipeKamar extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $guarded = ['id'];
+    protected $fillable = [
+        'id',
+        'nama',
+        'harga_per_malam',
+        'jumlah_kamar',
+        'kapasitas_dewasa',
+        'kapasitas_anak',
+        'tersedia_dari',
+        'tersedia_sampai',
+        'luas_kamar',
+        'tipe_bed',
+        'gambar',
+    ];
 
     public function propertis()
     {
         return $this->belongsToMany(Properti::class, 'properti_tipe_kamar', 'tipe_kamar_id', 'properti_id');
+    }
+
+    public function fasilitas()
+    {
+        return $this->belongsToMany(Fasilitas::class, 'fasilitas_tipe_kamar', 'tipe_kamar_id', 'fasilitas_id')->withTimestamps();
     }
 }

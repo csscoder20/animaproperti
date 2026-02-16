@@ -29,10 +29,70 @@ class TipeKamarResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nama')
-                    ->label('Nama Tipe Kamar')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Section::make('Informasi Dasar')
+                    ->schema([
+                        Forms\Components\TextInput::make('nama')
+                            ->label('Nama Tipe Kamar')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('harga_per_malam')
+                            ->label('Harga per Malam')
+                            ->numeric()
+                            ->prefix('Rp')
+                            ->required(),
+                        Forms\Components\TextInput::make('jumlah_kamar')
+                            ->label('Jumlah Kamar')
+                            ->numeric()
+                            ->default(1)
+                            ->required(),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Kapasitas & Ketersediaan')
+                    ->schema([
+                        Forms\Components\TextInput::make('kapasitas_dewasa')
+                            ->label('Max Dewasa')
+                            ->numeric()
+                            ->default(2)
+                            ->required(),
+                        Forms\Components\TextInput::make('kapasitas_anak')
+                            ->label('Max Anak')
+                            ->numeric()
+                            ->default(0)
+                            ->required(),
+                        Forms\Components\DatePicker::make('tersedia_dari')
+                            ->label('Tersedia Dari')
+                            ->native(false)
+                            ->displayFormat('d M Y'),
+                        Forms\Components\DatePicker::make('tersedia_sampai')
+                            ->label('Tersedia Sampai')
+                            ->native(false)
+                            ->displayFormat('d M Y'),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Spesifikasi & Gambar')
+                    ->schema([
+                        Forms\Components\TextInput::make('luas_kamar')
+                            ->label('Luas Kamar (m²)')
+                            ->placeholder('Contoh: 20'),
+                        Forms\Components\TextInput::make('tipe_bed')
+                            ->label('Tipe Bed')
+                            ->placeholder('Contoh: King Size'),
+                        Forms\Components\FileUpload::make('gambar')
+                            ->label('Foto Kamar')
+                            ->image()
+                            ->directory('tipe-kamar-images')
+                            ->columnSpanFull(),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Fasilitas')
+                    ->schema([
+                        Forms\Components\CheckboxList::make('fasilitas')
+                            ->label('Fasilitas Kamar')
+                            ->relationship('fasilitas', 'nama')
+                            ->columns(3)
+                            ->gridDirection('row')
+                            ->bulkToggleable()
+                    ]),
             ]);
     }
 

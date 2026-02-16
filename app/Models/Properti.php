@@ -68,7 +68,7 @@ class Properti extends Model
 
     public function fasilitas()
     {
-        return $this->belongsToMany(Fasilitas::class, 'fasilitas_properti', 'properti_id', 'fasilitas_id');
+        return $this->belongsToMany(Fasilitas::class, 'fasilitas_properti', 'properti_id', 'fasilitas_id')->withTimestamps();
     }
 
     public function agens()
@@ -80,7 +80,8 @@ class Properti extends Model
     {
         return $this->belongsToMany(TipeKamar::class, 'properti_tipe_kamar', 'properti_id', 'tipe_kamar_id')
                     ->using(PropertiTipeKamar::class)
-                    ->withPivot(['id', 'harga_per_malam', 'tersedia_dari', 'tersedia_sampai', 'kapasitas_dewasa', 'kapasitas_anak', 'jumlah_kamar', 'luas_kamar', 'tipe_bed', 'gambar']);
+                    ->withPivot(['id', 'harga_per_malam', 'tersedia_dari', 'tersedia_sampai', 'kapasitas_dewasa', 'kapasitas_anak', 'jumlah_kamar', 'luas_kamar', 'tipe_bed', 'gambar'])
+                    ->withTimestamps();
     }
 
     public function propertiTipeKamars()
@@ -103,12 +104,13 @@ class Properti extends Model
     public function updateRoomStats()
     {
         if ($this->disewa_per_kamar) {
-            $totalRooms = $this->propertiTipeKamars()->sum('jumlah_kamar');
+            $tipeKamars = $this->tipeKamars()->get();
+            
+            $totalRooms = $tipeKamars->sum('jumlah_kamar');
             
             // Calculate total capacity (adults)
-            // Assuming kapasitas_tamu is total capacity across all rooms
-            $totalCapacity = $this->propertiTipeKamars()->get()->sum(function ($item) {
-                return $item->kapasitas_dewasa * $item->jumlah_kamar;
+            $totalCapacity = $tipeKamars->sum(function ($item) {
+                return (int)$item->kapasitas_dewasa * (int)$item->jumlah_kamar;
             });
 
             $this->update([

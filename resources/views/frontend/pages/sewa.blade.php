@@ -23,7 +23,7 @@
                                 </div>
 
                                 {{-- Date Range Picker --}}
-                                <div class="col-lg-4 col-md-12">
+                                <div class="col-lg-3 col-md-12">
                                     <div class="search-field">
                                         <label class="field-label">Tanggal Sewa</label>
                                         <input type="text" id="datepicker" class="form-control" placeholder="Pilih Tanggal Check-in - Check-out" readonly>
@@ -33,7 +33,7 @@
                                 </div>
 
                                 {{-- Guest & Room Dropdown --}}
-                                <div class="col-lg-4 col-md-12">
+                                <div class="col-lg-3 col-md-12">
                                     <div class="search-field">
                                         <label class="field-label">Tamu & Kamar</label>
                                         <div class="dropdown">
@@ -131,13 +131,10 @@
                                 </div>
 
                                 {{-- Button Cari --}}
-                                <div class="col-12 mt-3 text-start">
-                                    <div class="search-field">
-                                        <label class="field-label d-none d-lg-block">&nbsp;</label>
-                                        <button type="submit" class="btn btn-custom-accent w-auto">
-                                            <i class="bi bi-search me-2"></i> Cari
-                                        </button>
-                                    </div>
+                                <div class="col-lg-2 mt-3 d-flex align-items-end justify-content-lg-end">
+                                    <button type="submit" class="btn btn-custom-accent w-100 w-lg-auto">
+                                        <i class="bi bi-search me-2"></i> Cari
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -217,101 +214,89 @@
                         <span class="text-muted small">{{ $totalResults }} Results Found</span>
                     </div>
 
-                    <div class="d-flex flex-column gap-3">
-                        @foreach ($properties as $property)
-                            <div class="card border mb-3 shadow-sm overflow-hidden">
-                                <div class="row g-0">
-                                    <div class="col-md-4">
-                                        {{-- Image --}}
-                                        @php
-                                            $imageUrl = null;
-                                            if ($property->gbr_primary_properti) {
-                                                $imageUrl = asset('storage/' . $property->gbr_primary_properti);
-                                            } elseif ($property->images->isNotEmpty()) {
-                                                $imageUrl = asset('storage/' . $property->images->first()->path);
-                                            } else {
-                                                $imageUrl = asset('themes/frontend/assets/img/default.png');
-                                            }
-                                        @endphp
-                                        <div style="height: 100%; min-height: 200px;">
-                                            <img src="{{ $imageUrl }}" class="img-fluid w-100 h-100" style="object-fit: cover;" alt="{{ $property->judul }}">
-                                            @if($property->penawaran)
-                                                <div class="position-absolute top-0 start-0 m-2">
-                                                    <span class="badge bg-primary">{{ $property->penawaran }}</span>
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="card-body h-100 d-flex flex-column justify-content-between">
-                                            <div>
-                                                <div class="mb-2">
-                                                    <h5 class="card-title fw-bold mb-1">{{ $property->judul }}</h5>
-                                                    <p class="card-text text-muted small mb-2">
-                                                    @php
-                                                        $type = $property->jenisProperti->slug ?? '';
-                                                        $badgeClass = match($type) {
-                                                            'kost' => 'bg-success',
-                                                            'apartemen' => 'bg-info text-dark',
-                                                            'rumah' => 'bg-primary',
-                                                            'villa' => 'bg-warning text-dark',
-                                                            'kantor' => 'bg-secondary',
-                                                            default => 'bg-light text-dark border',
-                                                        };
-                                                    @endphp
-                                                    <span class="badge {{ $badgeClass }} mb-2">{{ $property->jenisProperti->nama ?? '' }}</span>
-                                                    </p>
-                                                    <p class="text-muted small mb-2">
-                                                        <i class="bi bi-geo-alt me-1"></i> {{ $property->alamat_lengkap ?? 'Alamat tidak tersedia' }}
-                                                    </p>
-                                                    @if($property->disewa_per_kamar && $property->propertiTipeKamars->count() > 0)
-                                                        <div class="mb-2">
-                                                            <span class="badge bg-light text-dark border"><i class="bi bi-door-open me-1"></i>{{ $property->propertiTipeKamars->count() }} Tipe Kamar</span>
-                                                            <span class="badge bg-light text-dark border"><i class="bi bi-people me-1"></i>Kapasitas bervariasi</span>
+                    <div class="properties-container">
+                        <div class="" data-aos="fade-up" data-aos-delay="250">
+                            <div class="row g-4">
+                                @foreach ($properties as $property)
+                                    <div class="col-12">
+                                        <div class="card mb-3 border-0 shadow-sm overflow-hidden" style="border-radius: 12px;">
+                                            <div class="row g-0">
+                                                <div class="col-md-4 position-relative">
+                                                    <a href="{{ route('sewa.show', array_merge(['slug' => $property->slug], request()->query())) }}" class="d-block h-100">
+                                                        @php
+                                                            $imageUrl = asset('storage/default.png'); 
+                                                            
+                                                            $pricePerNight = 0;
+                                                            if ($property->disewa_per_kamar && $property->tipeKamars->count() > 0) {
+                                                                $pricePerNight = $property->tipeKamars->min('harga_per_malam');
+                                                            } else {
+                                                                $pricePerNight = $property->harga_sewa_per_malam ?? $property->harga;
+                                                            }
+                                                        @endphp
+                                                        <img src="{{ $imageUrl }}" class="img-fluid rounded-start h-100 object-fit-cover w-100" style="min-height: 250px;" alt="{{ $property->judul }}">
+                                                        
+                                                        <div class="position-absolute top-0 start-0 m-3">
+                                                            @if ($property->featured == 1)
+                                                                <span class="badge bg-warning text-dark mb-1">Unggulan</span>
+                                                            @endif
+                                                            <span class="badge bg-primary">{{ $property->penawaran }}</span>
                                                         </div>
-                                                    @endif
+                                                    </a>
                                                 </div>
-                                                
-                                                <div class="row g-2">
-                                                    <div class="d-flex flex-wrap gap-2 mt-3">
-                                                        @if ($property->fasilitas->count() > 0)
-                                                            @foreach ($property->fasilitas as $fasilitas)
-                                                                <div class="d-flex align-items-center text-muted small me-2">
-                                                                    <i class="bi {{ $fasilitas->icon ?? 'bi-check-circle' }} me-1 text-primary"></i>
-                                                                    <span>{{ $fasilitas->nama }}</span>
-                                                                </div>
-                                                            @endforeach
-                                                        @else
-                                                            <div class="text-muted small fst-italic">No facilities data available.</div>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                <div class="col-md-8">
+                                                    <div class="card-body d-flex flex-column h-100 p-4">
+                                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                                            <div>
+                                                                <h4 class="card-title fw-bold mb-1"><a href="{{ route('sewa.show', array_merge(['slug' => $property->slug], request()->query())) }}" class="text-dark text-decoration-none">{{ $property->judul }}</a></h4>
+                                                                <p class="card-text text-muted small mb-2">
+                                                                    <i class="bi bi-geo-alt me-1 text-danger"></i> {{ $property->alamat_lengkap ?? 'Alamat tidak tersedia' }}
+                                                                </p>
+                                                            </div>
+                                                            <div class="text-end">
+                                                                 <span class="badge bg-light text-dark border">{{ $property->jenisProperti->nama ?? '-' }}</span>
+                                                            </div>
+                                                        </div>
 
-                                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                                <div class="text-start me-3">
-                                                    @php
-                                                        if ($property->disewa_per_kamar && $property->propertiTipeKamars->count() > 0) {
-                                                            $pricePerNight = $property->propertiTipeKamars->min('harga_per_malam');
-                                                            $isRange = true;
-                                                        } else {
-                                                            $pricePerNight = $property->harga_sewa_per_malam ?? $property->harga;
-                                                            $isRange = false;
-                                                        }
-                                                    @endphp
-                                                    <small>{{ $isRange ? 'Harga Mulai Dari' : 'Harga Sewa' }}</small>
-                                                    <div class="d-flex align-items-center gap-2">
-                                                        <h4 class="fw-bold mb-0 text-primary">Rp {{ number_format($pricePerNight, 0, ',', '.') }}</h4>
-                                                        <small class="text-muted">/malam</small>
+                                                        <div class="mb-3">
+                                                            <h5 class="fw-bold text-primary mb-0">Rp {{ number_format($pricePerNight, 0, ',', '.') }} <small class="text-muted fw-normal fs-6">/malam</small></h5>
+                                                        </div>
+
+                                                        <div class="d-flex gap-3 text-muted mb-4 small">
+                                                            @if ($property->jenisProperti->nama == 'Tanah')
+                                                                <div><i class="bi bi-arrows-angle-expand me-1"></i> LT: {{ $property->luas_tanah }} m²</div>
+                                                            @else
+                                                                <div><i class="bi bi-house-door me-1"></i> {{ $property->jumlah_kamar_tidur }} KT</div>
+                                                                <div><i class="bi bi-droplet me-1"></i> {{ $property->jumlah_kamar_mandi }} KM</div>
+                                                                <div><i class="bi bi-arrows-angle-expand me-1"></i> LT: {{ $property->luas_tanah }} m²</div>
+                                                                <div><i class="bi bi-arrows-angle-expand me-1"></i> LB: {{ $property->luas_bangunan }} m²</div>
+                                                            @endif
+                                                        </div>
+                                                        
+                                                        <div class="mt-auto d-flex justify-content-between align-items-center border-top pt-3">
+                                                            <div class="d-flex align-items-center">
+                                                                {{-- Agent Info --}}
+                                                                @if($property->agens->isNotEmpty())
+                                                                    @php $firstAgent = $property->agens->first(); @endphp
+                                                                     <img src="{{ $firstAgent->pas_foto ? asset('storage/' . $firstAgent->pas_foto) : asset('images/default-avatar.png') }}" class="rounded-circle me-2" width="30" height="30" alt="{{ $firstAgent->nama_lengkap }}">
+                                                                    <small class="text-muted">{{ $firstAgent->nama_lengkap }}</small>
+                                                                @else
+                                                                    <i class="bi bi-person-circle fs-5 text-secondary me-2"></i>
+                                                                    <small class="text-muted">Admin</small>
+                                                                @endif
+                                                            </div>
+
+                                                            <div>
+                                                                <a href="{{ route('sewa.show', array_merge(['slug' => $property->slug], request()->query())) }}" class="btn btn-primary rounded-pill px-4">Detail</a>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <a href="{{ route('sewa.show', array_merge(['slug' => $property->slug], request()->query())) }}" class="btn btn-outline-primary px-4 rounded-pill btn-custom-accent w-auto">Pilih</a>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endforeach
                             </div>
-                        @endforeach
+                        </div>
                     </div>
 
                     <nav class="pagination-wrapper mt-4">
@@ -320,7 +305,7 @@
                 </div>
             </div>
         @elseif(isset($isSearch) && $isSearch)
-            <div class="col-12 text-center py-5 mb-5">
+            <div class="col-12 text-center py-3 mb-3">
                 <div class="empty-results">
                     <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
                     <h4 class="text-muted">Properti tidak ditemukan</h4>
@@ -328,15 +313,88 @@
                 </div>
             </div>
         @else
-            <div class="col-12 text-center py-5 mb-5">
-                <div class="empty-results">
-                    <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
-                    <h4 class="text-muted">Mulai Pencarian Anda</h4>
-                    <p class="text-muted">Gunakan filter di atas untuk menemukan properti impian Anda</p>
+            <div class="col-12 text-center py-0 mb-5">
+                       {{-- All Properties Grid Section --}}
+        @if(isset($allProperties) && $allProperties->count() > 0)
+        <div class="row mb-5" data-aos="fade-up" data-aos-delay="300">            
+        <div class="row g-4">
+        @foreach ($allProperties as $property)
+            <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 border shadow-sm overflow-hidden property-card-hover">
+                    {{-- Image --}}
+                    @php
+                        // $imageUrl = null;
+                        // if ($property->gbr_primary_properti) {
+                            // $imageUrl = asset('storage/' . $property->gbr_primary_properti);
+                        // } elseif ($property->images->isNotEmpty()) {
+                            // $imageUrl = asset('storage/' . $property->images->first()->path);
+                        // } else {
+                            // $imageUrl = asset('themes/frontend/assets/img/default.png');
+                        // }
+                        $imageUrl = asset('storage/default.png');
+                    @endphp
+                        <div class="position-relative" style="height: 200px;">
+                            <img src="{{ $imageUrl }}" class="img-fluid w-100 h-100 object-fit-cover" alt="{{ $property->judul }}">
+                            @if($property->penawaran)
+                                <div class="position-absolute top-0 start-0 m-2">
+                                    <span class="badge bg-primary shadow-sm">{{ $property->penawaran }}</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold mb-1 text-truncate text-start" title="{{ $property->judul }}">{{ $property->judul }}</h5>
+                            <p class="card-text text-muted small mb-2 text-truncate text-start">
+                                <i class="bi bi-geo-alt me-1 text-danger"></i> {{ $property->alamat_lengkap ?? 'Alamat tidak tersedia' }}
+                            </p>
+                            
+                            {{-- Property Type Badge --}}
+                            <div class="mb-2 text-start">
+                                @php
+                                    $type = $property->jenisProperti->slug ?? '';
+                                    $badgeClass = match($type) {
+                                        'kost' => 'bg-success',
+                                        'apartemen' => 'bg-info text-dark',
+                                        'rumah' => 'bg-primary',
+                                        'villa' => 'bg-warning text-dark',
+                                        'kantor' => 'bg-secondary',
+                                        'default' => 'bg-light text-dark border',
+                                        default => 'bg-light text-dark border',
+                                    };
+                                @endphp
+                                <span class="badge {{ $badgeClass }}">{{ $property->jenisProperti->nama ?? '' }}</span>
+                            </div>
+
+                            <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                                 <div>
+                                    @php
+                                        $pricePerNight = 0;
+                                        $isRange = false;
+                                        if ($property->disewa_per_kamar && $property->tipeKamars->count() > 0) {
+                                            $pricePerNight = $property->tipeKamars->min('harga_per_malam');
+                                            $isRange = true;
+                                        } else {
+                                            $pricePerNight = $property->harga_sewa_per_malam ?? $property->harga;
+                                            $isRange = false;
+                                        }
+                                    @endphp
+                                    <small class="text-muted d-block text-start" style="font-size: 0.75rem;">{{ $isRange ? 'Mulai Dari' : 'Harga Sewa' }}</small>
+                                    <span class="fw-bold text-primary fs-5">Rp {{ number_format($pricePerNight, 0, ',', '.') }}</span>
+                                    <small class="text-muted">/malam</small>
+                                </div>
+                                <a href="{{ route('sewa.show', array_merge(['slug' => $property->slug], request()->query())) }}" class="btn btn-outline-primary rounded-pill btn-sm px-3">
+                                    Detail <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                     </div>
                 </div>
+            @endforeach
+            </div>
+        </div>
+        @endif
             </div>
         @endif
-
 
 
         {{-- Features Section --}}
@@ -409,8 +467,6 @@
                 <div class="swiper-pagination"></div>
             </div>
         @endif
-
-
 
 </section>
 

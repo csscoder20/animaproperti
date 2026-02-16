@@ -12,6 +12,8 @@ class Fasilitas extends Model
 
     protected $table = 'fasilitas';
     protected $guarded = ['id'];
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     public function properti()
     {

@@ -126,12 +126,12 @@ class SewaController extends Controller
                     // Scenario 2: Property rented per room (disewa_per_kamar = true)
                     ->orWhere(function ($qRoom) use ($adults, $children, $rooms) {
                         $qRoom->where('disewa_per_kamar', true)
-                            ->whereHas('propertiTipeKamars', function ($sub) use ($adults, $children, $rooms) {
-                                $sub->where('jumlah_kamar', '>=', $rooms)
+                            ->whereHas('tipeKamars', function ($sub) use ($adults, $children, $rooms) {
+                                $sub->where('tipe_kamars.jumlah_kamar', '>=', $rooms)
                                     ->whereRaw("
                                         GREATEST(
-                                            IF(COALESCE(kapasitas_dewasa, 0) > 0, CEIL(? / kapasitas_dewasa), IF(? > 0, 1000, 0)),
-                                            IF(COALESCE(kapasitas_anak, 0) > 0, CEIL(? / kapasitas_anak), IF(? > 0, 1000, 0))
+                                            IF(COALESCE(tipe_kamars.kapasitas_dewasa, 0) > 0, CEIL(? / tipe_kamars.kapasitas_dewasa), IF(? > 0, 1000, 0)),
+                                            IF(COALESCE(tipe_kamars.kapasitas_anak, 0) > 0, CEIL(? / tipe_kamars.kapasitas_anak), IF(? > 0, 1000, 0))
                                         ) <= ?
                                     ", [$adults, $adults, $children, $children, $rooms]);
                             });
@@ -154,8 +154,8 @@ class SewaController extends Controller
                 });
             }
 
-        // Paginate results and Eager Load Room Types with Pivot for search results display
-        $properties = $query->with(['propertiTipeKamars', 'fasilitas'])->paginate(12)->appends($request->query());
+        // Paginate results and Eager Load Room Types for search results display
+        $properties = $query->with(['tipeKamars', 'fasilitas'])->paginate(12)->appends($request->query());
         $totalResults = $properties->total();
         }
 
@@ -173,6 +173,18 @@ class SewaController extends Controller
         // Fetch Active Sliders
         $activeSliders = Slider::active()->orderBy('order')->get();
 
+        // Fetch All Rental Properties (Below Slider)
+        // User said: "di bawah section ini... tampilkan semua data properti"
+        // implying it should always be visible below the slider.
+        $allProperties = Properti::with(['jenisProperti', 'images', 'fasilitas', 'tipeKamars'])
+            ->where('penawaran', 'Disewa')
+            ->whereHas('jenisProperti', function ($q) {
+                $q->whereIn('slug', ['kost', 'apartemen']);
+            })
+            ->latest()
+            ->get();
+
+
         return view('frontend.pages.sewa', compact(
             'title',
             'properties',
@@ -181,13 +193,16 @@ class SewaController extends Controller
             'kecamatanList',
             'agenList',
             'activeSliders',
-            'isSearch'
+            'isSearch',
+            'allProperties'
         ));
     }
 
     public function show($slug)
     {
-        $property = Properti::with(['jenisProperti', 'images', 'agens'])
+        $property = Properti::with(['jenisProperti', 'images', 'agens', 'tipeKamars' => function($q) {
+            $q->where('tipe_kamars.jumlah_kamar', '>', 0); // Only show available rooms
+        }, 'fasilitas'])
             ->where('slug', $slug)
             ->firstOrFail();
 
@@ -286,12 +301,9 @@ class SewaController extends Controller
     // Get Tipe Kamar if selected and update price
     $tipeKamar = null;
     if ($request->filled('tipe_kamar_id')) {
-        $tipeKamar = \App\Models\TipeKamar::find($request->tipe_kamar_id);
+        $tipeKamar = \App\Models\TipeKamar::with('fasilitas')->find($request->tipe_kamar_id);
         if ($tipeKamar) {
-            $pivot = $property->propertiTipeKamars()->where('tipe_kamar_id', $tipeKamar->id)->first();
-            if ($pivot) {
-                $pricePerNight = $pivot->harga_per_malam;
-            }
+            $pricePerNight = $tipeKamar->harga_per_malam;
         }
     }
 
@@ -363,12 +375,21 @@ class SewaController extends Controller
              return back()->with('error', 'Data agen tidak ditemukan untuk properti ini.');
         }
 
-        // Get Tipe Kamar Name if exists
+        if ($property->disewa_per_kamar && !$request->filled('tipe_kamar_id')) {
+             return back()->with('error', 'Silakan pilih tipe kamar yang Anda inginkan.');
+        }
+
+        // Get Tipe Kamar Name if exists and DECREMENT STOCK
         $tipeKamarName = null;
         if ($request->filled('tipe_kamar_id')) {
-            $tipeKamar = \App\Models\TipeKamar::find($request->tipe_kamar_id);
+            $tipeKamar = \App\Models\TipeKamar::lockForUpdate()->find($request->tipe_kamar_id);
             if ($tipeKamar) {
+                if ($tipeKamar->jumlah_kamar <= 0) {
+                     return back()->with('error', 'Maaf, tipe kamar ini baru saja habis terpesan. Silakan pilih tipe lain.');
+                }
+                
                 $tipeKamarName = $tipeKamar->nama;
+                $tipeKamar->decrement('jumlah_kamar');
             }
         }
 
@@ -392,6 +413,7 @@ class SewaController extends Controller
             'total_price' => $request->total_price,
             'status' => 'pending',
             'payment_method' => $request->payment_method,
+            'tipe_kamar_id' => $request->tipe_kamar_id,
             // 'notes' => $tipeKamarName ? "Tipe Kamar: $tipeKamarName" : null, // If you have notes column
         ]);
 
