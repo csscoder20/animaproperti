@@ -358,9 +358,103 @@ class PropertiSeeder extends Seeder
                 'created_at' => '2025-08-05 13:28:29',
                 'updated_at' => '2025-08-08 10:38:41'
             ],
+            [
+                'id' => '0198eae4-bd2e-733d-beb3-d749677c0d64',
+                'judul' => 'Vida View Apartment - Luxury Unit ready to stay',
+                'slug' => 'vida-view-apartment-luxury-unit-ready-to-stay',
+                'jenis_properti_id' => 'c3d05c3e-a3d2-48f2-b5b6-006a6d43d3c5',
+                'deskripsi' => '<p>Nikmati hunian vertikal di jantung kota Makassar. Vida View Apartment hadir dengan fasilitas bintang 5.</p>',
+                'harga' => 850000000.00,
+                'status' => 'Tersedia',
+                'penawaran' => 'Disewa',
+                'jenis_cluster' => 'Brentwood',
+                'tipe_perumahan' => '2BR',
+                'provinsi' => '73',
+                'kabupaten' => '73.71',
+                'kecamatan' => '73.71.13',
+                'kelurahan' => '73.71.13.1009',
+                'kode_pos' => '90221',
+                'link_brosur' => '#',
+                'link_layout' => '#',
+                'link_spesifikasi' => '#',
+                'link_site_plan' => '#',
+                'gbr_primary_properti' => 'data-pendukung/01K3NE9F97TV6X45GHD9MX8BV8.jpeg',
+                'alamat_lengkap' => 'Jl. Topaz Raya, Makassar',
+                'jumlah_kamar_tidur' => 2,
+                'jumlah_kamar_mandi' => 1,
+                'luas_bangunan' => 42,
+                'luas_tanah' => 45,
+                'tahun_dibangun' => 2018,
+                'unggulan' => true,
+                'disewa_per_kamar' => true,
+                'created_at' => '2025-08-27 09:38:35',
+                'updated_at' => '2025-08-27 09:38:35'
+            ],
+            [
+                'id' => '0198eae4-bd2e-733d-beb3-d749677c0d65',
+                'judul' => 'Kost Eksklusif Pettarani - Dekat Kampus dan Perkantoran',
+                'slug' => 'kost-eksklusif-pettarani-dekat-kampus-dan-perkantoran',
+                'jenis_properti_id' => 'ef178b65-0ccb-4a26-a5d2-584f8ccf2523',
+                'deskripsi' => '<p>Kost nyaman dengan fasilitas lengkap di pusat bisnis Makassar.</p>',
+                'harga' => 2500000.00,
+                'status' => 'Tersedia',
+                'penawaran' => 'Disewa',
+                'jenis_cluster' => 'Eksklusif',
+                'tipe_perumahan' => 'Standar',
+                'provinsi' => '73',
+                'kabupaten' => '73.71',
+                'kecamatan' => '73.71.13',
+                'kelurahan' => '73.71.13.1009',
+                'kode_pos' => '90221',
+                'link_brosur' => '#',
+                'link_layout' => '#',
+                'link_spesifikasi' => '#',
+                'link_site_plan' => '#',
+                'gbr_primary_properti' => 'data-pendukung/01K3NE9F97TV6X45GHD9MX8BV9.jpeg',
+                'alamat_lengkap' => 'Jl. A.P. Pettarani, Makassar',
+                'jumlah_kamar_tidur' => 1,
+                'jumlah_kamar_mandi' => 1,
+                'luas_bangunan' => 15,
+                'luas_tanah' => 100,
+                'tahun_dibangun' => 2022,
+                'unggulan' => true,
+                'disewa_per_kamar' => true,
+                'created_at' => '2025-08-27 09:38:35',
+                'updated_at' => '2025-08-27 09:38:35'
+            ],
         ];
 
-        $this->command->info('DEBUG: Inserting Property with ID: ' . $data[0]['id']);
-        DB::table('propertis')->insert($data);
+        $this->command->info('DEBUG: Inserting Properties...');
+        foreach ($data as $item) {
+            $properti = \App\Models\Properti::create($item);
+
+            // Attach 3 random facilities
+            $randomFasilitas = \App\Models\Fasilitas::inRandomOrder()->take(3)->pluck('id');
+            $properti->fasilitas()->attach($randomFasilitas);
+
+            // Special handling for Apartemen and Kost (Room Types)
+            if (in_array($item['jenis_properti_id'], [
+                'c3d05c3e-a3d2-48f2-b5b6-006a6d43d3c5', // Apartemen
+                'ef178b65-0ccb-4a26-a5d2-584f8ccf2523'  // Kost
+            ])) {
+                $tipeKamars = \App\Models\TipeKamar::inRandomOrder()->take(2)->get();
+                foreach ($tipeKamars as $tk) {
+                    $properti->tipeKamars()->attach($tk->id, [
+                        'id' => \Illuminate\Support\Str::uuid(),
+                        'harga_per_malam' => $properti->harga / 30, // Rough estimate
+                        'tersedia_dari' => now(),
+                        'tersedia_sampai' => now()->addMonths(6),
+                        'kapasitas_dewasa' => rand(1, 2),
+                        'kapasitas_anak' => rand(0, 1),
+                        'jumlah_kamar' => rand(5, 10),
+                        'luas_kamar' => rand(15, 30),
+                        'tipe_bed' => 'Double Bed',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+                $properti->updateRoomStats();
+            }
+        }
     }
 }

@@ -99,7 +99,7 @@
         <table>
             <tr>
                 <td class="header-logo">
-                    <img src="{{ public_path($settings['logo_path'] ?? 'themes/frontend/assets/img/android-chrome-512x512.png') }}"
+                    <img src="{{ public_path($settings['logo_path'] ?? 'storage/logos/logo.png') }}"
                         alt="Logo" height="50">
                     <p style="margin: 5px 0 0 0;">
                         {{ $settings['site_name'] ?? 'ANIMA PROPERTI' }}<br>

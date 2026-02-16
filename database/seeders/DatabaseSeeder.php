@@ -14,6 +14,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             MasterWilayahSeeder::class,
             JenisPropertiSeeder::class,
+            FasilitasSeeder::class,
+            TipeKamarSeeder::class,
             AgenSeeder::class,
             PropertiSeeder::class,
             PropertyImageSeeder::class,

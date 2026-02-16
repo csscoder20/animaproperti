@@ -2,7 +2,7 @@
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
         <a href="{{ url('/') }}" class="logo d-flex align-items-center">
             <img class="rounded"
-                src="{{ ($settings['logo'] ?? false) ? asset('storage/' . $settings['logo']) : asset('themes/frontend/assets/img/android-chrome-512x512.png') }}"
+                src="{{ ($settings['logo'] ?? false) ? asset('storage/' . $settings['logo']) : asset('storage/logos/logo.png') }}"
                 alt="Logo">
             <h1 class="sitename">{{ $settings['site_name'] ?? 'ANIMA PROPERTI' }}</h1>
         </a>

@@ -26,7 +26,7 @@ class PengaturanSeeder extends Seeder
             ['id' => '01987f5e-fe45-72f0-a15b-af6e0c181767', 'key' => 'tiktok', 'value' => 'https://www.tiktok.com/@anima.properti', 'created_at' => '2025-08-06 12:33:08', 'updated_at' => '2025-08-06 12:33:08'],
             ['id' => '01987f5e-fe46-7195-b98b-e26bffc5420b', 'key' => 'youtube', 'value' => 'https://www.youtube.com/@AnimaProperti-RumahMakassar', 'created_at' => '2025-08-06 12:33:08', 'updated_at' => '2025-08-06 12:33:08'],
             ['id' => '01987f5e-fe46-7195-b98b-e26c0072b3e6', 'key' => 'twitter', 'value' => 'https://x.com/animaproperti', 'created_at' => '2025-08-06 12:33:08', 'updated_at' => '2025-08-07 08:28:58'],
-            ['id' => '01987f5e-fe47-72a8-92cc-2e3642bf8d48', 'key' => 'logo', 'value' => 'logos/01K1ZNXZHR114K9N8HDEGN9SV7.jpg', 'created_at' => '2025-08-06 12:33:08', 'updated_at' => '2025-08-06 12:33:08']
+            ['id' => '01987f5e-fe47-72a8-92cc-2e3642bf8d48', 'key' => 'logo', 'value' => 'logos/logo.png', 'created_at' => '2025-08-06 12:33:08', 'updated_at' => '2025-08-06 12:33:08']
         ]);
     }
 }

@@ -59,7 +59,7 @@
             <thead>
                 <tr>
                     <th>
-                        <img src="{{ public_path($settings['logo_path'] ?? 'themes/frontend/assets/img/android-chrome-512x512.png') }}"
+                        <img src="{{ public_path($settings['logo_path'] ?? 'storage/logos/logo.png') }}"
                             alt="Logo" height="50">
                         <p>
                             {{ $settings['address'] ?? 'Ruko Saphire No. 49 Jl. Mutiara Boulevard Bulurokeng - Makassar' }}<br>

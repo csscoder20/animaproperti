@@ -13,6 +13,9 @@ class TipeKamarSeeder extends Seeder
      */
     public function run(): void
     {
+        \Illuminate\Support\Facades\DB::table('properti_tipe_kamar')->delete();
+        \Illuminate\Support\Facades\DB::table('tipe_kamars')->delete();
+
         $tipeKamars = [
             'Standard Room',
             'Superior Room',
