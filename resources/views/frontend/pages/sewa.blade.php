@@ -224,7 +224,11 @@
                                                 <div class="col-md-4 position-relative">
                                                     <a href="{{ route('sewa.show', array_merge(['slug' => $property->slug], request()->query())) }}" class="d-block h-100">
                                                         @php
-                                                            $imageUrl = asset('storage/default.png'); 
+                                                            $imageUrl = $property->gbr_primary_properti 
+                                                                ? asset('storage/' . $property->gbr_primary_properti) 
+                                                                : ($property->images->isNotEmpty() 
+                                                                    ? asset('storage/' . $property->images->first()->path) 
+                                                                    : asset('themes/frontend/assets/img/default.png'));
                                                             
                                                             $pricePerNight = 0;
                                                             if ($property->disewa_per_kamar && $property->tipeKamars->count() > 0) {
@@ -323,15 +327,11 @@
                     <div class="card h-100 border shadow-sm overflow-hidden property-card-hover">
                     {{-- Image --}}
                     @php
-                        // $imageUrl = null;
-                        // if ($property->gbr_primary_properti) {
-                            // $imageUrl = asset('storage/' . $property->gbr_primary_properti);
-                        // } elseif ($property->images->isNotEmpty()) {
-                            // $imageUrl = asset('storage/' . $property->images->first()->path);
-                        // } else {
-                            // $imageUrl = asset('themes/frontend/assets/img/default.png');
-                        // }
-                        $imageUrl = asset('storage/default.png');
+                        $imageUrl = $property->gbr_primary_properti 
+                            ? asset('storage/' . $property->gbr_primary_properti) 
+                            : ($property->images->isNotEmpty() 
+                                ? asset('storage/' . $property->images->first()->path) 
+                                : asset('themes/frontend/assets/img/default.png'));
                     @endphp
                         <div class="position-relative" style="height: 200px;">
                             <img src="{{ $imageUrl }}" class="img-fluid w-100 h-100 object-fit-cover" alt="{{ $property->judul }}">
