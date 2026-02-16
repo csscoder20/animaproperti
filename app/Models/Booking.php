@@ -19,6 +19,8 @@ class Booking extends Model
         'agent_id',
         'customer_name',
         'customer_phone',
+        'nik',
+        'email',
         'checkin',
         'checkout',
         'rooms',
@@ -27,6 +29,7 @@ class Booking extends Model
         'total_price',
         'status',
         'payment_method',
+        'room_number',
     ];
 
     public function properti()

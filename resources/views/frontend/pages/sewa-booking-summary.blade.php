@@ -108,6 +108,28 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-wrapper me-3" style="width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                            <i class="bi bi-card-text fs-5" style="color: #fff;"></i>
+                                        </div>
+                                        <div style="overflow: hidden;">
+                                            <small class="d-block" style="color: rgba(255,255,255,0.8); font-size: 0.7rem;">NIK</small>
+                                            <span class="fw-bold d-block" style="color: #fff; font-size: 0.95rem; word-break: break-all;">{{ $request->nik }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-wrapper me-3" style="width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                            <i class="bi bi-envelope fs-5" style="color: #fff;"></i>
+                                        </div>
+                                        <div style="overflow: hidden;">
+                                            <small class="d-block" style="color: rgba(255,255,255,0.8); font-size: 0.7rem;">Email</small>
+                                            <span class="fw-bold d-block" style="color: #fff; font-size: 0.95rem; word-break: break-all;">{{ $request->email }}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -170,6 +192,8 @@
                             @csrf
                             <input type="hidden" name="customer_name" value="{{ $request->customer_name }}">
                             <input type="hidden" name="customer_phone" value="{{ $request->customer_phone }}">
+                            <input type="hidden" name="nik" value="{{ $request->nik }}">
+                            <input type="hidden" name="email" value="{{ $request->email }}">
                             <input type="hidden" name="agent_phone" value="{{ $request->agent_phone }}">
                             <input type="hidden" name="agent_name" value="{{ $request->agent_name }}">
                             <input type="hidden" name="checkin" value="{{ $request->checkin }}">

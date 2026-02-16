@@ -130,6 +130,14 @@
                                             <label class="form-label fw-bold small">No. WhatsApp</label>
                                             <input type="tel" class="form-control" name="customer_phone" required placeholder="Contoh: 08123456789">
                                         </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold small">NIK (Sesuai KTP)</label>
+                                            <input type="text" class="form-control" name="nik" required placeholder="Masukkan 16 digit NIK">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold small">Alamat Email</label>
+                                            <input type="email" class="form-control" name="email" required placeholder="Contoh: budi@email.com">
+                                        </div>
                                     </div>
 
                                     @if($property->disewa_per_kamar && $property->tipeKamars->count() > 0)

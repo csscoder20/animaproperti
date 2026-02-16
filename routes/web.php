@@ -11,6 +11,15 @@ use App\Http\Controllers\SewaController;
 use App\Http\Controllers\InformasiController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\BookingPrintController;
+
+// Booking Print Routes
+Route::prefix('admin/bookings')->name('admin.bookings.')->group(function () {
+    Route::get('/{id}/print-invoice', [BookingPrintController::class, 'printInvoice'])->name('print-invoice');
+    Route::get('/{id}/print-room-card', [BookingPrintController::class, 'printRoomCard'])->name('print-room-card');
+    Route::get('/{id}/preview-invoice', [BookingPrintController::class, 'previewInvoice'])->name('preview-invoice');
+    Route::get('/{id}/preview-room-card', [BookingPrintController::class, 'previewRoomCard'])->name('preview-room-card');
+});
 
 Route::get('/sewa', [SewaController::class, 'index'])->name('sewa.index');
 Route::get('/sewa/{slug}', [SewaController::class, 'show'])->name('sewa.show');

@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
+
 class BookingResource extends Resource
 {
     protected static ?string $model = Booking::class;
@@ -40,7 +41,20 @@ class BookingResource extends Resource
                             ->tel()
                             ->required()
                             ->maxLength(255),
-                    ])->columns(2),
+                        Forms\Components\TextInput::make('nik')
+                            ->label('NIK')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->label('Email')
+                            ->email()
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('room_number')
+                            ->label('Nomor Kamar')
+                            ->placeholder('Contoh: A-101')
+                            ->maxLength(255),
+                    ])->columns(3),
 
                 Forms\Components\Section::make('Detail Sewa')
                     ->schema([
@@ -116,6 +130,12 @@ class BookingResource extends Resource
                 Tables\Columns\TextColumn::make('customer_phone')
                     ->label('No. HP')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('nik')
+                    ->label('NIK')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('properti.judul')
                     ->label('Properti')
                     ->limit(30)
@@ -151,8 +171,34 @@ class BookingResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('preview_invoice')
+                        ->label('Preview Invoice')
+                        ->icon('heroicon-o-eye')
+                        ->color('gray')
+                        ->url(fn(Booking $record): string => route('admin.bookings.preview-invoice', $record))
+                        ->openUrlInNewTab(),
+                    Tables\Actions\Action::make('print_invoice')
+                        ->label('Cetak Invoice')
+                        ->icon('heroicon-o-printer')
+                        ->color('success')
+                        ->url(fn(Booking $record): string => route('admin.bookings.print-invoice', $record))
+                        ->openUrlInNewTab(),
+                    Tables\Actions\Action::make('preview_room_card')
+                        ->label('Preview Kartu Kamar')
+                        ->icon('heroicon-o-eye')
+                        ->color('gray')
+                        ->url(fn(Booking $record): string => route('admin.bookings.preview-room-card', $record))
+                        ->openUrlInNewTab(),
+                    Tables\Actions\Action::make('print_room_card')
+                        ->label('Cetak Kartu Kamar')
+                        ->icon('heroicon-o-identification')
+                        ->color('info')
+                        ->url(fn(Booking $record): string => route('admin.bookings.print-room-card', $record))
+                        ->openUrlInNewTab(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
