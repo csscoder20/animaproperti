@@ -264,6 +264,12 @@
                                                     <p class="text-muted small mb-2">
                                                         <i class="bi bi-geo-alt me-1"></i> {{ $property->alamat_lengkap ?? 'Alamat tidak tersedia' }}
                                                     </p>
+                                                    @if($property->disewa_per_kamar && $property->propertiTipeKamars->count() > 0)
+                                                        <div class="mb-2">
+                                                            <span class="badge bg-light text-dark border"><i class="bi bi-door-open me-1"></i>{{ $property->propertiTipeKamars->count() }} Tipe Kamar</span>
+                                                            <span class="badge bg-light text-dark border"><i class="bi bi-people me-1"></i>Kapasitas bervariasi</span>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                                 
                                                 <div class="row g-2">
@@ -285,10 +291,19 @@
                                             <div class="d-flex justify-content-between align-items-center mt-3">
                                                 <div class="text-start me-3">
                                                     @php
-                                                        $pricePerNight = $property->harga_sewa_per_malam ?? $property->harga;
+                                                        if ($property->disewa_per_kamar && $property->propertiTipeKamars->count() > 0) {
+                                                            $pricePerNight = $property->propertiTipeKamars->min('harga_per_malam');
+                                                            $isRange = true;
+                                                        } else {
+                                                            $pricePerNight = $property->harga_sewa_per_malam ?? $property->harga;
+                                                            $isRange = false;
+                                                        }
                                                     @endphp
-                                                    <h4 class="fw-bold mb-0 text-primary">Rp {{ number_format($pricePerNight, 0, ',', '.') }}</h4>
-                                                    <small class="text-muted d-block">Per Malam</small>
+                                                    <small>{{ $isRange ? 'Harga Mulai Dari' : 'Harga Sewa' }}</small>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <h4 class="fw-bold mb-0 text-primary">Rp {{ number_format($pricePerNight, 0, ',', '.') }}</h4>
+                                                        <small class="text-muted">/malam</small>
+                                                    </div>
                                                 </div>
                                                 <a href="{{ route('sewa.show', array_merge(['slug' => $property->slug], request()->query())) }}" class="btn btn-outline-primary px-4 rounded-pill btn-custom-accent w-auto">Pilih</a>
                                             </div>

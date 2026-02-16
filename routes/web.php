@@ -21,15 +21,7 @@ Route::get('/sewa/{slug}/check-availability', [SewaController::class, 'checkAvai
 Route::get('/sewa/{slug}/booking/confirm', function ($slug) {
     return redirect()->route('sewa.show', $slug);
 });
-Route::get('/debug-schema', function () {
-    return \Illuminate\Support\Facades\DB::select('DESCRIBE bookings');
-});
-Route::get('/force-drop-bookings', function () {
-    \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
-    \Illuminate\Support\Facades\Schema::dropIfExists('bookings');
-    \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
-    return 'Bookings table dropped.';
-});
+
 Route::post('/sewa/{slug}/booking/process', [SewaController::class, 'processBooking'])->name('sewa.booking.process');
 Route::get('/registrasi-agen', [RegistrationController::class, 'index']);
 Route::get('/formulir-registrasi-agen', [RegistrationController::class, 'form_registrasi_agen']);

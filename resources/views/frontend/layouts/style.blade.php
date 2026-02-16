@@ -9,6 +9,7 @@
 <link href="{{ asset('themes/frontend/assets/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
 <link href="{{ asset('themes/frontend/assets/css/main.css') }}" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
 
 <style>
     .view-masonry,

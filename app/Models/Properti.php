@@ -78,7 +78,14 @@ class Properti extends Model
 
     public function tipeKamars()
     {
-        return $this->belongsToMany(TipeKamar::class, 'properti_tipe_kamar', 'properti_id', 'tipe_kamar_id')->withPivot('gambar');
+        return $this->belongsToMany(TipeKamar::class, 'properti_tipe_kamar', 'properti_id', 'tipe_kamar_id')
+                    ->using(PropertiTipeKamar::class)
+                    ->withPivot(['id', 'harga_per_malam', 'tersedia_dari', 'tersedia_sampai', 'kapasitas_dewasa', 'kapasitas_anak', 'jumlah_kamar', 'luas_kamar', 'tipe_bed', 'gambar']);
+    }
+
+    public function propertiTipeKamars()
+    {
+        return $this->hasMany(PropertiTipeKamar::class);
     }
 
     public function images()
@@ -91,5 +98,23 @@ class Properti extends Model
         return $this->gbr_primary_properti
             ? asset('storage/' . $this->gbr_primary_properti)
             : asset('themes/frontend/assets/img/default.png');
+    }
+
+    public function updateRoomStats()
+    {
+        if ($this->disewa_per_kamar) {
+            $totalRooms = $this->propertiTipeKamars()->sum('jumlah_kamar');
+            
+            // Calculate total capacity (adults)
+            // Assuming kapasitas_tamu is total capacity across all rooms
+            $totalCapacity = $this->propertiTipeKamars()->get()->sum(function ($item) {
+                return $item->kapasitas_dewasa * $item->jumlah_kamar;
+            });
+
+            $this->update([
+                'jumlah_kamar' => $totalRooms,
+                'kapasitas_tamu' => $totalCapacity,
+            ]);
+        }
     }
 }

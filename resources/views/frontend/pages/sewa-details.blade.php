@@ -20,6 +20,58 @@
 .property-gallery-slider .swiper-pagination-bullets {
     bottom: 0 !important;
 }
+
+/* Room Type Selection Styles */
+.tipekamar-card-item {
+    transition: all 0.3s ease;
+    border-radius: 12px;
+}
+.tipekamar-card-item:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.tipekamar-card-item.selected {
+    border-color: #198754 !important;
+    background-color: #f8fffb;
+}
+.room-thumb-container {
+    position: relative;
+    width: 200px;
+    height: 150px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.room-zoom-icon {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(255,255,255,0.8);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    font-size: 1rem;
+    z-index: 2;
+}
+.room-specs-icon {
+    width: 24px;
+    text-align: center;
+    color: #888;
+    margin-right: 8px;
+}
+.tipekamar-select-btn {
+    min-width: 100px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+.tipekamar-select-btn.selected {
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+    color: #fff !important;
+}
 </style>
 @endpush
 
@@ -65,6 +117,7 @@
                                     <input type="hidden" name="total_price" value="{{ $totalPrice }}">
                                     <input type="hidden" name="agent_name" id="agent_name">
                                     <input type="hidden" name="agent_phone" id="agent_phone">
+                                    <input type="hidden" name="tipe_kamar_id" id="tipe_kamar_id">
 
                                     {{-- Data Kontak --}}
                                     <h5 class="fw-bold border-bottom pb-2 mb-3">Data Kontak Pemesan</h5>
@@ -78,6 +131,72 @@
                                             <input type="tel" class="form-control" name="customer_phone" required placeholder="Contoh: 08123456789">
                                         </div>
                                     </div>
+
+                                    @if($property->disewa_per_kamar && $property->tipeKamars->count() > 0)
+                                        <h5 class="fw-bold border-bottom pb-2 mb-3 mt-4">Pilih Tipe Kamar</h5>
+                                        <div class="d-flex flex-column gap-3 mb-4">
+                                            @foreach($property->tipeKamars as $tipe)
+                                                @php
+                                                    $imagePath = $tipe->pivot->gambar 
+                                                        ? asset('storage/' . $tipe->pivot->gambar) 
+                                                        : asset('themes/frontend/assets/img/default-room.jpg');
+                                                @endphp
+                                                <div class="card border tipekamar-card-item" id="tipe-card-{{ $tipe->id }}">
+                                                    <div class="card-body p-3">
+                                                        <div class="d-flex flex-column flex-md-row gap-3">
+                                                            {{-- Room Image with Lightbox --}}
+                                                            <div class="room-thumb-container">
+                                                                <img src="{{ $imagePath }}" alt="{{ $tipe->nama }}" class="w-100 h-100 object-fit-cover">
+                                                                <a href="{{ $imagePath }}" class="glightbox room-zoom-icon" data-gallery="room-gallery-{{ $tipe->id }}">
+                                                                    <i class="bi bi-search"></i>
+                                                                </a>
+                                                            </div>
+
+                                                            {{-- Room Details --}}
+                                                            <div class="flex-grow-1">
+                                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                                    <h5 class="fw-bold mb-0 text-dark">{{ $tipe->nama }}</h5>
+                                                                    <div class="text-end">
+                                                                        <h5 class="fw-bold mb-0 text-success">Rp {{ number_format($tipe->pivot->harga_per_malam, 0, ',', '.') }}</h5>
+                                                                        <small class="text-muted">Room Total</small>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <p class="text-muted small mb-2"><i class="bi bi-building me-1"></i> Animaproperti · <a href="#" class="text-primary text-decoration-none small">More Info</a></p>
+                                                                    
+                                                                    <div class="row g-2">
+                                                                        <div class="col-sm-6">
+                                                                            <div class="d-flex align-items-center mb-1 small">
+                                                                                <i class="bi bi-people room-specs-icon"></i>
+                                                                                <span>Max {{ $tipe->pivot->kapasitas_dewasa }} Dewasa, {{ $tipe->pivot->kapasitas_anak }} Anak</span>
+                                                                            </div>
+                                                                            <div class="d-flex align-items-center small">
+                                                                                <i class="bi bi-arrows-fullscreen room-specs-icon" style="font-size: 0.8rem;"></i>
+                                                                                <span>{{ $tipe->pivot->luas_kamar ?? '-' }} m²</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            <div class="d-flex align-items-center small">
+                                                                                <i class="bi bi-briefcase room-specs-icon"></i>
+                                                                                <span>{{ $tipe->pivot->tipe_bed ?? '-' }}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="text-end">
+                                                                    <button type="button" class="btn btn-outline-success tipekamar-select-btn" id="btn-select-{{ $tipe->id }}" onclick="selectTipeKamar(this, '{{ $tipe->id }}', {{ $tipe->pivot->harga_per_malam }}, '{{ $tipe->nama }}')">
+                                                                        Select
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
 
                                     {{-- Metode Pembayaran --}}
                                     <h5 class="fw-bold border-bottom pb-2 mb-3 mt-4">Metode Pembayaran</h5>
@@ -201,12 +320,13 @@
                                     </div>
                                     <div class="col-md-6">
                                         <span class="text-muted d-block">Unit:</span>
-                                        <span class="fw-bold">{{ $rooms }} Kamar, {{ $guests }} Tamu</span>
+                                        <span class="fw-bold" id="summary-unit">{{ $rooms }} Kamar, {{ $guests }} Tamu</span>
+                                        <small class="d-block text-primary fw-bold" id="summary-room-type"></small>
                                     </div>
                                     <div class="col-12 border-top pt-2 mt-2">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <span class="fw-bold">Total Biaya:</span>
-                                            <span class="fw-bold text-primary fs-5">Rp {{ number_format($totalPrice, 0, ',', '.') }}</span>
+                                            <span class="fw-bold text-primary fs-5" id="summary-total-price">Rp {{ number_format($totalPrice, 0, ',', '.') }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -245,6 +365,10 @@
                 },
             });
 
+            const lightbox = GLightbox({
+                selector: '.glightbox'
+            });
+
             // Agent Selection Logic (Event Delegation not needed with onclick)
         });
 
@@ -273,6 +397,35 @@
             element.classList.add('border-primary', 'bg-light');
         }
 
+        function selectTipeKamar(btn, id, price, name) {
+             document.getElementById('tipe_kamar_id').value = id;
+
+             // Update visual cards
+             document.querySelectorAll('.tipekamar-card-item').forEach(c => {
+                c.classList.remove('selected');
+            });
+            document.getElementById('tipe-card-' + id).classList.add('selected');
+
+            // Update visual buttons
+            document.querySelectorAll('.tipekamar-select-btn').forEach(b => {
+                b.classList.remove('selected');
+                b.innerHTML = 'Select';
+            });
+            btn.classList.add('selected');
+            btn.innerHTML = 'Select <i class="bi bi-check-lg ms-1"></i>';
+
+            // Update Sidebar Summary
+            const duration = {{ $duration }};
+            const rooms = {{ $rooms }};
+            const totalPrice = price * rooms * duration;
+            
+            document.getElementById('summary-room-type').innerText = name;
+            document.getElementById('summary-total-price').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalPrice);
+            
+            // Update hidden input total price for final form
+            document.querySelector('input[name="total_price"]').value = totalPrice;
+        }
+
         function submitFinalBooking() {
             const form = document.getElementById('bookingConfirmForm');
             
@@ -285,6 +438,21 @@
                     icon: 'warning',
                     title: 'Agen Belum Dipilih',
                     text: 'Silakan pilih agen terlebih dahulu untuk melanjutkan.',
+                });
+                return;
+            }
+
+            // Validate Tipe Kamar if applicable
+            const tipekamarInput = document.getElementById('tipe_kamar_id');
+            // Check if tipe kamar section exists by checking if input exists (it always does)
+            // We need to check if we SHOULD validate it. 
+            // The section is conditionally rendered. If it's visible, we should probably validate it if we can detect it.
+            // Or easier, just check if the card items exist.
+            if (document.querySelector('.tipekamar-card-item') && !tipekamarInput.value) {
+                 Swal.fire({
+                    icon: 'warning',
+                    title: 'Tipe Kamar Belum Dipilih',
+                    text: 'Silakan pilih tipe kamar terlebih dahulu.',
                 });
                 return;
             }

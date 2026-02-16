@@ -62,6 +62,14 @@
                                             <small class="text-muted" style="font-size: 0.7rem;">{{ $checkout->format('H:i') }} WIB</small>
                                         </div>
                                     </div>
+                                    @if(isset($tipeKamar))
+                                        <div class="col-12 mt-3">
+                                            <div class="p-2 border rounded bg-light">
+                                                <small class="text-muted d-block">Tipe Kamar</small>
+                                                <strong class="text-primary">{{ $tipeKamar->nama }}</strong>
+                                            </div>
+                                        </div>
+                                    @endif
                                     <div class="col-6">
                                         <small class="text-muted d-block">Kamar</small>
                                         <strong class="fs-5">{{ $request->rooms }}</strong>
@@ -171,6 +179,7 @@
                             <input type="hidden" name="duration" value="{{ $duration }}">
                             <input type="hidden" name="total_price" value="{{ $totalPrice }}">
                             <input type="hidden" name="payment_method" value="{{ $request->payment_method }}">
+                            <input type="hidden" name="tipe_kamar_id" value="{{ $request->tipe_kamar_id }}">
                             
                             
                             <div class="d-flex flex-column flex-sm-row justify-content-between align-items-stretch gap-2 gap-sm-3 mt-4">

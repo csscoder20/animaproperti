@@ -57,6 +57,10 @@ class SewaController extends Controller
                         ->orWhereHas('jenisProperti', function ($qType) use ($keyword) {
                             $qType->where('nama', 'LIKE', '%' . $keyword . '%');
                         })
+                        // Search by Room Type Name
+                        ->orWhereHas('tipeKamars', function ($qRoom) use ($keyword) {
+                            $qRoom->where('nama', 'LIKE', '%' . $keyword . '%');
+                        })
                         // OR Search by Location (Kecamatan, Kabupaten, Provinsi) matches
                         ->orWhere(function ($subQ) use ($matchingWilayahCodes) {
                             if (!empty($matchingWilayahCodes)) {
@@ -98,20 +102,39 @@ class SewaController extends Controller
                 }
 
                 $query->where(function ($q) use ($adults, $children, $rooms, $totalGuests) {
-                    // Logic A: Granular Columns Exist -> Check Utilization
-                    $q->where(function ($sub) use ($adults, $children, $rooms) {
-                        $sub->whereRaw('(COALESCE(kapasitas_dewasa_per_kamar, 0) > 0 OR COALESCE(kapasitas_anak_per_kamar, 0) > 0)')
-                            ->whereRaw("
-                                (
-                                    IF(COALESCE(kapasitas_dewasa_per_kamar, 0) > 0, ? / kapasitas_dewasa_per_kamar, IF(? > 0, 1000, 0)) +
-                                    IF(COALESCE(kapasitas_anak_per_kamar, 0) > 0, ? / kapasitas_anak_per_kamar, IF(? > 0, 1000, 0))
-                                ) <= ?
-                            ", [$adults, $adults, $children, $children, $rooms]);
+                    // Scenario 1: Property rented as a whole (disewa_per_kamar = false)
+                    $q->where(function ($qWhole) use ($adults, $children, $rooms, $totalGuests) {
+                        $qWhole->where('disewa_per_kamar', false)
+                            ->where(function ($sub) use ($adults, $children, $rooms, $totalGuests) {
+                                // Sub-logic A: Granular Columns Exist
+                                $sub->where(function ($s) use ($adults, $children, $rooms) {
+                                    $s->whereRaw('(COALESCE(kapasitas_dewasa_per_kamar, 0) > 0 OR COALESCE(kapasitas_anak_per_kamar, 0) > 0)')
+                                        ->whereRaw("
+                                            GREATEST(
+                                                IF(COALESCE(kapasitas_dewasa_per_kamar, 0) > 0, CEIL(? / kapasitas_dewasa_per_kamar), IF(? > 0, 1000, 0)),
+                                                IF(COALESCE(kapasitas_anak_per_kamar, 0) > 0, CEIL(? / kapasitas_anak_per_kamar), IF(? > 0, 1000, 0))
+                                            ) <= ?
+                                        ", [$adults, $adults, $children, $children, $rooms]);
+                                })
+                                // Sub-logic B: Legacy / No Granular -> Check Total Capacity
+                                ->orWhere(function ($s) use ($totalGuests) {
+                                    $s->whereRaw('(COALESCE(kapasitas_dewasa_per_kamar, 0) = 0 AND COALESCE(kapasitas_anak_per_kamar, 0) = 0)')
+                                        ->where('kapasitas_tamu', '>=', $totalGuests);
+                                });
+                            });
                     })
-                    // Logic B: Legacy / No Granular -> Check Total Capacity
-                    ->orWhere(function ($sub) use ($totalGuests) {
-                        $sub->whereRaw('(COALESCE(kapasitas_dewasa_per_kamar, 0) = 0 AND COALESCE(kapasitas_anak_per_kamar, 0) = 0)')
-                            ->where('kapasitas_tamu', '>=', $totalGuests);
+                    // Scenario 2: Property rented per room (disewa_per_kamar = true)
+                    ->orWhere(function ($qRoom) use ($adults, $children, $rooms) {
+                        $qRoom->where('disewa_per_kamar', true)
+                            ->whereHas('propertiTipeKamars', function ($sub) use ($adults, $children, $rooms) {
+                                $sub->where('jumlah_kamar', '>=', $rooms)
+                                    ->whereRaw("
+                                        GREATEST(
+                                            IF(COALESCE(kapasitas_dewasa, 0) > 0, CEIL(? / kapasitas_dewasa), IF(? > 0, 1000, 0)),
+                                            IF(COALESCE(kapasitas_anak, 0) > 0, CEIL(? / kapasitas_anak), IF(? > 0, 1000, 0))
+                                        ) <= ?
+                                    ", [$adults, $adults, $children, $children, $rooms]);
+                            });
                     });
                 });
             }
@@ -131,8 +154,8 @@ class SewaController extends Controller
                 });
             }
 
-        // Paginate results
-        $properties = $query->paginate(12)->appends($request->query());
+        // Paginate results and Eager Load Room Types with Pivot for search results display
+        $properties = $query->with(['propertiTipeKamars', 'fasilitas'])->paginate(12)->appends($request->query());
         $totalResults = $properties->total();
         }
 
@@ -245,31 +268,46 @@ class SewaController extends Controller
             'rooms' => 'required|integer|min:1',
             'guests' => 'required|integer|min:1',
             'payment_method' => 'required|string',
+            'tipe_kamar_id' => 'nullable|string',
         ]);
 
-        $property = Properti::with(['jenisProperti', 'images', 'agens'])->where('slug', $slug)->firstOrFail();
+        $property = Properti::with(['jenisProperti', 'images', 'agens', 'propertiTipeKamars'])->where('slug', $slug)->firstOrFail();
 
         // Calculate duration and total price
-        $checkin = \Carbon\Carbon::parse($request->checkin);
-        $checkout = \Carbon\Carbon::parse($request->checkout);
-        $duration = $checkin->diffInDays($checkout) ?: 1;
-        // Use harga_sewa_per_malam for rental properties (Kost/Apartemen)
-        $pricePerNight = $property->harga_sewa_per_malam ?? $property->harga;
-        $totalPrice = $request->rooms * $pricePerNight * $duration;
+    $checkin = \Carbon\Carbon::parse($request->checkin);
+    $checkout = \Carbon\Carbon::parse($request->checkout);
+    $duration = $checkin->diffInDays($checkout) ?: 1;
+
+    // Default price from property
+    $pricePerNight = $property->harga_sewa_per_malam ?? $property->harga;
+    
+    // Get Tipe Kamar if selected and update price
+    $tipeKamar = null;
+    if ($request->filled('tipe_kamar_id')) {
+        $tipeKamar = \App\Models\TipeKamar::find($request->tipe_kamar_id);
+        if ($tipeKamar) {
+            $pivot = $property->propertiTipeKamars()->where('tipe_kamar_id', $tipeKamar->id)->first();
+            if ($pivot) {
+                $pricePerNight = $pivot->harga_per_malam;
+            }
+        }
+    }
+
+    $totalPrice = $request->rooms * $pricePerNight * $duration;
 
         // Find the selected agent
-        $agent = Agen::where('no_hp', 'LIKE', '%' . substr($request->agent_phone, -8))->first();
-        
-        if (!$agent) {
-            $agent = $property->agens()->first();
-        }
+    $agent = Agen::where('no_hp', 'LIKE', '%' . substr($request->agent_phone, -8))->first();
+    
+    if (!$agent) {
+        $agent = $property->agens()->first();
+    }
 
-        if (!$agent) {
-            return back()->with('error', 'Data agen tidak ditemukan untuk properti ini.');
-        }
+    if (!$agent) {
+        return back()->with('error', 'Data agen tidak ditemukan untuk properti ini.');
+    }
 
-        // Get full address
-        $alamatLengkap = $this->getAlamatLengkapProperti($property);
+    // Get full address
+    $alamatLengkap = $this->getAlamatLengkapProperti($property);
 
         $title = 'Ringkasan Pesanan - ' . $property->judul;
 
@@ -282,7 +320,8 @@ class SewaController extends Controller
             'checkout',
             'duration',
             'totalPrice',
-            'request'
+            'request',
+            'tipeKamar'
         ));
     }
 
@@ -300,6 +339,7 @@ class SewaController extends Controller
             'duration' => 'required|integer',
             'total_price' => 'required|numeric',
             'payment_method' => 'required|string',
+            'tipe_kamar_id' => 'nullable|string',
         ]);
 
         $property = Properti::where('slug', $slug)->firstOrFail();
@@ -317,6 +357,15 @@ class SewaController extends Controller
 
         if (!$agent) {
              return back()->with('error', 'Data agen tidak ditemukan untuk properti ini.');
+        }
+
+        // Get Tipe Kamar Name if exists
+        $tipeKamarName = null;
+        if ($request->filled('tipe_kamar_id')) {
+            $tipeKamar = \App\Models\TipeKamar::find($request->tipe_kamar_id);
+            if ($tipeKamar) {
+                $tipeKamarName = $tipeKamar->nama;
+            }
         }
 
         // Create Booking Record (Optional: If you want to save to DB)
@@ -337,6 +386,7 @@ class SewaController extends Controller
             'total_price' => $request->total_price,
             'status' => 'pending',
             'payment_method' => $request->payment_method,
+            // 'notes' => $tipeKamarName ? "Tipe Kamar: $tipeKamarName" : null, // If you have notes column
         ]);
 
         // Construct WA Message
@@ -351,11 +401,14 @@ class SewaController extends Controller
         $totalFormatted = number_format($request->total_price, 0, ',', '.');
         $paymentMethod = $request->payment_method;
 
+        $tipeKamarString = $tipeKamarName ? "- Tipe Kamar: {$tipeKamarName}\n" : "";
+
         $message = "Halo Kak {$agent->nama_lengkap}, saya {$request->customer_name} ingin memesan properti:\n" .
             "*{$property->judul}*\n\n" .
             "Detail Pesanan:\n" .
             "- Check-in: {$checkinFormatted} WIB\n" .
             "- Check-out: {$checkoutFormatted} WIB\n" .
+            $tipeKamarString .
             "- Jumlah Kamar: {$request->rooms}\n" .
             "- Jumlah Tamu: {$request->guests} Orang\n" .
             "- Durasi: {$request->duration} Malam\n" .
