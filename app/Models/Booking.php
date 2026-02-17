@@ -13,6 +13,58 @@ class Booking extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
+    protected static function booted()
+    {
+        // 1. Restore stock when Booking is DELETED
+        static::deleted(function ($booking) {
+            if ($booking->tipe_kamar_id) {
+                $tipeKamar = \App\Models\TipeKamar::find($booking->tipe_kamar_id);
+                if ($tipeKamar) {
+                    $tipeKamar->increment('jumlah_kamar');
+                }
+            }
+        });
+
+        // 2. Adjust stock when Booking STATUS is UPDATED
+        static::updated(function ($booking) {
+            if ($booking->isDirty('status')) {
+                $oldStatus = $booking->getOriginal('status');
+                $newStatus = $booking->status;
+
+                // Define status groups
+                // Stock Decreasing Statuses (Stock Occupied)
+                $activeStatuses = ['pending', 'confirmed', 'paid', 'completed'];
+                
+                // Stock Restoring Statuses (Stock Free)
+                $inactiveStatuses = ['cancelled', 'refunded'];
+
+                // Check transition
+                $wasActive = in_array($oldStatus, $activeStatuses);
+                $isInactive = in_array($newStatus, $inactiveStatuses);
+
+                $wasInactive = in_array($oldStatus, $inactiveStatuses);
+                $isActive = in_array($newStatus, $activeStatuses);
+
+                if ($booking->tipe_kamar_id) {
+                    $tipeKamar = \App\Models\TipeKamar::find($booking->tipe_kamar_id);
+                    if ($tipeKamar) {
+                        // Case A: Active -> Inactive (e.g. Confirmed -> Cancelled)
+                        // RESTORE Stock
+                        if ($wasActive && $isInactive) {
+                             $tipeKamar->increment('jumlah_kamar', $booking->rooms ?? 1);
+                        }
+
+                        // Case B: Inactive -> Active (e.g. Cancelled -> Pending)
+                        // REDUCE Stock
+                        if ($wasInactive && $isActive) {
+                             $tipeKamar->decrement('jumlah_kamar', $booking->rooms ?? 1);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     //
     protected $fillable = [
         'properti_id',

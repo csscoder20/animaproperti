@@ -204,7 +204,7 @@ class SewaController extends Controller
     public function show($slug)
     {
         $property = Properti::with(['jenisProperti', 'images', 'agens', 'tipeKamars' => function($q) {
-            $q->where('tipe_kamars.jumlah_kamar', '>', 0); // Only show available rooms
+            $q->where('tipe_kamars.jumlah_kamar', '>', 0)->with('fasilitas');
         }, 'fasilitas'])
             ->where('slug', $slug)
             ->firstOrFail();

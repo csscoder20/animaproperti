@@ -129,21 +129,27 @@ class BookingResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('customer_phone')
                     ->label('No. HP')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('nik')
                     ->label('NIK')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('email')
                     ->label('Email')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('properti.judul')
                     ->label('Properti')
                     ->limit(30)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('agent.nama_lengkap')
                     ->label('Agen')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('checkin')
+                    ->date('d M Y'),
+                Tables\Columns\TextColumn::make('checkout')
                     ->date('d M Y'),
                 Tables\Columns\TextColumn::make('duration')
                     ->label('Durasi')
@@ -154,7 +160,8 @@ class BookingResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('payment_method')
                     ->label('Metode Bayar')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
@@ -165,35 +172,51 @@ class BookingResource extends Resource
                         'cancelled' => 'danger',
                         'refunded' => 'danger',
                         default => 'gray',
-                    }),
+                    })
+                    ->action(
+                        Tables\Actions\Action::make('update_status')
+                            ->label('Update Status')
+                            ->form([
+                                Forms\Components\Select::make('status')
+                                    ->label('Status Baru')
+                                    ->options([
+                                        'pending' => 'Pending',
+                                        'confirmed' => 'Confirmed',
+                                        'paid' => 'Dibayar',
+                                        'completed' => 'Selesai',
+                                        'cancelled' => 'Dibatalkan',
+                                        'refunded' => 'Dikembalikan',
+                                    ])
+                                    ->required()
+                                    ->default(fn (Booking $record) => $record->status),
+                            ])
+                            ->modalHeading('Update Status Pesanan')
+                            ->modalDescription('Apakah Anda yakin ingin mengubah status pesanan ini? Stok kamar akan disesuaikan otomatis.')
+                            ->modalSubmitActionLabel('Simpan')
+                            ->action(function (Booking $record, array $data) {
+                                $record->update($data);
+                            })
+                            ->requiresConfirmation()
+                    )
+                    ->sortable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\Action::make('preview_invoice')
-                        ->label('Preview Invoice')
-                        ->icon('heroicon-o-eye')
-                        ->color('gray')
-                        ->url(fn(Booking $record): string => route('admin.bookings.preview-invoice', $record))
-                        ->openUrlInNewTab(),
                     Tables\Actions\Action::make('print_invoice')
                         ->label('Cetak Invoice')
                         ->icon('heroicon-o-printer')
                         ->color('success')
+                        ->visible(fn (Booking $record) => in_array($record->status, ['paid', 'completed']))
                         ->url(fn(Booking $record): string => route('admin.bookings.print-invoice', $record))
-                        ->openUrlInNewTab(),
-                    Tables\Actions\Action::make('preview_room_card')
-                        ->label('Preview Kartu Kamar')
-                        ->icon('heroicon-o-eye')
-                        ->color('gray')
-                        ->url(fn(Booking $record): string => route('admin.bookings.preview-room-card', $record))
                         ->openUrlInNewTab(),
                     Tables\Actions\Action::make('print_room_card')
                         ->label('Cetak Kartu Kamar')
                         ->icon('heroicon-o-identification')
                         ->color('info')
+                        ->visible(fn (Booking $record) => in_array($record->status, ['paid', 'completed']))
                         ->url(fn(Booking $record): string => route('admin.bookings.print-room-card', $record))
                         ->openUrlInNewTab(),
                     Tables\Actions\EditAction::make(),

@@ -45,7 +45,7 @@ class TipeKamarResource extends Resource
                             ->numeric()
                             ->default(1)
                             ->required(),
-                    ])->columns(2),
+                    ])->columns(3),
 
                 Forms\Components\Section::make('Kapasitas & Ketersediaan')
                     ->schema([
@@ -67,7 +67,7 @@ class TipeKamarResource extends Resource
                             ->label('Tersedia Sampai')
                             ->native(false)
                             ->displayFormat('d M Y'),
-                    ])->columns(2),
+                    ])->columns(4),
 
                 Forms\Components\Section::make('Spesifikasi & Gambar')
                     ->schema([
@@ -89,7 +89,7 @@ class TipeKamarResource extends Resource
                         Forms\Components\CheckboxList::make('fasilitas')
                             ->label('Fasilitas Kamar')
                             ->relationship('fasilitas', 'nama')
-                            ->columns(3)
+                            ->columns(4)
                             ->gridDirection('row')
                             ->bulkToggleable()
                     ]),
@@ -103,6 +103,37 @@ class TipeKamarResource extends Resource
                 Tables\Columns\TextColumn::make('nama')
                     ->label('Nama Tipe Kamar')
                     ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('jumlah_kamar')
+                    ->label('Jumlah Kamar')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('harga_per_malam')
+                    ->label('Harga per Malam')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('kapasitas_dewasa')
+                    ->label('Kapasitas Dewasa')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('kapasitas_anak')
+                    ->label('Kapasitas Anak')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('luas_kamar')
+                    ->label('Luas Kamar')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('tipe_bed')
+                    ->label('Tipe Bed')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('tersedia_dari')
+                    ->label('Tersedia Dari')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('tersedia_sampai')
+                    ->label('Tersedia Sampai')
+                    ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

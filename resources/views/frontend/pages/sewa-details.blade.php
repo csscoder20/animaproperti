@@ -260,7 +260,7 @@
                                                         ? asset('storage/' . $tipe->gambar) 
                                                         : asset('themes/frontend/assets/img/default-room.jpg');
                                                 @endphp
-                                                <div class="card border tipekamar-card-item" id="tipe-card-{{ $tipe->id }}">
+                                                <div class="card border tipekamar-card-item {{ $tipe->jumlah_kamar <= 0 ? 'bg-light text-muted' : '' }}" id="tipe-card-{{ $tipe->id }}" style="{{ $tipe->jumlah_kamar <= 0 ? 'opacity: 0.7;' : '' }}">
                                                     <div class="card-body p-3">
                                                         <div class="d-flex flex-column flex-md-row gap-3">
                                                             {{-- Room Image with Lightbox --}}
@@ -276,8 +276,14 @@
                                                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                                                     <h5 class="fw-bold mb-0 text-dark">{{ $tipe->nama }}</h5>
                                                                     <div class="text-end">
-                                                                        <h5 class="fw-bold mb-0 text-success">Rp {{ number_format($tipe->harga_per_malam, 0, ',', '.') }}</h5>
-                                                                        <small class="text-muted">Room Total</small>
+                                                                        <h5 class="fw-bold mb-0 {{ $tipe->jumlah_kamar > 0 ? 'text-success' : 'text-danger' }}">
+                                                                            Rp {{ number_format($tipe->harga_per_malam, 0, ',', '.') }}
+                                                                        </h5>
+                                                                        @if($tipe->jumlah_kamar > 0)
+                                                                            <small class="text-muted">Room Total</small>
+                                                                        @else
+                                                                            <span class="badge bg-danger">Habis Terpesan</span>
+                                                                        @endif
                                                                     </div>
                                                                 </div>
 
@@ -304,11 +310,23 @@
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="text-end">
-                                                                    <button type="button" class="btn btn-outline-success tipekamar-select-btn" id="btn-select-{{ $tipe->id }}" onclick="selectTipeKamar(this, '{{ $tipe->id }}', {{ $tipe->harga_per_malam }}, '{{ $tipe->nama }}')">
-                                                                        Select
-                                                                    </button>
-                                                                </div>
+ <div class="text-end">
+                                                                    @if($tipe->jumlah_kamar > 0)
+                                                                        <button type="button" 
+                                                                            class="btn btn-outline-success tipekamar-select-btn" 
+                                                                            id="btn-select-{{ $tipe->id }}" 
+                                                                            onclick="selectTipeKamar(this, '{{ $tipe->id }}', {{ $tipe->harga_per_malam }}, '{{ $tipe->nama }}')">
+                                                                            Select
+                                                                        </button>
+                                                                    @else
+                                                                        <button type="button" 
+                                                                            class="btn btn-secondary disabled" 
+                                                                            id="btn-select-{{ $tipe->id }}" 
+                                                                            disabled>
+                                                                            Habis
+                                                                        </button>
+                                                                    @endif
+                                                                    </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -368,7 +386,7 @@
                                         </div>
                                     </div>
 
-                                    <button type="button" class="btn btn-success w-auto py-2 fw-bold btn-custom-accent " onclick="submitFinalBooking()">
+                                    <button type="button" class="btn btn-success w-auto fw-bold btn-custom-accent " onclick="submitFinalBooking()">
                                         <i class="bi bi-whatsapp me-2"></i> Proses Sekarang
                                     </button>
                                 </form>
@@ -412,8 +430,12 @@
                                 <div class="facilities-section mt-3">
                                     <h5 class="fw-bold fs-6 mb-3">Fasilitas</h5>
                                     <div class="d-flex flex-wrap gap-2 mt-3 mb-4">
-                                        @if ($property->fasilitas->count() > 0)
-                                            @foreach ($property->fasilitas as $fasilitas)
+                                        @php
+                                            $allFacilities = $property->fasilitas->merge($property->tipeKamars->pluck('fasilitas')->flatten())->unique('id');
+                                        @endphp
+
+                                        @if ($allFacilities->count() > 0)
+                                            @foreach ($allFacilities as $fasilitas)
                                                 <div class="d-flex align-items-center text-muted small me-2 mb-2">
                                                     <i class="bi {{ $fasilitas->icon ?? 'bi-check-circle' }} me-1 text-primary"></i>
                                                     <span>{{ $fasilitas->nama }}</span>
