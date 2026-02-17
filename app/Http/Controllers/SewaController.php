@@ -171,7 +171,10 @@ class SewaController extends Controller
         $agenList = Agen::select('id', 'nama_lengkap')->get();
 
         // Fetch Active Sliders
-        $activeSliders = Slider::active()->orderBy('order')->get();
+        $activeSliders = Slider::active()
+            ->where('show_on_sewa', true)
+            ->orderBy('order')
+            ->get();
 
         // Fetch All Rental Properties (Below Slider)
         // User said: "di bawah section ini... tampilkan semua data properti"

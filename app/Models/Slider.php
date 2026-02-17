@@ -22,12 +22,18 @@ class Slider extends Model
         'link_url',
         'order',
         'is_active',
+        'is_temporary',
+        'show_on_home',
+        'show_on_sewa',
         'start_date',
         'end_date',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_temporary' => 'boolean',
+        'show_on_home' => 'boolean',
+        'show_on_sewa' => 'boolean',
         'start_date' => 'datetime',
         'end_date' => 'datetime',
     ];
@@ -41,10 +47,17 @@ class Slider extends Model
 
         return $query->where('is_active', true)
             ->where(function ($q) use ($now) {
-                $q->whereNull('start_date')->orWhere('start_date', '<=', $now);
-            })
-            ->where(function ($q) use ($now) {
-                $q->whereNull('end_date')->orWhere('end_date', '>=', $now);
+                // Jika temporary, cek tanggal. Jika tidak, abaikan tanggal.
+                $q->where('is_temporary', false)
+                  ->orWhere(function ($sub) use ($now) {
+                      $sub->where('is_temporary', true)
+                          ->where(function ($d) use ($now) {
+                              $d->whereNull('start_date')->orWhere('start_date', '<=', $now);
+                          })
+                          ->where(function ($d) use ($now) {
+                              $d->whereNull('end_date')->orWhere('end_date', '>=', $now);
+                          });
+                  });
             });
     }
 }

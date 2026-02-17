@@ -42,7 +42,7 @@ class AdminPanelProvider extends PanelProvider
             ])
 
             ->path('admin')
-            ->brandName('SISPENDIK BINTUNI')
+            ->brandName('ANIMA PROPERTI')
             ->sidebarFullyCollapsibleOnDesktop()
             ->defaultThemeMode(ThemeMode::Light)
             ->favicon(function () {

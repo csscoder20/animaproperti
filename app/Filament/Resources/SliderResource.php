@@ -41,12 +41,26 @@ class SliderResource extends Resource
                             ->required()
                             ->numeric()
                             ->default(0),
+                        Forms\Components\Toggle::make('show_on_home')
+                            ->label('Tampil di Beranda')
+                            ->default(true),
+
+                        Forms\Components\Toggle::make('show_on_sewa')
+                            ->label('Tampil di Sewa')
+                            ->default(false),
+
+                        Forms\Components\Toggle::make('is_temporary')
+                            ->label('Tampil Sementara?')
+                            ->reactive()
+                            ->default(false),
+
                         Forms\Components\DatePicker::make('start_date')
                             ->native(false)
                             ->seconds(false)
                             ->displayFormat('d/m/Y')
                             ->default(now())
-                            ->required()
+                            ->required(fn (Forms\Get $get) => $get('is_temporary'))
+                            ->visible(fn (Forms\Get $get) => $get('is_temporary'))
                             ->before('end_date')
                             ->label('Start Date'),
 
@@ -54,8 +68,9 @@ class SliderResource extends Resource
                             ->native(false)
                             ->seconds(false)
                             ->displayFormat('d/m/Y')
-                            ->default(now())
-                            ->required()
+                            ->default(now()->addDays(7))
+                            ->required(fn (Forms\Get $get) => $get('is_temporary'))
+                            ->visible(fn (Forms\Get $get) => $get('is_temporary'))
                             ->after('start_date')
                             ->label('End Date'),
 
