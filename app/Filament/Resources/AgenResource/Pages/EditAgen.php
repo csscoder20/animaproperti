@@ -19,4 +19,8 @@ class EditAgen extends EditRecord
     {
         return [];
     }
+    protected function getHeaderActions(): array
+    {
+        return [];
+    }
 }

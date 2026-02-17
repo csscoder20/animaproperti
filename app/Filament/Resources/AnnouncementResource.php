@@ -88,6 +88,7 @@ class AnnouncementResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null)
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
                 Tables\Columns\ImageColumn::make('image_path')->defaultImageUrl(asset('themes/frontend/assets/img/default.png')),
@@ -102,9 +103,13 @@ class AnnouncementResource extends Resource
                     ->dateTime(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ])
+                ->link()
+                ->label('Options'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

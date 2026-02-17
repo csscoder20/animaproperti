@@ -91,6 +91,7 @@ class PelangganResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null)
             ->columns([
                 TextColumn::make('nama')
                     ->label('Nama Lengkap')
@@ -151,9 +152,13 @@ class PelangganResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ])
+                ->link()
+                ->label('Options'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

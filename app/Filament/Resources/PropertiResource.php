@@ -421,6 +421,7 @@ class PropertiResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null)
             ->columns([
                 Tables\Columns\TextColumn::make('judul')
                     ->label('Nama Properti')
@@ -500,24 +501,28 @@ class PropertiResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-                Action::make('duplicate')
-                    ->label('Duplicate')
-                    ->icon('heroicon-m-document-duplicate')
-                    ->color('gray')
-                    ->action(function ($record) {
-                        $newRecord = $record->replicate();
-                        $newTitle = $record->judul . ' (Copy)';
-                        $newRecord->judul = $newTitle;
-                        $newRecord->slug = Str::slug($newTitle) . '-' . Str::random(4);
-                        $newRecord->save();
-                    })
-                    ->requiresConfirmation()
-                    ->modalHeading('Duplicate Item')
-                    ->modalSubheading('Apakah Anda yakin ingin menduplikasi item ini?')
-                    ->modalButton('Ya, Duplikasi'),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                    Action::make('duplicate')
+                        ->label('Duplicate')
+                        ->icon('heroicon-m-document-duplicate')
+                        ->color('gray')
+                        ->action(function ($record) {
+                            $newRecord = $record->replicate();
+                            $newTitle = $record->judul . ' (Copy)';
+                            $newRecord->judul = $newTitle;
+                            $newRecord->slug = Str::slug($newTitle) . '-' . Str::random(4);
+                            $newRecord->save();
+                        })
+                        ->requiresConfirmation()
+                        ->modalHeading('Duplicate Item')
+                        ->modalSubheading('Apakah Anda yakin ingin menduplikasi item ini?')
+                        ->modalButton('Ya, Duplikasi'),
+                ])
+                ->link()
+                ->label('Options'),
             ])
             ->headerActions([
                 FilamentExportHeaderAction::make('export')

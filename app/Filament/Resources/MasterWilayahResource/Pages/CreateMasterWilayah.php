@@ -9,4 +9,5 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateMasterWilayah extends CreateRecord
 {
     protected static string $resource = MasterWilayahResource::class;
+    protected static bool $canCreateAnother = false;
 }

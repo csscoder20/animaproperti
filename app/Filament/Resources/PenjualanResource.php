@@ -301,6 +301,7 @@ class PenjualanResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null)
             ->columns([
                 TextColumn::make('properti.judul')
                     ->label('Properti')
@@ -351,15 +352,18 @@ class PenjualanResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make('print')
-                    ->label('Cetak Invoice')
-                    ->icon('heroicon-o-printer')
-                    ->url(fn($record) => route('invoice.show', ['id' => $record->id]))
-                    ->openUrlInNewTab(),
-
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                    Tables\Actions\Action::make('print')
+                        ->label('Cetak Invoice')
+                        ->icon('heroicon-o-printer')
+                        ->url(fn($record) => route('invoice.show', ['id' => $record->id]))
+                        ->openUrlInNewTab(),
+                ])
+                ->link()
+                ->label('Options'),
             ])
 
             ->bulkActions([

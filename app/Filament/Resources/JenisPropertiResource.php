@@ -49,6 +49,7 @@ class JenisPropertiResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null)
             ->columns([
                 TextColumn::make('nama')->label('Nama')->searchable()->sortable(),
                 TextColumn::make('slug')->label('Slug')->sortable(),
@@ -59,27 +60,31 @@ class JenisPropertiResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-                Action::make('duplicate')
-                    ->label('Duplicate')
-                    ->icon('heroicon-m-document-duplicate')
-                    ->color('gray')
-                    ->action(function ($record) {
-                        $newRecord = $record->replicate();
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                    Action::make('duplicate')
+                        ->label('Duplicate')
+                        ->icon('heroicon-m-document-duplicate')
+                        ->color('gray')
+                        ->action(function ($record) {
+                            $newRecord = $record->replicate();
 
-                        $newNama = $record->nama . ' (Copy)';
-                        $newRecord->nama = $newNama;
+                            $newNama = $record->nama . ' (Copy)';
+                            $newRecord->nama = $newNama;
 
-                        $newRecord->slug = Str::slug($newNama) . '-' . Str::random(4);
+                            $newRecord->slug = Str::slug($newNama) . '-' . Str::random(4);
 
-                        $newRecord->save();
-                    })
-                    ->requiresConfirmation()
-                    ->modalHeading('Duplicate Item')
-                    ->modalSubheading('Apakah Anda yakin ingin menduplikasi item ini?')
-                    ->modalButton('Ya, Duplikasi'),
+                            $newRecord->save();
+                        })
+                        ->requiresConfirmation()
+                        ->modalHeading('Duplicate Item')
+                        ->modalSubheading('Apakah Anda yakin ingin menduplikasi item ini?')
+                        ->modalButton('Ya, Duplikasi'),
+                ])
+                ->link()
+                ->label('Options'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

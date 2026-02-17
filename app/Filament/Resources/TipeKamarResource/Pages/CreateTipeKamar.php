@@ -9,4 +9,5 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateTipeKamar extends CreateRecord
 {
     protected static string $resource = TipeKamarResource::class;
+    protected static bool $canCreateAnother = false;
 }

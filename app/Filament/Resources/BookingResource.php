@@ -119,6 +119,7 @@ class BookingResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null)
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Booking')
@@ -222,6 +223,8 @@ class BookingResource extends Resource
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
                 ])
+                ->link()
+                ->label('Options'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
